@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/CarshServiceIcon.png</file>
+        <file>icons/arrow_left_icon.png</file>
+        <file>icons/arrow_right_icon.png</file>
+        <file>icons/CarshServiceIcon256.png</file>
+    </qresource>
+</RCC>
