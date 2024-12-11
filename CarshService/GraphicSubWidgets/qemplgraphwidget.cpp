@@ -115,7 +115,7 @@ void QEmplGraphWidget::UpdateGraph()
             QString strMonthName = date.toString("MM.yyyy");
 
             QString strQuery = QString("select SUM(\"Платежи сотрудников\".Сумма) from \"Платежи сотрудников\" where \"Платежи сотрудников\".id in (select \"Расширение задачи ШС\".\"Оплата парковки\" from \"Расширение задачи ШС\",Задачи where \"Расширение задачи ШС\".id = Задачи.Расширение and Задачи.\"Дата Время\">%1 and  Задачи.\"Дата Время\"<=%2 and Задачи.Исполнитель='%3')").arg(time_from).arg(time_to).arg(m_pEmplCombo->currentData().toString());
-            qDebug()<<strQuery;
+
             query.exec(strQuery);
             while(query.next())
             {

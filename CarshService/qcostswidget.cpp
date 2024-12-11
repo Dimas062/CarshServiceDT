@@ -117,7 +117,7 @@ QCostsWidget::QCostsWidget(QWidget *parent)
     m_pCostsTableWidget->setHorizontalHeaderLabels(headers);
     connect(m_pCostsTableWidget , SIGNAL(itemDoubleClicked(QTableWidgetItem*)) , this , SLOT(OnTasksDblClk(QTableWidgetItem*)));
     pVMainLayout->addWidget(m_pCostsTableWidget);
-    qDebug()<<"before OnFilterApplyPressed";
+
     OnFilterApplyPressed();
 }
 
@@ -129,8 +129,6 @@ void QCostsWidget::UpdateCostsList()
     QString strExec= QString("SELECT Расходы.id, Расходы.\"Дата Время\" , \"Платежи сотрудников\".Сумма , Товары.Товар , \"Статьи расходов\".\"Статья расходов\"  , Пользователи.Фамилия, Пользователи.Имя, Пользователи.Отчество FROM Расходы, \"Платежи сотрудников\", Товары , Пользователи , \"Статьи расходов\"  where Расходы.Удалено<>'true' and Расходы.Товар=Товары.id and Расходы.Оплата=\"Платежи сотрудников\".id and \"Статьи расходов\".id=Расходы.Статья  and Пользователи.id=Расходы.Сотрудник and Расходы.Удалено <> true %1 order by Расходы.\"Дата Время\" desc").arg(m_filtersStr);
     QSqlQuery Query;
     Query.exec(strExec);
-    qDebug()<<strExec;
-
 
     //QMessageBox::information(NULL , "ddasda" , strExec);
 

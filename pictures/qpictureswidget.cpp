@@ -160,8 +160,6 @@ void QPicturesWidget::UpdatePictures()
 
 void QPicturesWidget::OnPictureClik()
 {
-    qDebug()<<"QPicturesWidget::OnPictureClik()";
-
     QFullScreenPicDialog dlg(&(*m_currentPictureIt) , this);
 
     dlg.exec();

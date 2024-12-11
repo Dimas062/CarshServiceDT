@@ -22,7 +22,6 @@ QPicLabel::~QPicLabel()
 
 void QPicLabel::mousePressEvent(QMouseEvent* event)
 {
-    qDebug()<<"QPicLabel::mousePressEvent(QMouseEvent* event)"<<event;
     if(event->type() == QEvent::MouseButtonPress)
     {
         const qreal iw = m_pCurrentImage->width();
@@ -53,14 +52,13 @@ void QPicLabel::mousePressEvent(QMouseEvent* event)
             QLabel::mousePressEvent(event);
             return;
         }
-        qDebug()<<"emit clicked();";
+
         emit clicked();
     }
 }
 
 void QPicLabel::SetCurrentImage(QImage * img)
 {
-    qDebug()<<"PicLabel::SetCurrentImage(QImage * img)";
     m_pCurrentImage = img;
     update();
 }

@@ -224,8 +224,6 @@ void QTasksWidget::UpdateTasksList()
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
     QString strQuery =  QString("SELECT Задачи.id, Задачи.\"Дата Время\", \"Типы задач\".\"Тип\" , \"Типы задач\".id , Задачи.\"Время выполнения\" , Заказчики.Название , Задачи.Цена , %3 , Пользователи.Имя, Пользователи.Фамилия , Пользователи. Отчество ,%4 FROM \"Типы задач\", Задачи, Заказчики, Пользователи where Заказчики.id=Задачи.Заказчик and Задачи.Исполнитель=Пользователи.id and Задачи.Тип = \"Типы задач\".id and Задачи.Удалено<> 'true'  %2 order by Задачи.\"Дата Время\" desc").arg(m_filtersStr).arg(NUMBER_BY_TASK).arg(PAY_BY_TASK);
 
-    //qDebug()<<strQuery;
-
     QSqlQuery query;
     query.exec(strQuery);
 
@@ -293,8 +291,6 @@ void QTasksWidget::UpdateTasksList()
         if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid::fromString("8078b7ce-e423-49ae-9ce6-17758b852b33"))
         {
             QString strPenParkQuery =  QString("SELECT \"Причины задержания\".Название from \"Причины задержания\" , Задачи , \"Расширение задачи ШС\" where Задачи.id='%1' and Задачи.Расширение = \"Расширение задачи ШС\".id and \"Расширение задачи ШС\".\"Причина задержания\"=\"Причины задержания\".id").arg(query.value(0).toString());
-
-            qDebug()<<strPenParkQuery;
 
             QSqlQuery PenParkquery;
             PenParkquery.exec(strPenParkQuery);

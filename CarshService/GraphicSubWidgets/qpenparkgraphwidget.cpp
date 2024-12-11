@@ -11,7 +11,6 @@
 QPenParkGraphWidget::QPenParkGraphWidget(QWidget *parent)
     : QWidget{parent}
 {
-    qDebug()<<"1";
     QVBoxLayout * pVMainLayout = new QVBoxLayout;
 
     QHBoxLayout * pHFilterLayout = new QHBoxLayout;
@@ -23,8 +22,6 @@ QPenParkGraphWidget::QPenParkGraphWidget(QWidget *parent)
     m_pFromDateEdit = new QDateEdit(QDateTime::currentDateTime().addMonths(-1).date());
     pHFilterLayout->addWidget(m_pFromDateEdit);
 
-
-    qDebug()<<"1.1";
     QLabel * pDateTimeToLabel = new QLabel("по: ");
     pHFilterLayout->addWidget(pDateTimeToLabel);
     m_pToDateEdit = new QDateEdit(QDateTime::currentDateTime().date());
@@ -34,26 +31,23 @@ QPenParkGraphWidget::QPenParkGraphWidget(QWidget *parent)
 
     m_pParkingCombo = new QComboBox;
     pHFilterLayout->addWidget(m_pParkingCombo);
-    qDebug()<<"1.2";
+
     QString strParkingQuery = "select id, Название from Штрафстоянки";
     QSqlQuery query;
     query.exec(strParkingQuery);
-    qDebug()<<"1.2.1";
+
     while(query.next())
     {
-        qDebug()<<"1.2.2";
         m_pParkingCombo->addItem(query.value(1).toString() , query.value(0));
-        qDebug()<<"1.2.3";
     }
-    // qDebug()<<"1.3";
+
     m_pParkingCombo->addItem("Bce" , QUuid());
     m_pParkingCombo->setCurrentIndex(m_pParkingCombo->findData(QUuid()));
-    // qDebug()<<"1.4";
 
     QPushButton * pFilterApplyButton = new QPushButton("Применть фильтры");
     connect(pFilterApplyButton,SIGNAL(pressed()),this,SLOT(OnFilterApplyPressed()));
     pHFilterLayout->addWidget(pFilterApplyButton);
-    qDebug()<<"1.5";
+
     pVMainLayout->addLayout(pHFilterLayout);
 
     this->setLayout(pVMainLayout);
@@ -146,16 +140,15 @@ void QPenParkGraphWidget::UpdateGraph()
 
         int time_from = QDateTime(QDate(from.year() , from.month() , 1) , QTime(0,0,0)).toSecsSinceEpoch();
         int time_to   = QDateTime(QDate(to.year() , to.month() , to.daysInMonth()) , QTime(23,59,59)).toSecsSinceEpoch();
-        qDebug()<<"2";
+
         QString strQuery = QString("select SUM(\"Платежи сотрудников\".Сумма),Штрафстоянки.Название from \"Платежи сотрудников\",Штрафстоянки where \"Платежи сотрудников\".id in (select \"Расширение задачи ШС\".\"Оплата парковки\" from \"Расширение задачи ШС\",Задачи where \"Расширение задачи ШС\".id = Задачи.Расширение and Задачи.\"Дата Время\">%1 and  Задачи.\"Дата Время\"<=%2 and \"Расширение задачи ШС\".Штрафстоянка=Штрафстоянки.id) group by Штрафстоянки.Название").arg(time_from).arg(time_to);
-        qDebug()<<strQuery;
+
         query.exec(strQuery);
         while(query.next())
         {
             *m_pBarSet<< query.value(0).toInt();
             if(iMaxCash<query.value(0).toInt()) iMaxCash = query.value(0).toInt();
             categories<< query.value(1).toString();
-            qDebug()<<"2 "<<query.value(1).toString();
         }
 
         m_pAxisY->setRange(0,iMaxCash);

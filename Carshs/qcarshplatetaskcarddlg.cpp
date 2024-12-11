@@ -8,7 +8,6 @@
 #include <QSqlQuery>
 #include <QDebug>
 #include <QDateTime>
-#include <QDebug>
 
 QCarshPlateTaskCardDlg::QCarshPlateTaskCardDlg(QString strTaskUuid)
 {
@@ -17,7 +16,8 @@ QCarshPlateTaskCardDlg::QCarshPlateTaskCardDlg(QString strTaskUuid)
 
     QLabel * pTopLabel = new QLabel();
     pVMainLayout->addWidget(pTopLabel);
-    pTopLabel->setText("<h1>Номера<\h1>");
+    pTopLabel->setText("<b>Номера<\b>");
+    pTopLabel->setStyleSheet("font-size: 20px;");
 
     pVMainLayout->addSpacing(5);
 
@@ -29,13 +29,15 @@ QCarshPlateTaskCardDlg::QCarshPlateTaskCardDlg(QString strTaskUuid)
     {
         QLabel * pDateTimeLabel = new QLabel();
         pVMainLayout->addWidget(pDateTimeLabel);
-        pDateTimeLabel->setText("<h3>" + QDateTime::fromSecsSinceEpoch(query.value(0).toInt()).toString("dd.MM.yyyy hh:mm") + "<\h3>");
+        pDateTimeLabel->setText("<b>" + QDateTime::fromSecsSinceEpoch(query.value(0).toInt()).toString("dd.MM.yyyy hh:mm") + "<\b>");
+        pDateTimeLabel->setStyleSheet("font-size: 16px;");
 
         if(query.value(1).toString().length()>1)
         {
             QLabel * pCommentLabel = new QLabel();
             pVMainLayout->addWidget(pCommentLabel);
-            pCommentLabel->setText(QString("<h3>Комментарий: %1<\h3>").arg(query.value(1).toString()));
+            pCommentLabel->setText(QString("<b>Комментарий: %1<\b>").arg(query.value(1).toString()));
+            pCommentLabel->setStyleSheet("font-size: 16px;");
         }
 
         QString strExtenQuery = QString("select \"Количество рамок\" , Госномер from \"Расширение задачи Номера\" where \"Расширение задачи Номера\".id='%1'").arg(query.value(2).toString());
@@ -46,11 +48,13 @@ QCarshPlateTaskCardDlg::QCarshPlateTaskCardDlg(QString strTaskUuid)
         {
             QLabel * pSummLabel = new QLabel();
             pVMainLayout->addWidget(pSummLabel);
-            pSummLabel->setText(QString("<h3>Количество рамок: %1 шт.<\h3>").arg(extendQuery.value(0).toString()));
+            pSummLabel->setText(QString("<b>Количество рамок: %1 шт.<\b>").arg(extendQuery.value(0).toString()));
+            pSummLabel->setStyleSheet("font-size: 16px;");
 
             QLabel * pPlateLabel = new QLabel();
             pVMainLayout->addWidget(pPlateLabel);
-            pPlateLabel->setText(QString("<h3>Госномер: %1<\h3>").arg(extendQuery.value(1).toString()));
+            pPlateLabel->setText(QString("<b>Госномер: %1<\b>").arg(extendQuery.value(1).toString()));
+            pPlateLabel->setStyleSheet("font-size: 16px;");
 
             m_pPicturesWidget = new QPicturesWidget(nullptr , true , true);
             m_pPicturesWidget->setMinimumHeight(400);

@@ -8,7 +8,6 @@
 #include <QSqlQuery>
 #include <QDebug>
 #include <QDateTime>
-#include <QDebug>
 
 QCarshPenaltyParkTaskCardDlg::QCarshPenaltyParkTaskCardDlg(QString strTaskUuid)
 {
@@ -17,7 +16,8 @@ QCarshPenaltyParkTaskCardDlg::QCarshPenaltyParkTaskCardDlg(QString strTaskUuid)
 
     QLabel * pTopLabel = new QLabel();
     pVMainLayout->addWidget(pTopLabel);
-    pTopLabel->setText("<h1>Штрафстоянка<\h1>");
+    pTopLabel->setText("<b>Штрафстоянка<\b>");
+    pTopLabel->setStyleSheet("font-size: 20px;");
 
     pVMainLayout->addSpacing(5);
 
@@ -29,13 +29,15 @@ QCarshPenaltyParkTaskCardDlg::QCarshPenaltyParkTaskCardDlg(QString strTaskUuid)
     {
         QLabel * pDateTimeLabel = new QLabel();
         pVMainLayout->addWidget(pDateTimeLabel);
-        pDateTimeLabel->setText("<h3>" + QDateTime::fromSecsSinceEpoch(query.value(0).toInt()).toString("dd.MM.yyyy hh:mm") + "<\h3>");
+        pDateTimeLabel->setText("<b>" + QDateTime::fromSecsSinceEpoch(query.value(0).toInt()).toString("dd.MM.yyyy hh:mm") + "<\b>");
+        pDateTimeLabel->setStyleSheet("font-size: 16px;");
 
         if(query.value(1).toString().length()>1)
         {
             QLabel * pCommentLabel = new QLabel();
             pVMainLayout->addWidget(pCommentLabel);
-            pCommentLabel->setText(QString("<h3>Комментарий: %1<\h3>").arg(query.value(1).toString()));
+            pCommentLabel->setText(QString("<b>Комментарий: %1<\b>").arg(query.value(1).toString()));
+            pCommentLabel->setStyleSheet("font-size: 16px;");
         }
 
 
@@ -47,7 +49,8 @@ QCarshPenaltyParkTaskCardDlg::QCarshPenaltyParkTaskCardDlg(QString strTaskUuid)
         {
             QLabel * pSummLabel = new QLabel();
             pVMainLayout->addWidget(pSummLabel);
-            pSummLabel->setText(QString("<h3>Сумма: %1 р.<\h3>").arg(extendQuery.value(0).toString()));
+            pSummLabel->setText(QString("<b>Сумма: %1 р.<\b>").arg(extendQuery.value(0).toString()));
+            pSummLabel->setStyleSheet("font-size: 16px;");
         }
 
 
@@ -57,7 +60,8 @@ QCarshPenaltyParkTaskCardDlg::QCarshPenaltyParkTaskCardDlg(QString strTaskUuid)
         {
             QLabel * pPlateLabel = new QLabel();
             pVMainLayout->addWidget(pPlateLabel);
-            pPlateLabel->setText(QString("<h3>Госномер: %1<\h3>").arg(extendQuery.value(0).toString()));
+            pPlateLabel->setText(QString("<b>Госномер: %1<\b>").arg(extendQuery.value(0).toString()));
+            pPlateLabel->setStyleSheet("font-size: 16px;");
         }
 
 
@@ -67,7 +71,8 @@ QCarshPenaltyParkTaskCardDlg::QCarshPenaltyParkTaskCardDlg(QString strTaskUuid)
         {
             QLabel * pGAILabel = new QLabel();
             pVMainLayout->addWidget(pGAILabel);
-            pGAILabel->setText(QString("<h3>Отдел ГАИ: %1 ( %2 )<\h3>").arg(extendQuery.value(0).toString()).arg(extendQuery.value(1).toString()));
+            pGAILabel->setText(QString("<b>Отдел ГАИ: %1 ( %2 )<\b>").arg(extendQuery.value(0).toString()).arg(extendQuery.value(1).toString()));
+            pGAILabel->setStyleSheet("font-size: 16px;");
         }
 
 
@@ -77,7 +82,8 @@ QCarshPenaltyParkTaskCardDlg::QCarshPenaltyParkTaskCardDlg(QString strTaskUuid)
         {
             QLabel * pReasonLabel = new QLabel();
             pVMainLayout->addWidget(pReasonLabel);
-            pReasonLabel->setText(QString("<h3>Причина задержания: %1<\h3>").arg(extendQuery.value(0).toString()));
+            pReasonLabel->setText(QString("<b>Причина задержания: %1<\b>").arg(extendQuery.value(0).toString()));
+            pReasonLabel->setStyleSheet("font-size: 16px;");
         }
 
         strExtenQuery = QString("select Штрафстоянки.Название , Штрафстоянки.Адрес from \"Расширение задачи ШС\", Штрафстоянки where Штрафстоянки.id=\"Расширение задачи ШС\".\"Штрафстоянка\" and \"Расширение задачи ШС\".id='%1'").arg(query.value(2).toString());
@@ -86,7 +92,8 @@ QCarshPenaltyParkTaskCardDlg::QCarshPenaltyParkTaskCardDlg(QString strTaskUuid)
         {
             QLabel * pPenParkingLabel = new QLabel();
             pVMainLayout->addWidget(pPenParkingLabel);
-            pPenParkingLabel->setText(QString("<h3>Штрафстоянка: %1 ( %2 )<\h3>").arg(extendQuery.value(0).toString()).arg(extendQuery.value(1).toString()));
+            pPenParkingLabel->setText(QString("<b>Штрафстоянка: %1 ( %2 )<\b>").arg(extendQuery.value(0).toString()).arg(extendQuery.value(1).toString()));
+            pPenParkingLabel->setStyleSheet("font-size: 16px;");
         }
 
         m_pPicturesWidget = new QPicturesWidget(nullptr , true , true);

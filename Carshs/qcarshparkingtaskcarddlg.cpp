@@ -16,8 +16,8 @@ QCarshParkingTaskCardDlg::QCarshParkingTaskCardDlg(QString strTaskUuid)
 
     QLabel * pTopLabel = new QLabel();
     pVMainLayout->addWidget(pTopLabel);
-    pTopLabel->setText("<h1>Закрытая территория<\h1>");
-
+    pTopLabel->setText("<b>Закрытая территория<\b>");
+    pTopLabel->setStyleSheet("font-size: 20px;");
     pVMainLayout->addSpacing(5);
 
     QString strQuery = QString("select \"Дата Время\" ,  Комментарий, Расширение from Задачи where id='%1'").arg(strTaskUuid);
@@ -28,13 +28,14 @@ QCarshParkingTaskCardDlg::QCarshParkingTaskCardDlg(QString strTaskUuid)
     {
         QLabel * pDateTimeLabel = new QLabel();
         pVMainLayout->addWidget(pDateTimeLabel);
-        pDateTimeLabel->setText("<h3>" + QDateTime::fromSecsSinceEpoch(query.value(0).toInt()).toString("dd.MM.yyyy hh:mm") + "<\h3>");
-
+        pDateTimeLabel->setText("<b>" + QDateTime::fromSecsSinceEpoch(query.value(0).toInt()).toString("dd.MM.yyyy hh:mm") + "<\b>");
+        pDateTimeLabel->setStyleSheet("font-size: 16px;");
         if(query.value(1).toString().length()>1)
         {
             QLabel * pCommentLabel = new QLabel();
             pVMainLayout->addWidget(pCommentLabel);
-            pCommentLabel->setText(QString("<h3>Комментарий: %1<\h3>").arg(query.value(1).toString()));
+            pCommentLabel->setText(QString("<b>Комментарий: %1<\b>").arg(query.value(1).toString()));
+            pCommentLabel->setStyleSheet("font-size: 16px;");
         }
 
         QString strExtenQuery = QString("select \"Платежи сотрудников\".Сумма , Госномер from \"Расширение задачи Парковка\", \"Платежи сотрудников\" where \"Расширение задачи Парковка\".\"Оплата парковки\"=\"Платежи сотрудников\".id and \"Расширение задачи Парковка\".id='%1'").arg(query.value(2).toString());
@@ -45,11 +46,13 @@ QCarshParkingTaskCardDlg::QCarshParkingTaskCardDlg(QString strTaskUuid)
         {
             QLabel * pSummLabel = new QLabel();
             pVMainLayout->addWidget(pSummLabel);
-            pSummLabel->setText(QString("<h3>Сумма: %1 руб.<\h3>").arg(extendQuery.value(0).toString()));
+            pSummLabel->setText(QString("<b>Сумма: %1 руб.<\b>").arg(extendQuery.value(0).toString()));
+            pSummLabel->setStyleSheet("font-size: 16px;");
 
             QLabel * pPlateLabel = new QLabel();
             pVMainLayout->addWidget(pPlateLabel);
-            pPlateLabel->setText(QString("<h3>Госномер: %1<\h3>").arg(extendQuery.value(1).toString()));
+            pPlateLabel->setText(QString("<b>Госномер: %1<\b>").arg(extendQuery.value(1).toString()));
+            pPlateLabel->setStyleSheet("font-size: 16px;");
 
             m_pPicturesWidget = new QPicturesWidget(nullptr , true , true);
             m_pPicturesWidget->setMinimumHeight(400);
