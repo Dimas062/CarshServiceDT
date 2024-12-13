@@ -5,17 +5,14 @@
 #include <QPixmap>
 #include <QSqlQuery>
 #include <QListWidgetItem>
-#include "common.h"
 #include <QDebug>
-#include <QSqlQuery>
+
 
 
 QEmploeesWidget::QEmploeesWidget(QWidget *parent)
     : QWidget{parent}
 {
     QVBoxLayout * pVMainLayout = new QVBoxLayout;
-    this->setLayout(pVMainLayout);
-
 
 
     QHBoxLayout * pHEmploeeLayout = new QHBoxLayout;
@@ -58,7 +55,7 @@ QEmploeesWidget::QEmploeesWidget(QWidget *parent)
     connect(m_pEmploeeListWidget , SIGNAL(itemClicked(QListWidgetItem*)) , this , SLOT(EmplClicked(QListWidgetItem*)));
 
 
-
+    this->setLayout(pVMainLayout);
 }
 
 void QEmploeesWidget::EmplClicked(QListWidgetItem* item)

@@ -142,16 +142,16 @@ void QEmplGraphWidget::UpdateGraph()
 
     //     int time_from = QDateTime(QDate(from.year() , from.month() , 1) , QTime(0,0,0)).toSecsSinceEpoch();
     //     int time_to   = QDateTime(QDate(to.year() , to.month() , to.daysInMonth()) , QTime(23,59,59)).toSecsSinceEpoch();
-    //     qDebug()<<"2";
+
     //     QString strQuery = QString("select SUM(\"Платежи сотрудников\".Сумма),Штрафстоянки.Название from \"Платежи сотрудников\",Штрафстоянки where \"Платежи сотрудников\".id in (select \"Расширение задачи ШС\".\"Оплата парковки\" from \"Расширение задачи ШС\",Задачи where \"Расширение задачи ШС\".id = Задачи.Расширение and Задачи.\"Дата Время\">%1 and  Задачи.\"Дата Время\"<=%2 and \"Расширение задачи ШС\".Штрафстоянка=Штрафстоянки.id) group by Штрафстоянки.Название").arg(time_from).arg(time_to);
-    //     qDebug()<<strQuery;
+
     //     query.exec(strQuery);
     //     while(query.next())
     //     {
     //         *m_pBarSet<< query.value(0).toInt();
     //         if(iMaxCash<query.value(0).toInt()) iMaxCash = query.value(0).toInt();
     //         categories<< query.value(1).toString();
-    //         qDebug()<<"2 "<<query.value(1).toString();
+
     //     }
 
     //     m_pAxisY->setRange(0,iMaxCash);

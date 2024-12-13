@@ -38,7 +38,7 @@ QCarshParkingTaskCardDlg::QCarshParkingTaskCardDlg(QString strTaskUuid)
             pCommentLabel->setStyleSheet("font-size: 16px;");
         }
 
-        QString strExtenQuery = QString("select \"Платежи сотрудников\".Сумма , Госномер from \"Расширение задачи Парковка\", \"Платежи сотрудников\" where \"Расширение задачи Парковка\".\"Оплата парковки\"=\"Платежи сотрудников\".id and \"Расширение задачи Парковка\".id='%1'").arg(query.value(2).toString());
+        QString strExtenQuery = QString("select \"Платежи сотрудников\".Сумма , Госномер , \"Платежи сотрудников\".id from \"Расширение задачи Парковка\", \"Платежи сотрудников\" where \"Расширение задачи Парковка\".\"Оплата парковки\"=\"Платежи сотрудников\".id and \"Расширение задачи Парковка\".id='%1'").arg(query.value(2).toString());
         QSqlQuery extendQuery;
 
         extendQuery.exec(strExtenQuery);
@@ -60,6 +60,15 @@ QCarshParkingTaskCardDlg::QCarshParkingTaskCardDlg(QString strTaskUuid)
 
             QString strPicsExec = QString("select Документы.Изображение from Документы, \"Задача-Документы задач\" where Документы.id=\"Задача-Документы задач\".Документ and \"Задача-Документы задач\".Задача='%1'").arg(strTaskUuid);
             QSqlQuery PicsQuery;
+            PicsQuery.exec(strPicsExec);
+            while(PicsQuery.next())
+            {
+                QString tmpStr = PicsQuery.value(0).toString();
+                QImage tmpImg = Base64ToImage(tmpStr);
+                m_pPicturesWidget->AddImage(tmpImg);
+            }
+
+            strPicsExec = QString("select Изображение from Документы where id in (select Документ from \"Платеж сотрудника - Документы\" where Платеж = '%1')").arg(extendQuery.value(2).toString());
             PicsQuery.exec(strPicsExec);
             while(PicsQuery.next())
             {

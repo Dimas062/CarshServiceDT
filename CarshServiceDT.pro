@@ -37,8 +37,13 @@ SOURCES += \
     Carshs/qcarshparkingtaskcarddlg.cpp \
     Carshs/qcarshpenaltyparktaskcarddlg.cpp \
     Carshs/qcarshplatetaskcarddlg.cpp \
+    Carshs/qdocstaskdlg.cpp \
     Carshs/qregistercarshuserdlg.cpp \
     Carshs/qrettozonecarddlg.cpp \
+    Carshs/qsmenataskdlg.cpp \
+    Partners/qplatepartnercardwidget.cpp \
+    Partners/qplatepartnerswidget.cpp \
+    Partners/qplatepartnertaskwidget.cpp \
     common.cpp \
     main.cpp \
     pictures/imagewidget.cpp \
@@ -75,8 +80,13 @@ HEADERS += \
     Carshs/qcarshparkingtaskcarddlg.h \
     Carshs/qcarshpenaltyparktaskcarddlg.h \
     Carshs/qcarshplatetaskcarddlg.h \
+    Carshs/qdocstaskdlg.h \
     Carshs/qregistercarshuserdlg.h \
     Carshs/qrettozonecarddlg.h \
+    Carshs/qsmenataskdlg.h \
+    Partners/qplatepartnercardwidget.h \
+    Partners/qplatepartnerswidget.h \
+    Partners/qplatepartnertaskwidget.h \
     common.h \
     pictures/imagewidget.h \
     pictures/qfullscreenpicdialog.h \

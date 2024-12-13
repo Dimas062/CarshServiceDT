@@ -115,7 +115,7 @@ QCostsWidget::QCostsWidget(QWidget *parent)
     QStringList headers;
     headers << "Дата/время" << "Статья расходов" << "Товар"<<"Стоимость"<<"Сотрудник";
     m_pCostsTableWidget->setHorizontalHeaderLabels(headers);
-    connect(m_pCostsTableWidget , SIGNAL(itemDoubleClicked(QTableWidgetItem*)) , this , SLOT(OnTasksDblClk(QTableWidgetItem*)));
+    connect(m_pCostsTableWidget , SIGNAL(itemDoubleClicked(QTableWidgetItem*)) , this , SLOT(OnCostsDblClk(QTableWidgetItem*)));
     pVMainLayout->addWidget(m_pCostsTableWidget);
 
     OnFilterApplyPressed();

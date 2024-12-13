@@ -6,7 +6,6 @@
 #include <QString>
 #include <QUuid>
 #include <QSqlQuery>
-#include <QDebug>
 #include <QDateTime>
 
 QCarshPenaltyParkTaskCardDlg::QCarshPenaltyParkTaskCardDlg(QString strTaskUuid)
@@ -43,7 +42,7 @@ QCarshPenaltyParkTaskCardDlg::QCarshPenaltyParkTaskCardDlg(QString strTaskUuid)
 
         QSqlQuery extendQuery;
 
-        QString strExtenQuery = QString("select \"Платежи сотрудников\".Сумма from \"Расширение задачи ШС\", \"Платежи сотрудников\" where  \"Расширение задачи ШС\".\"Оплата парковки\"=\"Платежи сотрудников\".id and \"Расширение задачи ШС\".id='%1'").arg(query.value(2).toString());
+        QString strExtenQuery = QString("select \"Платежи сотрудников\".Сумма , \"Платежи сотрудников\".id from \"Расширение задачи ШС\", \"Платежи сотрудников\" where  \"Расширение задачи ШС\".\"Оплата парковки\"=\"Платежи сотрудников\".id and \"Расширение задачи ШС\".id='%1'").arg(query.value(2).toString());
         extendQuery.exec(strExtenQuery);
         if(extendQuery.next())
         {
@@ -52,6 +51,8 @@ QCarshPenaltyParkTaskCardDlg::QCarshPenaltyParkTaskCardDlg(QString strTaskUuid)
             pSummLabel->setText(QString("<b>Сумма: %1 р.<\b>").arg(extendQuery.value(0).toString()));
             pSummLabel->setStyleSheet("font-size: 16px;");
         }
+
+        QString strPayId =extendQuery.value(1).toString();
 
 
         strExtenQuery = QString("select Госномер from \"Расширение задачи ШС\" where \"Расширение задачи ШС\".id='%1'").arg(query.value(2).toString());
@@ -102,6 +103,15 @@ QCarshPenaltyParkTaskCardDlg::QCarshPenaltyParkTaskCardDlg(QString strTaskUuid)
 
         QString strPicsExec = QString("select Документы.Изображение from Документы, \"Задача-Документы задач\" where Документы.id=\"Задача-Документы задач\".Документ and \"Задача-Документы задач\".Задача='%1'").arg(strTaskUuid);
         QSqlQuery PicsQuery;
+        PicsQuery.exec(strPicsExec);
+        while(PicsQuery.next())
+        {
+            QString tmpStr = PicsQuery.value(0).toString();
+            QImage tmpImg = Base64ToImage(tmpStr);
+            m_pPicturesWidget->AddImage(tmpImg);
+        }
+
+        strPicsExec = QString("select Изображение from Документы where id in (select Документ from \"Платеж сотрудника - Документы\" where Платеж = '%1')").arg(strPayId);
         PicsQuery.exec(strPicsExec);
         while(PicsQuery.next())
         {

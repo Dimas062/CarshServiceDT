@@ -6,7 +6,6 @@
 #include <QString>
 #include <QUuid>
 #include <QSqlQuery>
-#include <QDebug>
 #include <QDateTime>
 
 QCarshPlateTaskCardDlg::QCarshPlateTaskCardDlg(QString strTaskUuid)

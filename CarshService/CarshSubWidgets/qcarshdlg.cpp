@@ -81,7 +81,7 @@ void QCarshDlg::OnColorPressed()
 
 void QCarshDlg::OnAddLogoPressed()
 {
-    m_strLogoPath = QFileDialog::getOpenFileName(this , "Выберите логотип" , QString(), "Изображения (*.png *.jpg);");
+    m_strLogoPath = QFileDialog::getOpenFileName(this , "Выберите логотип" , QString(), "All files (*.*);;JPEG (*.jpg *.jpeg);;BMP (*.bmp)");
     if(m_strLogoPath.length()>2)
     {
         QImageReader imageReader(m_strLogoPath);

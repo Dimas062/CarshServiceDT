@@ -1,5 +1,4 @@
-#include "qrettozonecarddlg.h"
-#include "common.h"
+#include "qsmenataskdlg.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -9,14 +8,14 @@
 #include <QDateTime>
 
 
-QRetToZoneCardDlg::QRetToZoneCardDlg(QString strTaskUuid)
+QSmenaTaskDlg::QSmenaTaskDlg(QString strTaskUuid)
 {
     QVBoxLayout * pVMainLayout = new QVBoxLayout(this);
     this->setLayout(pVMainLayout);
 
     QLabel * pTopLabel = new QLabel();
     pVMainLayout->addWidget(pTopLabel);
-    pTopLabel->setText("<b>Возврат в зону<\b>");
+    pTopLabel->setText("<b>Смена<\b>");
     pTopLabel->setStyleSheet("font-size: 20px;");
     pVMainLayout->addSpacing(5);
 
@@ -38,7 +37,8 @@ QRetToZoneCardDlg::QRetToZoneCardDlg(QString strTaskUuid)
             pCommentLabel->setStyleSheet("font-size: 16px;");
         }
 
-        QString strExtenQuery = QString("select  Госномер from \"Расширение задачи Возврат в зону\"  where \"Расширение задачи Возврат в зону\".id='%1'").arg(query.value(2).toString());
+        QString strExtenQuery = QString("select \"Количество часов в смене\".Количество from \"Расширение задачи Смена\" , \"Количество часов в смене\"  where \"Расширение задачи Смена\".id='%1' and \"Расширение задачи Смена\".\"Количество часов\" = \"Количество часов в смене\".id").arg(query.value(2).toString());
+
         QSqlQuery extendQuery;
 
         extendQuery.exec(strExtenQuery);
@@ -47,24 +47,10 @@ QRetToZoneCardDlg::QRetToZoneCardDlg(QString strTaskUuid)
 
             QLabel * pPlateLabel = new QLabel();
             pVMainLayout->addWidget(pPlateLabel);
-            pPlateLabel->setText(QString("<b>Госномер: %1<\b>").arg(extendQuery.value(0).toString()));
+            pPlateLabel->setText(QString("<b>Часов в смене: %1 ч.<\b>").arg(extendQuery.value(0).toString()));
             pPlateLabel->setStyleSheet("font-size: 16px;");
-            m_pPicturesWidget = new QPicturesWidget(nullptr , true , true);
-            m_pPicturesWidget->setMinimumHeight(400);
-            pVMainLayout->addWidget(m_pPicturesWidget);
-
-            QString strPicsExec = QString("select Документы.Изображение from Документы, \"Задача-Документы задач\" where Документы.id=\"Задача-Документы задач\".Документ and \"Задача-Документы задач\".Задача='%1'").arg(strTaskUuid);
-            QSqlQuery PicsQuery;
-            PicsQuery.exec(strPicsExec);
-            while(PicsQuery.next())
-            {
-                QString tmpStr = PicsQuery.value(0).toString();
-                QImage tmpImg = Base64ToImage(tmpStr);
-                m_pPicturesWidget->AddImage(tmpImg);
-            }
         }
     }
 
     pVMainLayout->addStretch();
 }
-

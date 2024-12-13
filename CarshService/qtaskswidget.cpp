@@ -11,6 +11,8 @@
 #include "../Carshs/qcarshplatetaskcarddlg.h"
 #include "../Carshs/qcarshparkingtaskcarddlg.h"
 #include "../Carshs/qrettozonecarddlg.h"
+#include "../Carshs/qsmenataskdlg.h"
+#include "../Carshs/qdocstaskdlg.h"
 #include <QSplashScreen>
 #include <QPushButton>
 #include <QTableWidgetItem>
@@ -200,6 +202,29 @@ void QTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         splash.finish(&dlg);
         dlg.exec();
     }
+
+    if(item->data(Qt::UserRole+1).toUuid() == QUuid::fromString("78850df8-814b-41c8-8977-945c085f3021"))
+    {
+        QPixmap pixmap(":/icons/CarshServiceIcon256.png");
+        QSplashScreen splash(pixmap);
+        splash.show();
+        splash.showMessage("Загрузка...");
+        QSmenaTaskDlg dlg(item->data(Qt::UserRole).toString());
+        splash.finish(&dlg);
+        dlg.exec();
+    }
+
+    if(item->data(Qt::UserRole+1).toUuid() == QUuid::fromString("25695573-f5fe-43fd-93dc-76ee09e461fa"))
+    {
+        QPixmap pixmap(":/icons/CarshServiceIcon256.png");
+        QSplashScreen splash(pixmap);
+        splash.show();
+        splash.showMessage("Загрузка...");
+        QDocsTaskDlg dlg(item->data(Qt::UserRole).toString());
+        splash.finish(&dlg);
+        dlg.exec();
+    }
+
 }
 
 void QTasksWidget::UpdateTasksList()
