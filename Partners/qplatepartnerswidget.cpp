@@ -39,7 +39,7 @@ QPlatePartnersWidget::QPlatePartnersWidget(QWidget *parent)
     while(PlatePartnerQuery.next())
     {
         QListWidgetItem * pItem = new QListWidgetItem;
-        pItem->setText(QString("%1").arg(PlatePartnerQuery.value(1).toString()));
+        pItem->setText(PlatePartnerQuery.value(1).toString());
         pItem->setData(Qt::UserRole , PlatePartnerQuery.value(0));
         m_pPlatePartnerListWidget->addItem(pItem);
     }
@@ -52,9 +52,7 @@ QPlatePartnersWidget::QPlatePartnersWidget(QWidget *parent)
 
 void QPlatePartnersWidget::PlatePartnerClicked(QListWidgetItem * item)
 {
-    qDebug()<<"QPlatePartnersWidget::PlatePartnerClicked(QListWidgetItem * item)";
     QString strPartnerUuid = item->data(Qt::UserRole).toString();
     m_pPlatePartnerCardWidget->SetActivPartner(strPartnerUuid);
     m_pPlatePartnerTasksWidget->SetActivPartner(strPartnerUuid);
-
 }

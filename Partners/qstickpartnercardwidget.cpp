@@ -1,17 +1,17 @@
-#include "qplatepartnercardwidget.h"
+#include "qStickpartnercardwidget.h"
 #include <QVBoxLayout>
 #include <QString>
 #include <QSqlQuery>
 #include <QListWidgetItem>
 
-QPlatePartnerCardWidget::QPlatePartnerCardWidget(QWidget *parent)
+QStickPartnerCardWidget::QStickPartnerCardWidget(QWidget *parent)
     : QWidget{parent}
 {
     m_strActivPartner = QString("NULL");
 
     QVBoxLayout * pVMainLayout = new QVBoxLayout;
 
-    m_pTopLabel = new QLabel("<b>Партнер \"Номера\"</b>");
+    m_pTopLabel = new QLabel("<b>Партнер \"Оклейка\"</b>");
     m_pTopLabel->setStyleSheet("font-size: 20px;\
                                color: black;");
     m_pTopLabel->setAlignment(Qt::AlignHCenter);
@@ -81,7 +81,7 @@ QPlatePartnerCardWidget::QPlatePartnerCardWidget(QWidget *parent)
     this->setLayout(pVMainLayout);
 }
 
-void QPlatePartnerCardWidget::OnActivAccountPressed()
+void QStickPartnerCardWidget::OnActivAccountPressed()
 {
     if(m_strActivPartner != QString("NULL"))
     {
@@ -107,7 +107,7 @@ void QPlatePartnerCardWidget::OnActivAccountPressed()
 }
 
 
-void QPlatePartnerCardWidget::SetActivPartner(QString strUuid)
+void QStickPartnerCardWidget::SetActivPartner(QString strUuid)
 {
     m_strActivPartner = strUuid;
 

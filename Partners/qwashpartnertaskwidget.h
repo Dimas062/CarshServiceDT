@@ -1,16 +1,16 @@
-#ifndef QPLATEPARTNERTASKWIDGET_H
-#define QPLATEPARTNERTASKWIDGET_H
+#ifndef QWashPARTNERTASKWIDGET_H
+#define QWashPARTNERTASKWIDGET_H
 
 #include <QWidget>
 #include <QTableWidget>
 #include <QComboBox>
 #include <QDateTimeEdit>
 
-class QPlatePartnerTaskWidget : public QWidget
+class QWashPartnerTaskWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QPlatePartnerTaskWidget(QWidget *parent = nullptr);
+    explicit QWashPartnerTaskWidget(QWidget *parent = nullptr);
     void SetActivPartner(QString strUuid);
 
     QTableWidget * m_pTasksTableWidget;
@@ -30,4 +30,4 @@ public slots:
 signals:
 };
 
-#endif // QPLATEPARTNERTASKWIDGET_H
+#endif // QWashPARTNERTASKWIDGET_H

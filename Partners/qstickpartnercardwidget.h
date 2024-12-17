@@ -1,16 +1,16 @@
-#ifndef QPLATEPARTNERCARDWIDGET_H
-#define QPLATEPARTNERCARDWIDGET_H
+#ifndef QStickPARTNERCARDWIDGET_H
+#define QStickPARTNERCARDWIDGET_H
 
 #include <QWidget>
 #include <QLabel>
 #include <QListWidget>
 #include <QPushButton>
 
-class QPlatePartnerCardWidget : public QWidget
+class QStickPartnerCardWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QPlatePartnerCardWidget(QWidget *parent = nullptr);
+    explicit QStickPartnerCardWidget(QWidget *parent = nullptr);
     void SetActivPartner(QString strUuid);
 
     QString m_strActivPartner;
@@ -36,4 +36,4 @@ public slots:
     void OnActivAccountPressed();
 };
 
-#endif // QPLATEPARTNERCARDWIDGET_H
+#endif // QStickPARTNERCARDWIDGET_H

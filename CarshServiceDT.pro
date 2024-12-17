@@ -33,6 +33,7 @@ SOURCES += \
     CarshService/qpartnerswidget.cpp \
     CarshService/qproviderswidget.cpp \
     CarshService/qtaskswidget.cpp \
+    Carshs/qcarshempltaskswidget.cpp \
     Carshs/qcarshmaindlg.cpp \
     Carshs/qcarshparkingtaskcarddlg.cpp \
     Carshs/qcarshpenaltyparktaskcarddlg.cpp \
@@ -44,6 +45,14 @@ SOURCES += \
     Partners/qplatepartnercardwidget.cpp \
     Partners/qplatepartnerswidget.cpp \
     Partners/qplatepartnertaskwidget.cpp \
+    Partners/qstickpartnercardwidget.cpp \
+    Partners/qstickpartnerswidget.cpp \
+    Partners/qstickpartnertaskdlg.cpp \
+    Partners/qstickpartnertaskwidget.cpp \
+    Partners/qwashpartnercardwidget.cpp \
+    Partners/qwashpartnerswidget.cpp \
+    Partners/qwashpartnertaskdlg.cpp \
+    Partners/qwashpartnertaskwidget.cpp \
     common.cpp \
     main.cpp \
     pictures/imagewidget.cpp \
@@ -76,6 +85,7 @@ HEADERS += \
     CarshService/qpartnerswidget.h \
     CarshService/qproviderswidget.h \
     CarshService/qtaskswidget.h \
+    Carshs/qcarshempltaskswidget.h \
     Carshs/qcarshmaindlg.h \
     Carshs/qcarshparkingtaskcarddlg.h \
     Carshs/qcarshpenaltyparktaskcarddlg.h \
@@ -87,6 +97,14 @@ HEADERS += \
     Partners/qplatepartnercardwidget.h \
     Partners/qplatepartnerswidget.h \
     Partners/qplatepartnertaskwidget.h \
+    Partners/qstickpartnercardwidget.h \
+    Partners/qstickpartnerswidget.h \
+    Partners/qstickpartnertaskdlg.h \
+    Partners/qstickpartnertaskwidget.h \
+    Partners/qwashpartnercardwidget.h \
+    Partners/qwashpartnerswidget.h \
+    Partners/qwashpartnertaskdlg.h \
+    Partners/qwashpartnertaskwidget.h \
     common.h \
     pictures/imagewidget.h \
     pictures/qfullscreenpicdialog.h \
@@ -100,6 +118,10 @@ HEADERS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+macx{
+    ICON = Resources/icons/icon.icns
+}
 
 RESOURCES += \
     resources.qrc
