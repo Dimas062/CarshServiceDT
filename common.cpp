@@ -1,5 +1,13 @@
 #include "common.h"
 #include <QBuffer>
+
+
+QString bool_to_str(bool b)
+{
+    if(b) return "true";
+    else return "false";
+}
+
 QString PictureFileToBase64(QString strPath)
 {
     QBuffer buffer;

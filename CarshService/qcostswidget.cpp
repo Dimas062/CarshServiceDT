@@ -9,7 +9,7 @@
 #include <QDateTime>
 #include <QPushButton>
 #include <QMessageBox>
-
+#include <CarshService/EmplSubWidgets/qemplcostdlg.h>
 
 QCostsWidget::QCostsWidget(QWidget *parent)
     : QWidget{parent}
@@ -112,13 +112,16 @@ QCostsWidget::QCostsWidget(QWidget *parent)
     m_pCostsTableWidget->setColumnWidth(3 ,250);
     m_pCostsTableWidget->setColumnWidth(4 ,250);
 
-    QStringList headers;
-    headers << "Дата/время" << "Статья расходов" << "Товар"<<"Стоимость"<<"Сотрудник";
-    m_pCostsTableWidget->setHorizontalHeaderLabels(headers);
+
+
     connect(m_pCostsTableWidget , SIGNAL(itemDoubleClicked(QTableWidgetItem*)) , this , SLOT(OnCostsDblClk(QTableWidgetItem*)));
     pVMainLayout->addWidget(m_pCostsTableWidget);
 
     OnFilterApplyPressed();
+
+    QStringList headers;
+    headers << "Дата/время" << "Статья расходов" << "Товар"<<"Стоимость"<<"Сотрудник";
+    m_pCostsTableWidget->setHorizontalHeaderLabels(headers);
 }
 
 
@@ -132,12 +135,18 @@ void QCostsWidget::UpdateCostsList()
 
     //QMessageBox::information(NULL , "ddasda" , strExec);
 
+    QStringList headers;
+    headers << "Дата/время" << "Статья расходов" << "Товар"<<"Стоимость"<<"Сотрудник";
+    m_pCostsTableWidget->setHorizontalHeaderLabels(headers);
+
     if(Query.size() < 1) return;
 
     m_pCostsTableWidget->setRowCount(Query.size() + 1);//+1 для итого
 
     int iRowCounter = 0;
     double dblSumm = 0;
+
+
 
     while(Query.next())
     {
@@ -184,7 +193,8 @@ void QCostsWidget::UpdateCostsList()
 
 void QCostsWidget::OnCostsDblClk(QTableWidgetItem* item)
 {
-
+    QEmplCostDlg dlg(item->data(Qt::UserRole).toString());
+    dlg.exec();
 }
 
 void QCostsWidget::OnFilterApplyPressed()

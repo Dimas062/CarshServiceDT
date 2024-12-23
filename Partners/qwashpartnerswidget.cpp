@@ -1,7 +1,9 @@
 #include "qWashpartnerswidget.h"
 #include <QHBoxLayout>
 #include <QSqlQuery>
+#include "common.h"
 
+extern int iUserType;
 
 QWashPartnersWidget::QWashPartnersWidget(QWidget *parent)
     : QWidget{parent}
@@ -34,6 +36,7 @@ QWashPartnersWidget::QWashPartnersWidget(QWidget *parent)
 
     /*Заполним пользователей*/
     QString strWashPartnerQuery("select Партнеры.id , ЮЛ.Название from Партнеры, ЮЛ where Партнеры.ЮЛ = ЮЛ.id and Партнеры.Удалено<>true and Партнеры.Тип='932a4dc1-238b-478d-8911-3de46dd8da65'");
+    if(iUserType == Carsh) strWashPartnerQuery.append(" and Партнеры.Подтвержден = true");
     QSqlQuery WashPartnerQuery;
     WashPartnerQuery.exec(strWashPartnerQuery);
     while(WashPartnerQuery.next())

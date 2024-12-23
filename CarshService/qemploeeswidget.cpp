@@ -5,9 +5,6 @@
 #include <QPixmap>
 #include <QSqlQuery>
 #include <QListWidgetItem>
-#include <QDebug>
-
-
 
 QEmploeesWidget::QEmploeesWidget(QWidget *parent)
     : QWidget{parent}
@@ -30,6 +27,10 @@ QEmploeesWidget::QEmploeesWidget(QWidget *parent)
     m_pEmplWorkDayWidget = new QEmplWorkDayWidget;
 
     //m_pEmplTabWidget->addTab(m_pEmplWorkDayWidget , "Смены");
+
+    m_pEmplPenWidget = new QEmplPenWidget;
+
+    m_pEmplTabWidget->addTab(m_pEmplPenWidget , "Поощрения/штрафы");
 
     m_pEmplCardWidget = new QEmplCardWidget;
 
@@ -64,4 +65,5 @@ void QEmploeesWidget::EmplClicked(QListWidgetItem* item)
     m_pEmplTasksWidget->SetActivEmpl(strEmplUuid);
     m_pEmplWorkDayWidget->SetActivEmpl(strEmplUuid);
     m_pEmplCardWidget->SetActivEmpl(strEmplUuid);
+    m_pEmplPenWidget->SetActivEmpl(strEmplUuid);
 }

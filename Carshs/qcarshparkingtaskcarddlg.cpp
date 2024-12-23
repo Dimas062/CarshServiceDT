@@ -7,7 +7,6 @@
 #include <QUuid>
 #include <QSqlQuery>
 #include <QDateTime>
-#include <QDebug>
 
 QCarshParkingTaskCardDlg::QCarshParkingTaskCardDlg(QString strTaskUuid)
 {

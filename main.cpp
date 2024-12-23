@@ -18,6 +18,7 @@ QRect screenGeometry;
 QUuid uuidCurrentUser;
 
 int iButtonHeight = 50;
+int iUserType = 0;
 
 QT_USE_NAMESPACE
 
@@ -42,23 +43,23 @@ int main(int argc, char *argv[])
     }
 
     QLoginDlg loginDlg;
-    int res = loginDlg.exec();
+    iUserType = loginDlg.exec();
 
-    if(res == 0) return 0;
+    if(iUserType == 0) return 0;
 
-    if(res == CarshService)
+    if(iUserType == CarshService)
     {
         QCarshServiceMainDlg dlg;
         dlg.show();
 
         return a.exec();
     }
-    if(res == Carsh)
+    if(iUserType == Carsh)
     {
        QCarshMainDlg dlg;
        dlg.show();
 
-        return a.exec();
+    return a.exec();
     }
 
     return a.exec();

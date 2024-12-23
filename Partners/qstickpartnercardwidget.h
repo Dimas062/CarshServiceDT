@@ -6,6 +6,7 @@
 #include <QListWidget>
 #include <QPushButton>
 
+
 class QStickPartnerCardWidget : public QWidget
 {
     Q_OBJECT

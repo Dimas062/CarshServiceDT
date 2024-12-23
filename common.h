@@ -3,6 +3,9 @@
 #include <QImage>
 #include <QString>
 
+QString bool_to_str(bool b);
+
+
 enum class PhotoTypes {DriverCard,    //Права
                         Passport,      //Паспорт
                         FLSert         //Свидетельство о ИП или самозанятости

@@ -1,7 +1,9 @@
 #include "qplatepartnerswidget.h"
 #include <QHBoxLayout>
 #include <QSqlQuery>
+#include "common.h"
 
+extern int iUserType;
 
 QPlatePartnersWidget::QPlatePartnersWidget(QWidget *parent)
     : QWidget{parent}
@@ -34,6 +36,10 @@ QPlatePartnersWidget::QPlatePartnersWidget(QWidget *parent)
 
     /*Заполним пользователей*/
     QString strPlatePartnerQuery("select Партнеры.id , ЮЛ.Название from Партнеры, ЮЛ where Партнеры.ЮЛ = ЮЛ.id and Партнеры.Удалено<>true and Партнеры.Тип='9c671ee9-2749-4717-a343-b18825855c29'");
+
+    if(iUserType == Carsh) strPlatePartnerQuery.append(" and Партнеры.Подтвержден = true");
+
+
     QSqlQuery PlatePartnerQuery;
     PlatePartnerQuery.exec(strPlatePartnerQuery);
     while(PlatePartnerQuery.next())

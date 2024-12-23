@@ -1,6 +1,5 @@
 #include "qcarshswidget.h"
 
-#include <QDebug>
 #include <QTabWidget>
 #include <QVBoxLayout>
 #include "CarshSubWidgets/qcarshlistwidget.h"

@@ -7,6 +7,7 @@
 #include "EmplSubWidgets/qempltaskswidget.h"
 #include "EmplSubWidgets/qemplworkdaywidget.h"
 #include "EmplSubWidgets/qemplcardwidget.h"
+#include "EmplSubWidgets/qemplpenwidget.h"//
 
 class QEmploeesWidget : public QWidget
 {
@@ -20,6 +21,7 @@ public:
     QEmplTasksWidget * m_pEmplTasksWidget;
     QEmplWorkDayWidget * m_pEmplWorkDayWidget;
     QEmplCardWidget * m_pEmplCardWidget;
+    QEmplPenWidget * m_pEmplPenWidget;
 
 public slots:
     void EmplClicked(QListWidgetItem*);

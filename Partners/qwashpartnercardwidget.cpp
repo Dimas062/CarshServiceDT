@@ -3,6 +3,10 @@
 #include <QString>
 #include <QSqlQuery>
 #include <QListWidgetItem>
+#include "common.h"
+
+extern int iUserType;
+
 
 QWashPartnerCardWidget::QWashPartnerCardWidget(QWidget *parent)
     : QWidget{parent}
@@ -58,15 +62,18 @@ QWashPartnerCardWidget::QWashPartnerCardWidget(QWidget *parent)
     m_pLoginLabel = new QLabel("Логин: ");
     m_pLoginLabel->setStyleSheet("font-size: 16px;\
                                 color: black;");
-    pVMainLayout->addWidget(m_pLoginLabel);
+    if(iUserType == CarshService)
+        pVMainLayout->addWidget(m_pLoginLabel);
 
     m_pPasswordLabel = new QLabel("Пароль: ");
     m_pPasswordLabel->setStyleSheet("font-size: 16px;\
                                 color: black;");
-    pVMainLayout->addWidget(m_pPasswordLabel);
+    if(iUserType == CarshService)
+        pVMainLayout->addWidget(m_pPasswordLabel);
 
     m_pActivateButton = new QPushButton("Актирвировать");
-    pVMainLayout->addWidget(m_pActivateButton);
+    if(iUserType == CarshService)
+        pVMainLayout->addWidget(m_pActivateButton);
     connect(m_pActivateButton,SIGNAL(pressed()),this,SLOT(OnActivAccountPressed()));
 
     QLabel * pPointsLabel = new QLabel("<b>Точки</b>");

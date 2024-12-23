@@ -1,7 +1,9 @@
 #include "qStickpartnerswidget.h"
 #include <QHBoxLayout>
 #include <QSqlQuery>
+#include "common.h"
 
+extern int iUserType;
 
 QStickPartnersWidget::QStickPartnersWidget(QWidget *parent)
     : QWidget{parent}
@@ -34,6 +36,7 @@ QStickPartnersWidget::QStickPartnersWidget(QWidget *parent)
 
     /*Заполним пользователей*/
     QString strStickPartnerQuery("select Партнеры.id , ЮЛ.Название from Партнеры, ЮЛ where Партнеры.ЮЛ = ЮЛ.id and Партнеры.Удалено<>true and Партнеры.Тип='082cf73c-6f6f-4167-ae89-b87c347091b2'");
+    if(iUserType == Carsh) strStickPartnerQuery.append(" and Партнеры.Подтвержден = true");
     QSqlQuery StickPartnerQuery;
     StickPartnerQuery.exec(strStickPartnerQuery);
     while(StickPartnerQuery.next())

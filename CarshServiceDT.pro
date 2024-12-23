@@ -14,9 +14,13 @@ RC_ICONS = icons\CarshService.ico
 
 SOURCES += \
     ../CarshService/service_widgets/qlinetext.cpp \
+    BDPatterns.cpp \
     CarshService/CarshSubWidgets/qcarshemplwidget.cpp \
     CarshService/CarshSubWidgets/qcarshlistwidget.cpp \
     CarshService/CarshSubWidgets/qcarshdlg.cpp \
+    CarshService/EmplSubWidgets/qemplcostdlg.cpp \
+    CarshService/EmplSubWidgets/qemplpendlg.cpp \
+    CarshService/EmplSubWidgets/qemplpenwidget.cpp \
     CarshService/GraphicSubWidgets/qemplgraphwidget.cpp \#
     CarshService/GraphicSubWidgets/qpenparkgraphwidget.cpp \
     CarshService/ProviderSubWidgets/qproviderdlg.cpp \
@@ -50,6 +54,7 @@ SOURCES += \
     Partners/qstickpartnertaskdlg.cpp \
     Partners/qstickpartnertaskwidget.cpp \
     Partners/qwashpartnercardwidget.cpp \
+    Partners/qwashpartnerpenaltydlg.cpp \
     Partners/qwashpartnerswidget.cpp \
     Partners/qwashpartnertaskdlg.cpp \
     Partners/qwashpartnertaskwidget.cpp \
@@ -61,14 +66,20 @@ SOURCES += \
     pictures/qpictureswidget.cpp \
     qcarshservicemaindlg.cpp \
     qlogindlg.cpp \
-    qregisterdlg.cpp
+    qregisterdlg.cpp \
+    service/qdelopenpendlg.cpp \
+    service/qdiceditdlg.cpp
 
 HEADERS += \
      ../CarshService/service_widgets/qlinetext.h \
     #BDPatterns.h \
+    BDPatterns.h \
     CarshService/CarshSubWidgets/qcarshemplwidget.h \
     CarshService/CarshSubWidgets/qcarshlistwidget.h \
     CarshService/CarshSubWidgets/qcarshdlg.h \
+    CarshService/EmplSubWidgets/qemplcostdlg.h \
+    CarshService/EmplSubWidgets/qemplpendlg.h \
+    CarshService/EmplSubWidgets/qemplpenwidget.h \
     CarshService/GraphicSubWidgets/qemplgraphwidget.h \
     CarshService/GraphicSubWidgets/qpenparkgraphwidget.h \
     CarshService/ProviderSubWidgets/qproviderdlg.h \
@@ -102,6 +113,7 @@ HEADERS += \
     Partners/qstickpartnertaskdlg.h \
     Partners/qstickpartnertaskwidget.h \
     Partners/qwashpartnercardwidget.h \
+    Partners/qwashpartnerpenaltydlg.h \
     Partners/qwashpartnerswidget.h \
     Partners/qwashpartnertaskdlg.h \
     Partners/qwashpartnertaskwidget.h \
@@ -112,7 +124,9 @@ HEADERS += \
     pictures/qpictureswidget.h \
     qcarshservicemaindlg.h \
     qlogindlg.h \
-    qregisterdlg.h
+    qregisterdlg.h \
+    service/qdelopenpendlg.h \
+    service/qdiceditdlg.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -120,7 +134,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 macx{
-    ICON = Resources/icons/icon.icns
+    # ICON = Resources/icons/icon.icns
+    ICON = Mac/icon.icns
+    QMAKE_INFO_PLIST = Mac/Info.plist
 }
 
 RESOURCES += \

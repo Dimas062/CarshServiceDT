@@ -62,16 +62,16 @@ void QWashPartnerTaskWidget::UpdateTasksList()
     m_pTasksTableWidget->setRowCount(0);
 
     QStringList headers;
-    headers  << "Дата/время" << "Точка" << "Номер"<<"Комментарий"<<"Заказчик"<<"Стоимость";
+    headers  << "Дата/время" << "Точка" <<"Комментарий"<<"Заказчик"<<"Стоимость";
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
-    QString strQuery =  QString("select \"Задачи партнера Оклейка\".id , \"Задачи партнера Оклейка\".ДатаВремя, \"Точки Партнеров\".Название , \"Задачи партнера Оклейка\".Номер, \"Задачи партнера Оклейка\".Комментарий, Поставщики.Название from \"Задачи партнера Оклейка\", \"Точки Партнеров\" , Поставщики, Партнеры where Поставщики.id = Партнеры.Поставщик  and \"Задачи партнера Оклейка\".Партнер = Партнеры.id  and \"Точки Партнеров\".id = \"Задачи партнера Оклейка\".Точка and \"Задачи партнера Оклейка\".Партнер='%1' %2").arg(m_strUuidCurrentPartner).arg(m_filtersStr);
+    QString strQuery =  QString("select \"Задачи партнера Мойка\".id , \"Задачи партнера Мойка\".ДатаВремя, \"Точки Партнеров\".Название , \"Задачи партнера Мойка\".Комментарий, Поставщики.Название from \"Задачи партнера Мойка\", \"Точки Партнеров\" , Поставщики, Партнеры where Поставщики.id = Партнеры.Поставщик  and \"Задачи партнера Мойка\".Партнер = Партнеры.id  and \"Точки Партнеров\".id = \"Задачи партнера Мойка\".Точка and \"Задачи партнера Мойка\".Партнер='%1' %2").arg(m_strUuidCurrentPartner).arg(m_filtersStr);
 
     QSqlQuery query;
     query.exec(strQuery);
 
     if(query.size() < 1) return;
 
-    m_pTasksTableWidget->setRowCount(query.size());//+1 для итого
+    m_pTasksTableWidget->setRowCount(query.size());
 
     int iRowCounter = 0;
     while(query.next())
@@ -88,39 +88,45 @@ void QWashPartnerTaskWidget::UpdateTasksList()
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTasksTableWidget->setItem(iRowCounter , 1,  pItem);
 
-        /*Количество*/
+
+        /*Комментарий*/
         pItem = new QTableWidgetItem(query.value(3).toString());
         pItem->setData(Qt::UserRole , query.value(0));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTasksTableWidget->setItem(iRowCounter , 2,  pItem);
 
-        /*Комментарий*/
+        /*Заказчик*/
         pItem = new QTableWidgetItem(query.value(4).toString());
         pItem->setData(Qt::UserRole , query.value(0));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTasksTableWidget->setItem(iRowCounter , 3,  pItem);
 
-        /*Заказчик*/
-        pItem = new QTableWidgetItem(query.value(5).toString());
-        pItem->setData(Qt::UserRole , query.value(0));
-        pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        m_pTasksTableWidget->setItem(iRowCounter , 4,  pItem);
-
-        QString strTypesExec=QString("select  \"Типы задач Оклейка\".Цена from \"Задача Оклейка - Типы\" , \"Типы задач Оклейка\"  where \"Типы задач Оклейка\".id = \"Задача Оклейка - Типы\".Тип and  \"Задача Оклейка - Типы\".Задача = '%1'").arg(query.value(0).toString());
+        QString strTypesExec=QString("select  \"Типы задач Мойка\".Цена, \"Задача Мойка - Типы\".Количество from \"Задача Мойка - Типы\" , \"Типы задач Мойка\"  where \"Типы задач Мойка\".id = \"Задача Мойка - Типы\".Тип and  \"Задача Мойка - Типы\".Задача = '%1'").arg(query.value(0).toString());
         QSqlQuery TypesQuery;
         QString strWorks;
         TypesQuery.exec(strTypesExec);
         double dblPrice = 0;
         while(TypesQuery.next())
         {
-            dblPrice = dblPrice + TypesQuery.value(0).toDouble();
+            dblPrice = dblPrice + TypesQuery.value(0).toDouble() * TypesQuery.value(1).toDouble();
         }
-        QString strPrice = QString(" %1 руб.").arg(dblPrice);
+
+        double dblPen = 0;
+        QString strPenExec = QString("select \"Отмена Мойки\".Количество, \"Типы задач Мойка\".Цена from \"Отмена Мойки\" , \"Типы задач Мойка\" where \"Отмена Мойки\".Задача='%1' and \"Отмена Мойки\".Тип=\"Типы задач Мойка\".id and \"Отмена Мойки\".Удалено=false").arg(query.value(0).toString());
+
+        QSqlQuery penQuery;
+        penQuery.exec(strPenExec);
+        while(penQuery.next())
+        {
+            dblPen = dblPen + penQuery.value(0).toInt() * penQuery.value(1).toInt();
+        }
+
+        QString strPrice = QString(" %1 руб.").arg(dblPrice - dblPen);
         /*Заказчик*/
         pItem = new QTableWidgetItem(strPrice);
         pItem->setData(Qt::UserRole , query.value(0));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        m_pTasksTableWidget->setItem(iRowCounter , 5,  pItem);
+        m_pTasksTableWidget->setItem(iRowCounter , 4,  pItem);
 
         iRowCounter++;
     }
@@ -136,10 +142,11 @@ void QWashPartnerTaskWidget::OnTasksDblClk(QTableWidgetItem* item)
 {
     QWashPartnerTaskDlg dlg(item->data(Qt::UserRole).toString());
     dlg.exec();
+    UpdateTasksList();
 }
 
 void QWashPartnerTaskWidget::OnFilterApplyPressed()
 {
-    m_filtersStr = QString("and \"Задачи партнера Оклейка\".ДатаВремя>'%1' and \"Задачи партнера Оклейка\".ДатаВремя<'%2'").arg(m_pFromDateTimeEdit->dateTime().toSecsSinceEpoch()).arg(m_pToDateTimeEdit->dateTime().toSecsSinceEpoch());
+    m_filtersStr = QString("and \"Задачи партнера Мойка\".ДатаВремя>'%1' and \"Задачи партнера Мойка\".ДатаВремя<'%2'").arg(m_pFromDateTimeEdit->dateTime().toSecsSinceEpoch()).arg(m_pToDateTimeEdit->dateTime().toSecsSinceEpoch());
     UpdateTasksList();
 }

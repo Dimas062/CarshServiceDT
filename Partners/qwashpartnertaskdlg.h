@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QObject>
 #include "pictures/qpictureswidget.h"
+#include <QTableWidget>
 
 class QWashPartnerTaskDlg : public QDialog
 {
@@ -11,6 +12,13 @@ class QWashPartnerTaskDlg : public QDialog
 public:
     QWashPartnerTaskDlg(QString strTaskUuid);
     QPicturesWidget * m_pPicturesWidget;
+    QTableWidget * m_pTypesTableWidget;
+    QString m_strTaskId;
+
+    void UpdateTable();
+
+public slots:
+    void typesCellDoubleClicked(int, int);
 };
 
 #endif // QWashPARTNERTASKDLG_H
