@@ -4,6 +4,7 @@
 #include <QSqlQuery>
 #include <QListWidgetItem>
 #include "common.h"
+#include <QUuid>
 
 extern int iUserType;
 
@@ -71,6 +72,17 @@ QWashPartnerCardWidget::QWashPartnerCardWidget(QWidget *parent)
     if(iUserType == CarshService)
         pVMainLayout->addWidget(m_pPasswordLabel);
 
+    QHBoxLayout * pPostavHLoyout = new QHBoxLayout;
+    QLabel * pPostavshikLabel = new QLabel("Поставщик:");
+    pPostavshikLabel->setStyleSheet("font-size: 16px;\
+                                color: black;");
+    pPostavHLoyout->addWidget(pPostavshikLabel);
+    
+    m_pPostavshikCombo = new QComboBox;
+    
+    pPostavHLoyout->addWidget(m_pPostavshikCombo);
+    pVMainLayout->addLayout(pPostavHLoyout);
+
     m_pActivateButton = new QPushButton("Актирвировать");
     if(iUserType == CarshService)
         pVMainLayout->addWidget(m_pActivateButton);
@@ -81,6 +93,8 @@ QWashPartnerCardWidget::QWashPartnerCardWidget(QWidget *parent)
                                color: black;");
     pPointsLabel->setAlignment(Qt::AlignHCenter);
     pVMainLayout->addWidget(pPointsLabel);
+
+
 
     m_pPointsListWidget = new QListWidget;
     pVMainLayout->addWidget(m_pPointsListWidget);
@@ -118,9 +132,10 @@ void QWashPartnerCardWidget::SetActivPartner(QString strUuid)
 {
     m_strActivPartner = strUuid;
 
-    QString strPartnerExec = QString("select ЮЛ.Название, ЮЛ.Адрес, ЮЛ.ИНН, ЮЛ.Банк, ЮЛ.Счет, Поставщики.Название , Партнеры.Подтвержден , Партнеры.Логин , Партнеры.Пароль from ЮЛ, Поставщики, Партнеры where Партнеры.id='%1' and Партнеры.Поставщик=Поставщики.id and Партнеры.ЮЛ=ЮЛ.id").arg(strUuid);
+    QString strPartnerExec = QString("select ЮЛ.Название, ЮЛ.Адрес, ЮЛ.ИНН, ЮЛ.Банк, ЮЛ.Счет, Партнеры.Поставщик , Партнеры.Подтвержден , Партнеры.Логин , Партнеры.Пароль from ЮЛ, Партнеры where Партнеры.id='%1' and Партнеры.ЮЛ=ЮЛ.id").arg(strUuid);
     QSqlQuery query;
     query.exec(strPartnerExec);
+    QString strPostavId;
 
     if(query.next())
     {
@@ -143,7 +158,10 @@ void QWashPartnerCardWidget::SetActivPartner(QString strUuid)
             m_pActivLabel->setText("Учетная запись не активна");
             m_pActivateButton->setText("Активировать учетную запись");
         }
+        strPostavId = query.value(5).toString();
     }
+    
+    
 
     //Точки
 
@@ -159,4 +177,15 @@ void QWashPartnerCardWidget::SetActivPartner(QString strUuid)
         pItem->setText(QString("%1 (%2)").arg(PointsQuery.value(0).toString()).arg(PointsQuery.value(1).toString()));
         m_pPointsListWidget->addItem(pItem);
     }
+    
+    
+    m_pPostavshikCombo->clear();
+    QString strExec = QString("select Поставщики.id, ЮЛ.Название from ЮЛ, Поставщики where Поставщики.ЮЛ=ЮЛ.id");
+    query.exec(strExec);
+    while(query.next())
+    {
+        m_pPostavshikCombo->addItem(query.value(1).toString() , query.value(0).toUuid());
+    }
+
+    m_pPostavshikCombo->setCurrentIndex(m_pPostavshikCombo->findData(QVariant(QUuid::fromString(strPostavId))));
 }

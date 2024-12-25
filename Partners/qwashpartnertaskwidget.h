@@ -26,6 +26,7 @@ public:
 public slots:
     void OnTasksDblClk(QTableWidgetItem*);
     void OnFilterApplyPressed();
+    void OnSchetPressed();
 
 signals:
 };

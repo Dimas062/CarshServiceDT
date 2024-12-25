@@ -7,6 +7,9 @@
 #include <QSqlQuery>
 #include <QPushButton>
 #include "qWashpartnertaskdlg.h"
+#include <QFileDialog>
+#include <QStandardPaths>
+#include "service/xlspatterns.h"
 
 QWashPartnerTaskWidget::QWashPartnerTaskWidget(QWidget *parent)
     : QWidget{parent}
@@ -39,6 +42,10 @@ QWashPartnerTaskWidget::QWashPartnerTaskWidget(QWidget *parent)
     QPushButton * pFilterApplyButton = new QPushButton("Применть фильтры");
     connect(pFilterApplyButton,SIGNAL(pressed()),this,SLOT(OnFilterApplyPressed()));
     pFilterHLoyuot->addWidget(pFilterApplyButton);
+
+    QPushButton * pSchetButton = new QPushButton("Сформировать счет партнера");
+    connect(pSchetButton,SIGNAL(pressed()),this,SLOT(OnSchetPressed()));
+    pFilterHLoyuot->addWidget(pSchetButton);
 
     pVMainLayout->addLayout(pFilterHLoyuot);
 
@@ -149,4 +156,20 @@ void QWashPartnerTaskWidget::OnFilterApplyPressed()
 {
     m_filtersStr = QString("and \"Задачи партнера Мойка\".ДатаВремя>'%1' and \"Задачи партнера Мойка\".ДатаВремя<'%2'").arg(m_pFromDateTimeEdit->dateTime().toSecsSinceEpoch()).arg(m_pToDateTimeEdit->dateTime().toSecsSinceEpoch());
     UpdateTasksList();
+}
+
+void QWashPartnerTaskWidget::OnSchetPressed()
+{
+    QString strFileName = QFileDialog::getSaveFileName(this , "Счет партнера Мойка" , QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) , tr("Excel (*.xls *.xlsx)"));
+
+    if(strFileName.length()>5)
+    {
+        QString strTmpFile = GetTempFNameSchet();
+
+        WriteULsSchetInfo(strTmpFile , QUuid(m_strUuidCurrentPartner) , QUuid(m_strUuidCurrentPartner));
+
+        QFile::copy(strTmpFile , strFileName);
+
+        DeleteTempFiles();
+    }
 }

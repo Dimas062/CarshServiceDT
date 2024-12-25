@@ -46,6 +46,9 @@ SOURCES += \
     Carshs/qregistercarshuserdlg.cpp \
     Carshs/qrettozonecarddlg.cpp \
     Carshs/qsmenataskdlg.cpp \
+    Dictionary/qdicitemeditdlg.cpp \
+    Dictionary/qdicnewrecdlg.cpp \
+    Dictionary/qdicwidget.cpp \
     Partners/qplatepartnercardwidget.cpp \
     Partners/qplatepartnerswidget.cpp \
     Partners/qplatepartnertaskwidget.cpp \
@@ -68,7 +71,8 @@ SOURCES += \
     qlogindlg.cpp \
     qregisterdlg.cpp \
     service/qdelopenpendlg.cpp \
-    service/qdiceditdlg.cpp
+    Dictionary/qdiceditdlg.cpp \
+    service/xlspatterns.cpp
 
 HEADERS += \
      ../CarshService/service_widgets/qlinetext.h \
@@ -105,6 +109,9 @@ HEADERS += \
     Carshs/qregistercarshuserdlg.h \
     Carshs/qrettozonecarddlg.h \
     Carshs/qsmenataskdlg.h \
+    Dictionary/qdicitemeditdlg.h \
+    Dictionary/qdicnewrecdlg.h \
+    Dictionary/qdicwidget.h \
     Partners/qplatepartnercardwidget.h \
     Partners/qplatepartnerswidget.h \
     Partners/qplatepartnertaskwidget.h \
@@ -126,7 +133,14 @@ HEADERS += \
     qlogindlg.h \
     qregisterdlg.h \
     service/qdelopenpendlg.h \
-    service/qdiceditdlg.h
+    Dictionary/qdiceditdlg.h \
+    service/xlspatterns.h
+
+# QXlsx code for Application Qt project
+QXLSX_PARENTPATH=./QXlsx/        # current QXlsx path is . (. means curret directory)
+QXLSX_HEADERPATH=./QXlsx/header/  # current QXlsx header path is ./header/
+QXLSX_SOURCEPATH=./QXlsx/source/  # current QXlsx source path is ./source/
+include(./QXlsx/QXlsx.pri)
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

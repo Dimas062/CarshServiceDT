@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QListWidget>
 #include <QPushButton>
+#include <QComboBox>
 
 class QWashPartnerCardWidget : public QWidget
 {
@@ -26,6 +27,8 @@ public:
     QLabel * m_pScetLabel;
     QLabel * m_pLoginLabel;
     QLabel * m_pPasswordLabel;
+
+    QComboBox * m_pPostavshikCombo;
 
     QPushButton * m_pActivateButton;
 
