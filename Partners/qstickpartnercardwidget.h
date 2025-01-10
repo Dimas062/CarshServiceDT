@@ -5,7 +5,7 @@
 #include <QLabel>
 #include <QListWidget>
 #include <QPushButton>
-
+#include "service/quleditdlg.h"
 
 class QStickPartnerCardWidget : public QWidget
 {
@@ -28,6 +28,8 @@ public:
     QLabel * m_pLoginLabel;
     QLabel * m_pPasswordLabel;
 
+    QULEditDlg m_ulDlg;
+
     QPushButton * m_pActivateButton;
 
     QListWidget * m_pPointsListWidget;
@@ -35,6 +37,7 @@ signals:
 
 public slots:
     void OnActivAccountPressed();
+    void OnULPressed();
 };
 
 #endif // QStickPARTNERCARDWIDGET_H

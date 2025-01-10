@@ -5,6 +5,7 @@
 #include <QTableWidget>
 #include <QComboBox>
 #include <QDateTimeEdit>
+#include "service/xlspatterns.h"
 
 class QWashPartnerTaskWidget : public QWidget
 {
@@ -16,12 +17,14 @@ public:
     QTableWidget * m_pTasksTableWidget;
 
     void UpdateTasksList();
+    QVector<SSchetItem> m_vCurrentSchetItems;
 
     QDateTimeEdit * m_pFromDateTimeEdit;
     QDateTimeEdit * m_pToDateTimeEdit;
 
     QString m_filtersStr;
     QString m_strUuidCurrentPartner;
+    QString m_strIdPostavshik;
 
 public slots:
     void OnTasksDblClk(QTableWidgetItem*);

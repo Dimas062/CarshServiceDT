@@ -6,6 +6,7 @@
 #include <QListWidget>
 #include <QPushButton>
 #include <QComboBox>
+#include "service/quleditdlg.h"
 
 class QWashPartnerCardWidget : public QWidget
 {
@@ -28,15 +29,21 @@ public:
     QLabel * m_pLoginLabel;
     QLabel * m_pPasswordLabel;
 
+    QULEditDlg m_ulDlg;
+
     QComboBox * m_pPostavshikCombo;
 
     QPushButton * m_pActivateButton;
 
     QListWidget * m_pPointsListWidget;
+
+
 signals:
 
 public slots:
     void OnActivAccountPressed();
+    void PostavshikIndexChanget(int);
+    void OnULPressed();
 };
 
 #endif // QWashPARTNERCARDWIDGET_H

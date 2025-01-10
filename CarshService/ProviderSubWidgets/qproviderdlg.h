@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QUuid>
 #include "../CarshService/service_widgets/qlinetext.h"
+#include "service/quleditdlg.h"
 
 class QProviderDlg : public QDialog
 {
@@ -11,8 +12,11 @@ class QProviderDlg : public QDialog
 public:
     QProviderDlg(QUuid uuidProvider = QUuid());
 
+    QULEditDlg ulDlg;
+
 public slots:
     void OnApplyPressed();
+    void OnULPressed();
 
 protected:
     QUuid m_uuidSourceProvider;

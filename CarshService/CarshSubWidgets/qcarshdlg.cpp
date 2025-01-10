@@ -36,6 +36,10 @@ QCarshDlg::QCarshDlg(QUuid uuidCars):QDialog()
     connect(m_pColorButton,SIGNAL(pressed()),this,SLOT(OnColorPressed()));
     pVMainLayout->addWidget(m_pColorButton);
 
+    QPushButton * pULButton = new QPushButton("Реквизиты ЮЛ");
+    connect(pULButton,SIGNAL(pressed()),this,SLOT(OnULPressed()));
+    pVMainLayout->addWidget(pULButton);
+
     QPushButton * pAddLogoButton = new QPushButton("Установить логотип");
     connect(pAddLogoButton,SIGNAL(pressed()),this,SLOT(OnAddLogoPressed()));
     pVMainLayout->addWidget(pAddLogoButton);
@@ -50,7 +54,7 @@ QCarshDlg::QCarshDlg(QUuid uuidCars):QDialog()
 
 void QCarshDlg::LoadFromBd()
 {
-    QString strQuery = QString("select Название, Логотип, Цвет from Заказчики where id='%1'").arg(m_uuidSourceCarsh.toString());
+    QString strQuery = QString("select Название, Логотип, Цвет , ЮЛ from Заказчики where id='%1'").arg(m_uuidSourceCarsh.toString());
     QSqlQuery query;
     query.exec(strQuery);
     while(query.next())
@@ -65,6 +69,8 @@ void QCarshDlg::LoadFromBd()
         m_currentRGB = QRgb(query.value(2).toInt());
 
         m_pColorButton->setStyleSheet(QString("background-color: rgb(%1,%2,%3)").arg(qRed(m_currentRGB)).arg(qGreen(m_currentRGB)).arg(qBlue(m_currentRGB)));
+
+        m_ulDlg.LoadFromBD(query.value(3).toString());
     }
 }
 
@@ -91,6 +97,11 @@ void QCarshDlg::OnAddLogoPressed()
     }
 }
 
+void QCarshDlg::OnULPressed()
+{
+    m_ulDlg.exec();
+}
+
 void QCarshDlg::OnApplyPressed()
 {
     if(m_uuidSourceCarsh==QUuid())//Новый
@@ -102,7 +113,9 @@ void QCarshDlg::OnApplyPressed()
 
                 QUuid carshUuid = QUuid::createUuid();
 
-                QString strExec = QString("insert into Заказчики (id , Название , Логотип, Цвет) values ('%1' , '%2' , '%3' , '%4')").arg(carshUuid.toString()).arg(m_pNameLineText->getText()).arg(strLogo).arg(m_currentRGB);
+                QString strUL = m_ulDlg.SaveToBD();
+
+                QString strExec = QString("insert into Заказчики (id , Название , Логотип, Цвет , ЮЛ) values ('%1' , '%2' , '%3' , '%4' , '%5')").arg(carshUuid.toString()).arg(m_pNameLineText->getText()).arg(strLogo).arg(m_currentRGB).arg(strUL);
 
                 QSqlQuery query;
 
@@ -129,6 +142,8 @@ void QCarshDlg::OnApplyPressed()
         QSqlQuery query;
 
         query.exec(strExec);
+
+        m_ulDlg.SaveToBD();
 
         accept();
 

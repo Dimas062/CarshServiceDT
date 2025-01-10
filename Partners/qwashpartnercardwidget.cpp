@@ -79,9 +79,14 @@ QWashPartnerCardWidget::QWashPartnerCardWidget(QWidget *parent)
     pPostavHLoyout->addWidget(pPostavshikLabel);
     
     m_pPostavshikCombo = new QComboBox;
+    connect(m_pPostavshikCombo , SIGNAL(currentIndexChanged(int)) , this , SLOT(PostavshikIndexChanget(int)));
     
     pPostavHLoyout->addWidget(m_pPostavshikCombo);
     pVMainLayout->addLayout(pPostavHLoyout);
+
+    QPushButton * pULButton = new QPushButton("Реквизиты ЮЛ");
+    connect(pULButton,SIGNAL(pressed()),this,SLOT(OnULPressed()));
+    pVMainLayout->addWidget(pULButton);
 
     m_pActivateButton = new QPushButton("Актирвировать");
     if(iUserType == CarshService)
@@ -127,12 +132,27 @@ void QWashPartnerCardWidget::OnActivAccountPressed()
     }
 }
 
+void QWashPartnerCardWidget::PostavshikIndexChanget(int idx)
+{
+    QString strPostavId = m_pPostavshikCombo->itemData(idx).toString();
+
+    QString strQuery = QString("update Партнеры set Поставщик='%1' where id='%2'").arg(strPostavId).arg(m_strActivPartner);
+    QSqlQuery query;
+    query.exec(strQuery);
+}
+
+void QWashPartnerCardWidget::OnULPressed()
+{
+    if(m_ulDlg.exec()==QDialog::Accepted)
+        m_ulDlg.SaveToBD();
+}
+
 
 void QWashPartnerCardWidget::SetActivPartner(QString strUuid)
 {
     m_strActivPartner = strUuid;
 
-    QString strPartnerExec = QString("select ЮЛ.Название, ЮЛ.Адрес, ЮЛ.ИНН, ЮЛ.Банк, ЮЛ.Счет, Партнеры.Поставщик , Партнеры.Подтвержден , Партнеры.Логин , Партнеры.Пароль from ЮЛ, Партнеры where Партнеры.id='%1' and Партнеры.ЮЛ=ЮЛ.id").arg(strUuid);
+    QString strPartnerExec = QString("select ЮЛ.Название, ЮЛ.Адрес, ЮЛ.ИНН, ЮЛ.Банк, ЮЛ.Счет, Партнеры.Поставщик , Партнеры.Подтвержден , Партнеры.Логин , Партнеры.Пароль, ЮЛ.id from ЮЛ, Партнеры where Партнеры.id='%1' and Партнеры.ЮЛ=ЮЛ.id").arg(strUuid);
     QSqlQuery query;
     query.exec(strPartnerExec);
     QString strPostavId;
@@ -159,6 +179,7 @@ void QWashPartnerCardWidget::SetActivPartner(QString strUuid)
             m_pActivateButton->setText("Активировать учетную запись");
         }
         strPostavId = query.value(5).toString();
+        m_ulDlg.LoadFromBD(query.value(9).toString());
     }
     
     

@@ -72,6 +72,7 @@ SOURCES += \
     qregisterdlg.cpp \
     service/qdelopenpendlg.cpp \
     Dictionary/qdiceditdlg.cpp \
+    service/quleditdlg.cpp \
     service/xlspatterns.cpp
 
 HEADERS += \
@@ -134,6 +135,7 @@ HEADERS += \
     qregisterdlg.h \
     service/qdelopenpendlg.h \
     Dictionary/qdiceditdlg.h \
+    service/quleditdlg.h \
     service/xlspatterns.h
 
 # QXlsx code for Application Qt project
@@ -155,3 +157,6 @@ macx{
 
 RESOURCES += \
     resources.qrc
+
+DISTFILES += \
+    templates/schet.xlsx

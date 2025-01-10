@@ -7,7 +7,7 @@
 #include <QMessageBox>
 #include <QSqlQuery>
 #include <QPalette>
-#include "common.h"
+
 
 
 QProviderDlg::QProviderDlg(QUuid uuidProvider)
@@ -21,6 +21,10 @@ QProviderDlg::QProviderDlg(QUuid uuidProvider)
     m_pNameLineText = new QLineText("Название");
     pVMainLayout->addWidget(m_pNameLineText);
 
+    QPushButton * pULButton = new QPushButton("Реквизиты ЮЛ");
+    connect(pULButton,SIGNAL(pressed()),this,SLOT(OnULPressed()));
+    pVMainLayout->addWidget(pULButton);
+
     QPushButton * pApplyButton = new QPushButton("Применить");
     connect(pApplyButton,SIGNAL(pressed()),this,SLOT(OnApplyPressed()));
     pVMainLayout->addWidget(pApplyButton);
@@ -31,16 +35,20 @@ QProviderDlg::QProviderDlg(QUuid uuidProvider)
 
 void QProviderDlg::LoadFromBd()
 {
-    QString strQuery = QString("select Название from Поставщики where id='%1'").arg(m_uuidSourceProvider.toString());
+    QString strQuery = QString("select Название, ЮЛ from Поставщики where id='%1'").arg(m_uuidSourceProvider.toString());
     QSqlQuery query;
     query.exec(strQuery);
     while(query.next())
     {
         m_pNameLineText->setText(query.value(0).toString());
+        ulDlg.LoadFromBD(query.value(1).toString());
     }
 }
 
-
+void QProviderDlg::OnULPressed()
+{
+    ulDlg.exec();
+}
 
 void QProviderDlg::OnApplyPressed()
 {
@@ -48,11 +56,13 @@ void QProviderDlg::OnApplyPressed()
     {
          QUuid ProviderUuid = QUuid::createUuid();
 
-         QString strExec = QString("insert into Поставщики (id , Название) values ('%1' , '%2')").arg(ProviderUuid.toString()).arg(m_pNameLineText->getText());
+         QString strULUuid =  ulDlg.SaveToBD();
+
+         QString strExec = QString("insert into Поставщики (id , Название , ЮЛ) values ('%1' , '%2' , '%3')").arg(ProviderUuid.toString()).arg(m_pNameLineText->getText()).arg(strULUuid);
 
          QSqlQuery query;
 
-         query.exec(strExec);
+         query.exec(strExec);  
 
          accept();
 
@@ -61,6 +71,8 @@ void QProviderDlg::OnApplyPressed()
     }
     else //Обновляем
     {
+        ulDlg.SaveToBD();
+
         QString strExec;
 
         strExec = QString("update Поставщики set Название='%1' where id='%2'").arg(m_pNameLineText->getText()).arg(m_uuidSourceProvider.toString());

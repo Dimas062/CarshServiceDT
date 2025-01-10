@@ -8,6 +8,7 @@
 #include <QPushButton>
 #include <QRgb>
 #include "../CarshService/service_widgets/qlinetext.h"
+#include "service/quleditdlg.h"
 
 class QCarshDlg:public QDialog
 {
@@ -19,6 +20,7 @@ public slots:
     void OnAddLogoPressed();
     void OnApplyPressed();
     void OnColorPressed();
+    void OnULPressed();
 
 protected:
     QUuid m_uuidSourceCarsh;
@@ -27,6 +29,7 @@ protected:
     QString m_strLogoPath;
     QRgb m_currentRGB;
     QPushButton * m_pColorButton;
+    QULEditDlg m_ulDlg;
     void LoadFromBd();
 };
 

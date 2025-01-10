@@ -72,6 +72,10 @@ QPlatePartnerCardWidget::QPlatePartnerCardWidget(QWidget *parent)
     if(iUserType == CarshService)
         pVMainLayout->addWidget(m_pPasswordLabel);
 
+    QPushButton * pULButton = new QPushButton("Реквизиты ЮЛ");
+    connect(pULButton,SIGNAL(pressed()),this,SLOT(OnULPressed()));
+    pVMainLayout->addWidget(pULButton);
+
     m_pActivateButton = new QPushButton("Актирвировать");
     if(iUserType == CarshService)
         pVMainLayout->addWidget(m_pActivateButton);
@@ -120,7 +124,7 @@ void QPlatePartnerCardWidget::SetActivPartner(QString strUuid)
 {
     m_strActivPartner = strUuid;
 
-    QString strPartnerExec = QString("select ЮЛ.Название, ЮЛ.Адрес, ЮЛ.ИНН, ЮЛ.Банк, ЮЛ.Счет, Поставщики.Название , Партнеры.Подтвержден , Партнеры.Логин , Партнеры.Пароль from ЮЛ, Поставщики, Партнеры where Партнеры.id='%1' and Партнеры.Поставщик=Поставщики.id and Партнеры.ЮЛ=ЮЛ.id").arg(strUuid);
+    QString strPartnerExec = QString("select ЮЛ.Название, ЮЛ.Адрес, ЮЛ.ИНН, ЮЛ.Банк, ЮЛ.Счет, Поставщики.Название , Партнеры.Подтвержден , Партнеры.Логин , Партнеры.Пароль, ЮЛ.id from ЮЛ, Поставщики, Партнеры where Партнеры.id='%1' and Партнеры.Поставщик=Поставщики.id and Партнеры.ЮЛ=ЮЛ.id").arg(strUuid);
     QSqlQuery query;
     query.exec(strPartnerExec);
 
@@ -145,6 +149,8 @@ void QPlatePartnerCardWidget::SetActivPartner(QString strUuid)
             m_pActivLabel->setText("Учетная запись не активна");
             m_pActivateButton->setText("Активировать учетную запись");
         }
+
+        m_ulDlg.LoadFromBD(query.value(9).toString());
     }
 
     //Точки
@@ -161,4 +167,10 @@ void QPlatePartnerCardWidget::SetActivPartner(QString strUuid)
         pItem->setText(QString("%1 (%2)").arg(PointsQuery.value(0).toString()).arg(PointsQuery.value(1).toString()));
         m_pPointsListWidget->addItem(pItem);
     }
+}
+
+void QPlatePartnerCardWidget::OnULPressed()
+{
+    if(m_ulDlg.exec()==QDialog::Accepted)
+        m_ulDlg.SaveToBD();
 }

@@ -26,10 +26,14 @@ enum PayTypes {
     Undefined = -1
 };
 
+QString GenNextShcetActNumber();
+
 QString PictureFileToBase64(QString strPath);
 
 QImage Base64ToImage(QString & base64Str);
 
 QString ImageToBase64(const QImage & img);
+
+QString rublesForNumber(long long number);
 
 #endif // COMMON_H

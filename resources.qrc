@@ -4,6 +4,7 @@
         <file>icons/arrow_left_icon.png</file>
         <file>icons/arrow_right_icon.png</file>
         <file>icons/CarshServiceIcon256.png</file>
-        <file>templates/schet.xls</file>
+        <file>templates/schet.xlsx</file>
+        <file>templates/act.xlsx</file>
     </qresource>
 </RCC>
