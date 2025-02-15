@@ -8,6 +8,7 @@
 #include "CarshService/QCSGraphicsWidget.h"
 #include "CarshService/qcostswidget.h"
 #include "Dictionary/qdicwidget.h"
+#include <QSqlQuery>
 
 #include <QVBoxLayout>
 
@@ -46,4 +47,25 @@ QCarshServiceMainDlg::QCarshServiceMainDlg()
 
     //this->setWindowFlags(Qt::Window);
     //this->showFullScreen();
+
+    mHeartbeatTimer = std::make_shared<QTimer>(this);
+    connect(mHeartbeatTimer.get() , &QTimer::timeout , this , &QCarshServiceMainDlg::OnProcessingHeartbeatTimer);
+    mHeartbeatTimer->start(m_iHeartbeatTime);
+}
+
+
+void QCarshServiceMainDlg::OnProcessingHeartbeatTimer()
+{
+    mHeartbeatTimer->stop();
+
+    QSqlQuery query;
+
+    query.exec("select id from Поставщики");
+
+    if(query.next())
+        qDebug()<<"Hardbeat "<<query.value(0).toString();
+    else
+        qDebug()<<"Hardbeat no next()";
+
+    mHeartbeatTimer->start(m_iHeartbeatTime);
 }

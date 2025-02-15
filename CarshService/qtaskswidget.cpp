@@ -18,6 +18,13 @@
 #include <QTableWidgetItem>
 #include "BDPatterns.h"
 #include <QFont>
+#include <QCheckBox>
+#include "service/qselfrombddlg.h"
+#include "service/xlspatterns.h"
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QStandardPaths>
+
 
 QTasksWidget::QTasksWidget(QWidget *parent)
     : QWidget{parent}
@@ -28,6 +35,7 @@ QTasksWidget::QTasksWidget(QWidget *parent)
     this->setLayout(pVMainLayout);
 
     QHBoxLayout * pFilterHLoyuot = new QHBoxLayout();
+    QHBoxLayout * pFilterHLoyuot2 = new QHBoxLayout();
 
     pFilterHLoyuot->addStretch();
 
@@ -52,8 +60,6 @@ QTasksWidget::QTasksWidget(QWidget *parent)
     connect(m_pTaskTypeComboBox , SIGNAL(currentIndexChanged(int)), this , SLOT(TaskTypeComboChanged(int)));
 
     pFilterHLoyuot->addStretch();
-
-
 
     /*Пользователи*/
     QLabel * pEmplLabel = new QLabel("Сотрудник:");
@@ -92,45 +98,57 @@ QTasksWidget::QTasksWidget(QWidget *parent)
         m_pCarshsComboBox->addItem(CarshsQuery.value(1).toString() , CarshsQuery.value(0));
     }
 
+    m_pOnlyFinishedCheckBox = new QCheckBox("Только завершенные");
+    pFilterHLoyuot->addWidget(m_pOnlyFinishedCheckBox);
+
     pFilterHLoyuot->addStretch();
 
 
     /*Период*/
-
     QLabel * pDateTimeFromLabel = new QLabel("c: ");
-    pFilterHLoyuot->addWidget(pDateTimeFromLabel);
-    m_pFromDateTimeEdit = new QDateTimeEdit(QDateTime::currentDateTime().addDays(-1));
-    pFilterHLoyuot->addWidget(m_pFromDateTimeEdit);
+    pFilterHLoyuot2->addWidget(pDateTimeFromLabel);
+    m_pFromDateTimeEdit = new QDateTimeEdit(QDateTime(QDate::currentDate().addDays(-(QDate::currentDate().day()) + 1) , QTime(0,0,0)));
+    pFilterHLoyuot2->addWidget(m_pFromDateTimeEdit);
 
 
 
     QLabel * pDateTimeToLabel = new QLabel("по: ");
-    pFilterHLoyuot->addWidget(pDateTimeToLabel);
+    pFilterHLoyuot2->addWidget(pDateTimeToLabel);
     m_pToDateTimeEdit = new QDateTimeEdit(QDateTime::currentDateTime());
-    pFilterHLoyuot->addWidget(m_pToDateTimeEdit);
+    pFilterHLoyuot2->addWidget(m_pToDateTimeEdit);
 
     pFilterHLoyuot->addStretch();
 
     QLabel * pNumberLabel = new QLabel("ГРЗ: ");
-    pFilterHLoyuot->addWidget(pNumberLabel);
+    pFilterHLoyuot2->addWidget(pNumberLabel);
     m_pNumberEdit = new QLineEdit();
-    pFilterHLoyuot->addWidget(m_pNumberEdit);
+    pFilterHLoyuot2->addWidget(m_pNumberEdit);
 
-    pFilterHLoyuot->addStretch();
+    pFilterHLoyuot2->addStretch();
+
+    pVMainLayout->addLayout(pFilterHLoyuot);
+    pVMainLayout->addLayout(pFilterHLoyuot2);
+
+    QHBoxLayout * pButtonsHLoyuot = new QHBoxLayout();
 
     QPushButton * pFilterApplyButton = new QPushButton("Применть фильтры");
     connect(pFilterApplyButton,SIGNAL(pressed()),this,SLOT(OnFilterApplyPressed()));
-    pFilterHLoyuot->addWidget(pFilterApplyButton);
+    pButtonsHLoyuot->addWidget(pFilterApplyButton);
 
-    pVMainLayout->addLayout(pFilterHLoyuot);
+    QPushButton * pSchetApplyButton = new QPushButton("Счет/Акт");
+    connect(pSchetApplyButton,SIGNAL(pressed()),this,SLOT(OnSchetPressed()));
+    pButtonsHLoyuot->addWidget(pSchetApplyButton);
+
+    pVMainLayout->addLayout(pButtonsHLoyuot);
 
     pVMainLayout->addSpacing(5);
 
     m_pTasksTableWidget = new QTableWidget;
-    m_pTasksTableWidget->setColumnCount(7);
+    m_pTasksTableWidget->setColumnCount(8);
+    m_pTasksTableWidget->setColumnWidth(7, 20);
     //m_pTasksTableWidget->setColumnHidden(2,true);  //Скрыли зазказчика
     QStringList headers;
-    headers << "Дата/время" << "Задача" << "Заказчик"<<"Сумма сотруднику"<<"ГРЗ"<<"Сотрудник"<<"Затраты";
+    headers << "Дата/время" << "Задача" << "Заказчик"<<"Сумма сотруднику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<" ";
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
     connect(m_pTasksTableWidget , SIGNAL(itemDoubleClicked(QTableWidgetItem*)) , this , SLOT(OnTasksDblClk(QTableWidgetItem*)));
     pVMainLayout->addWidget(m_pTasksTableWidget);
@@ -227,28 +245,177 @@ void QTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
 
 }
 
+//У задач сотрудников счет формируется только для заказчика, но в двух вариантах - услуги и затраты
+void QTasksWidget::OnSchetPressed()
+{
+    QSqlQuery query;
+
+    QUuid uuidULZakazIdUL = QUuid();
+
+    /*Выбор поставщика тоже делаем диалогом*/
+    QSelFromBdDlg selPostDlg("Поставщики" , "Название");
+    if(selPostDlg.exec() == QDialog::Rejected) return;
+
+    QUuid uuidULPostavId;
+
+    QString strPostavULQueru = QString("select ЮЛ from Поставщики where id='%1'").arg(selPostDlg.m_strRetId);
+    query.exec(strPostavULQueru);
+    while(query.next())
+        uuidULPostavId = QUuid::fromString(query.value(0).toString());
+
+    //Заполнение массива элементов для счета
+    QVector<SSchetItem> vCurrentSchetItems;
+    QVector<SSchetItem> vCurrentSchetZatratiItems;
+
+    SSchetItem schetItem;
+
+    int iRowCount = m_pTasksTableWidget->rowCount();
+
+    int iCheckBoxCol = 7;
+
+    /*Выбрана штрафстоянка - доп. столбцы штрафстоянки*/
+    if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid::fromString("8078b7ce-e423-49ae-9ce6-17758b852b33")) iCheckBoxCol = 8;
+
+    for(int iRowCounter = 0 ; iRowCounter<iRowCount - 1; iRowCounter++) //-1 - итого
+    {
+        if(((QCheckBox *)m_pTasksTableWidget->cellWidget(iRowCounter , iCheckBoxCol))->isChecked() == false) continue;
+
+        QUuid uuidCurrentLineZakazUL = m_pTasksTableWidget->item(iRowCounter , 1)->data(Qt::UserRole + 5).toUuid();
+        //QUuid uuidCurrentLineZakaz   = m_pTasksTableWidget->item(iRowCounter , 1)->data(Qt::UserRole + 6).toUuid();
+
+        if(uuidULZakazIdUL != QUuid() && uuidULZakazIdUL!=uuidCurrentLineZakazUL)
+        {
+            QMessageBox::information(this , "Счет, акт для заказчика" , "В таблице отмечены позиции для разных заказчиков. Для формирования счета и акта для заказчика оставьте отмеченными только позиции одного заказчика");
+            return;
+        }
+        uuidULZakazIdUL = uuidCurrentLineZakazUL;
+
+        schetItem.dblCount = 1;
+        schetItem.strName = m_pTasksTableWidget->item(iRowCounter , 1)->text() + "(" + m_pTasksTableWidget->item(iRowCounter , 4)->text() + ")";
+        schetItem.strUnitMeasure =" шт.";
+        schetItem.dblItemPrice = m_pTasksTableWidget->item(iRowCounter , 1)->data(Qt::UserRole +4).toDouble();//Стоимость задачи для заказчика
+
+        vCurrentSchetItems.push_back(schetItem);
+
+        schetItem.dblItemPrice = m_pTasksTableWidget->item(iRowCounter , 1)->data(Qt::UserRole +2).toDouble();//Затраты
+        vCurrentSchetZatratiItems.push_back(schetItem);
+    }
+
+
+    QString strFileName = QFileDialog::getSaveFileName(this , "Счет" , QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) , tr("Excel (*.xls *.xlsx)"));
+    QString strFileNameZatrati = strFileName;
+    strFileNameZatrati.insert(strFileNameZatrati.length()-4 , "_Затраты");
+
+    if(strFileName.length()>5)
+    {
+        QString strTmpFile = GetTempFNameSchet();
+
+        QString strNumber = GenNextShcetActNumber();
+
+        WriteULsSchetInfo(strTmpFile , uuidULZakazIdUL , uuidULPostavId , vCurrentSchetItems , strNumber);
+
+        QFile::remove(strFileName);
+
+        if(QFile::copy(strTmpFile , strFileName))
+        {
+            QMessageBox::information(this , "КаршерингСервис" , "Счет сохранен " + strFileName);
+        }
+        else
+        {
+            QMessageBox::information(this , "КаршерингСервис" , "Не удалось сохранить счет " + strFileName);
+        }
+
+        strTmpFile = GetTempFNameAct();
+
+        WriteULsActInfo(strTmpFile , uuidULZakazIdUL , uuidULPostavId , vCurrentSchetItems , strNumber);
+
+        strFileName.insert(strFileName.length() - 4 , "_Акт");
+
+        QFile::remove(strFileName);
+
+
+        if(QFile::copy(strTmpFile , strFileName))
+        {
+            QMessageBox::information(this , "КаршерингСервис" , "Акт сохранен " + strFileName);
+        }
+        else
+        {
+            QMessageBox::information(this , "КаршерингСервис" , "Не удалось сохранить акт " + strFileName);
+        }
+
+        //затраты
+
+        strTmpFile = GetTempFNameSchet();
+        strTmpFile.insert(strTmpFile.length()-4 , "_Затраты");
+
+        strNumber = GenNextShcetActNumber();
+
+        WriteULsSchetInfo(strTmpFile , uuidULZakazIdUL , uuidULPostavId , vCurrentSchetZatratiItems , strNumber);
+
+        QFile::remove(strFileNameZatrati);
+
+        if(QFile::copy(strTmpFile , strFileNameZatrati))
+        {
+            QMessageBox::information(this , "КаршерингСервис" , "Счет на затраты сохранен " + strFileNameZatrati);
+        }
+        else
+        {
+            QMessageBox::information(this , "КаршерингСервис" , "Не удалось сохранить счет на затраты " + strFileNameZatrati);
+        }
+
+        strTmpFile = GetTempFNameAct();
+
+        WriteULsActInfo(strTmpFile , uuidULZakazIdUL , uuidULPostavId , vCurrentSchetZatratiItems , strNumber);
+
+        strFileNameZatrati.insert(strFileNameZatrati.length() - 4 , "_Акт");
+
+        QFile::remove(strFileNameZatrati);
+
+
+        if(QFile::copy(strTmpFile , strFileNameZatrati))
+        {
+            QMessageBox::information(this , "КаршерингСервис" , "Акт на затраты сохранен " + strFileNameZatrati);
+        }
+        else
+        {
+            QMessageBox::information(this , "КаршерингСервис" , "Не удалось сохранить акт на затраты" + strFileNameZatrati);
+        }
+
+
+        DeleteTempFiles();
+    }
+}
+
 void QTasksWidget::UpdateTasksList()
 {
     m_pTasksTableWidget->clear();
     m_pTasksTableWidget->clearSpans();
     m_pTasksTableWidget->setRowCount(0);
-    m_pTasksTableWidget->setColumnCount(7);
+    m_pTasksTableWidget->setColumnCount(8);
 
     /*Задачи пользователей*/
 
     QStringList headers;
-    headers << "Дата/время" << "Задача" << "Заказчик"<<"Сумма сотруднику"<<"ГРЗ"<<"Сотрудник"<<"Затраты";
+
 
     /*Выбрана штрафстоянка - доп. столбцы штрафстоянки*/
     if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid::fromString("8078b7ce-e423-49ae-9ce6-17758b852b33"))
     {
-        headers<<"Причина задержания";
+        headers << "Дата/время" << "Задача" << "Заказчик"<<"Сумма сотруднику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<"Причина задержания"<<" ";
+        m_pTasksTableWidget->setColumnCount(9);
+        m_pTasksTableWidget->setColumnWidth(7, 100);
+        m_pTasksTableWidget->setColumnWidth(8, 20);
+    }
+    else
+    {
+        headers << "Дата/время" << "Задача" << "Заказчик"<<"Сумма сотруднику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<" ";
         m_pTasksTableWidget->setColumnCount(8);
+        m_pTasksTableWidget->setColumnWidth(7, 20);
     }
 
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
-    QString strQuery =  QString("SELECT Задачи.id, Задачи.\"Дата Время\", \"Типы задач\".\"Тип\" , \"Типы задач\".id , Задачи.\"Время выполнения\" , Заказчики.Название , Задачи.Цена , %3 , Пользователи.Имя, Пользователи.Фамилия , Пользователи. Отчество ,%4 FROM \"Типы задач\", Задачи, Заказчики, Пользователи where Заказчики.id=Задачи.Заказчик and Задачи.Исполнитель=Пользователи.id and Задачи.Тип = \"Типы задач\".id and Задачи.Удалено<> 'true'  %2 order by Задачи.\"Дата Время\" desc").arg(m_filtersStr).arg(NUMBER_BY_TASK).arg(PAY_BY_TASK);
-
+    QString strQuery =  QString("SELECT Задачи.id, Задачи.\"Дата Время\", \"Типы задач\".\"Тип\" , \"Типы задач\".id , Задачи.\"Время выполнения\" , Заказчики.Название , Задачи.Цена , %3 , Пользователи.Имя, Пользователи.Фамилия , Пользователи. Отчество ,  Заказчики.id , Заказчики.ЮЛ, ЦеныЗаказчиков.Цена,  %4 FROM \"Типы задач\", Задачи, Заказчики, Пользователи, ЦеныЗаказчиков where ЦеныЗаказчиков.Заказчик=Заказчики.id and ЦеныЗаказчиков.ТипЗадачи=Задачи.Тип and Заказчики.id=Задачи.Заказчик and Задачи.Исполнитель=Пользователи.id and Задачи.Тип = \"Типы задач\".id and Задачи.Удалено<> 'true'  %2 order by Задачи.\"Дата Время\" desc").arg(m_filtersStr).arg(NUMBER_BY_TASK).arg(PAY_BY_TASK);
+    qDebug()<<strQuery;
     QSqlQuery query;
     query.exec(strQuery);
 
@@ -261,17 +428,27 @@ void QTasksWidget::UpdateTasksList()
     double dblPay = 0;
     while(query.next())
     {
+        if(m_pOnlyFinishedCheckBox->isChecked())
+        {
+            if(query.value(6).toInt() == 0) continue;
+        }
 
-        // QTableWidgetItem * pItem = new QTableWidgetItem(QString("%1 - %2 (%3). %4 руб.").arg(QDateTime::fromSecsSinceEpoch(query.value(1).toInt()).toString("dd.MM.yyyy hh:mm")).arg(query.value(2).toString()).arg(query.value(5).toString()).arg(query.value(6).toString()));
         QTableWidgetItem * pItem = new QTableWidgetItem(QDateTime::fromSecsSinceEpoch(query.value(1).toInt()).toString("dd.MM.yyyy hh:mm"));
         pItem->setData(Qt::UserRole , query.value(0));
         pItem->setData(Qt::UserRole +1 , query.value(3));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTasksTableWidget->setItem(iRowCounter , 0,  pItem);
 
+        /*Тип задачи - по этому столбцу строится счет, поэтому в нем сохраним затраты и и сумму*/
         pItem = new QTableWidgetItem(query.value(2).toString());
-        pItem->setData(Qt::UserRole , query.value(0));
-        pItem->setData(Qt::UserRole +1 , query.value(3));
+        pItem->setData(Qt::UserRole , query.value(0));//id задачи
+        pItem->setData(Qt::UserRole +1 , query.value(3));//id типа задачи
+        pItem->setData(Qt::UserRole +2 , query.value(14));//Затраты
+        pItem->setData(Qt::UserRole +3 , query.value(6));//Сумма сотруднику (Задачи.цена)
+        pItem->setData(Qt::UserRole +4 , query.value(13));//Сумма заказчику (ЦеныЗаказчиков.Цена)
+        pItem->setData(Qt::UserRole +5 , query.value(12));//Заказчики.ЮЛ
+        pItem->setData(Qt::UserRole +6 , query.value(11));//Заказчики.id
+
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTasksTableWidget->setItem(iRowCounter , 1,  pItem);
 
@@ -305,12 +482,14 @@ void QTasksWidget::UpdateTasksList()
         m_pTasksTableWidget->setItem(iRowCounter , 5,  pItem);
 
         /*Затраты*/
-        pItem = new QTableWidgetItem(query.value(11).toString());
+        pItem = new QTableWidgetItem(query.value(14).toString());
         pItem->setData(Qt::UserRole , query.value(0));
         pItem->setData(Qt::UserRole +1 , query.value(3));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTasksTableWidget->setItem(iRowCounter , 6,  pItem);
-        dblPay = dblPay + query.value(11).toDouble();
+        dblPay = dblPay + query.value(14).toDouble();
+
+        int iChecBoxCol = 7;
 
         /*Выбрана штрафстоянка - доп. столбцы штрафстоянки*/
         if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid::fromString("8078b7ce-e423-49ae-9ce6-17758b852b33"))
@@ -326,20 +505,27 @@ void QTasksWidget::UpdateTasksList()
                 pItem->setData(Qt::UserRole +1 , query.value(3));
                 pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
                 m_pTasksTableWidget->setItem(iRowCounter , 7,  pItem);
+
             }
+            iChecBoxCol = 8;
         }
+
+        /*Чек-бокс*/
+        QCheckBox * pCheckBox = new QCheckBox();
+        pCheckBox->setChecked(true);
+        m_pTasksTableWidget->setCellWidget(iRowCounter , iChecBoxCol , pCheckBox);
 
         iRowCounter++;
     }
 
-    /*Задачи партнёров*/
+    m_pTasksTableWidget->setRowCount(iRowCounter + 1);//+1 для итого
 
     /*Добавим Итого*/
     m_pTasksTableWidget->setSpan(iRowCounter , 0 , 1 , 5);
-    QTableWidgetItem * pItem = new QTableWidgetItem(QString("Итого: %1 руб.").arg(dblSumm));
+    QTableWidgetItem * pItem = new QTableWidgetItem(QString("Итого: %1 руб.").arg(dblSumm , 0, 'f', 2));
     m_pTasksTableWidget->setItem(iRowCounter , 0,  pItem);
 
-    pItem = new QTableWidgetItem(QString(" %1 руб.").arg(dblPay));
+    pItem = new QTableWidgetItem(QString(" %1 руб.").arg(dblPay , 0, 'f', 2));
     m_pTasksTableWidget->setItem(iRowCounter , 6,  pItem);
 
     QFont font;

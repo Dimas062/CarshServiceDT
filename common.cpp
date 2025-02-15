@@ -84,7 +84,7 @@ std::vector<QString> teens = { " десять", " одиннадцать", " д�
 std::vector<QString> tens = { "", "", " двадцать", " тридцать", " сорок", " пятьдесят", " шестьдесят", " семьдесят", " восемьдесят", " девяносто" };
 std::vector<QString> hundredth = { ""," сто", " двести", " триста", " четыреста", " пятьсот", " шестьсот", " семьсот", " восемьсот", " девятьсот",};
 
-QString Ending(int number , std::vector<QString> ends) {
+QString Ending(long long number , std::vector<QString> ends) {
     int lastDigit = number % 10;
     int penultimateDigit = (number / 10) % 10;
 

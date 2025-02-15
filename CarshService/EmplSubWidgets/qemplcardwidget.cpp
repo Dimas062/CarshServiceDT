@@ -5,7 +5,7 @@
 #include "common.h"
 #include <QMessageBox>
 #include <QDateTime>
-
+#include "service/qselectavailablezakazs.h"
 
 QEmplCardWidget::QEmplCardWidget(QWidget *parent)
     : QWidget{parent}
@@ -34,6 +34,10 @@ QEmplCardWidget::QEmplCardWidget(QWidget *parent)
 
 
     pVMainLayout->addSpacing(15);
+
+    QPushButton * pZakazsButton = new QPushButton("Доступные заказчики");
+    connect(pZakazsButton,SIGNAL(pressed()),this,SLOT(OnZakazsPressed()));
+    pVMainLayout->addWidget(pZakazsButton);
 
 
     QPushButton * pDriverCardButton = new QPushButton("Права");
@@ -67,6 +71,12 @@ QEmplCardWidget::QEmplCardWidget(QWidget *parent)
     m_IsActive = false;
 
 
+}
+
+void QEmplCardWidget::OnZakazsPressed()
+{
+    QSelectAvailableZakazs dlg(m_strCurUserId);
+    dlg.exec();
 }
 
 void QEmplCardWidget::OnFotoPictureClik()

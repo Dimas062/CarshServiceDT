@@ -15,9 +15,18 @@ QStickPartnersWidget::QStickPartnersWidget(QWidget *parent)
 
     QHBoxLayout * pHStickPartnerLayout = new QHBoxLayout;
 
+    QVBoxLayout * pPartnersLayout = new QVBoxLayout;
+
+    QLabel * pPartnersLabel = new QLabel("Партнеры");
+    pPartnersLabel->setAlignment(Qt::AlignHCenter);
+
+    pPartnersLayout->addWidget(pPartnersLabel);
+
     m_pStickPartnerListWidget = new QListWidget();
 
-    pHStickPartnerLayout->addWidget(m_pStickPartnerListWidget);
+    pPartnersLayout->addWidget(m_pStickPartnerListWidget);
+
+    pHStickPartnerLayout->addLayout(pPartnersLayout);
 
     m_pStickPartnerTabWidget = new QTabWidget;
 

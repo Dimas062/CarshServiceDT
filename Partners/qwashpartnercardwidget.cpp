@@ -5,6 +5,8 @@
 #include <QListWidgetItem>
 #include "common.h"
 #include <QUuid>
+#include "service/qselectavailablezakazs.h"
+#include "service/qpointeditdlg.h"
 
 extern int iUserType;
 
@@ -84,6 +86,10 @@ QWashPartnerCardWidget::QWashPartnerCardWidget(QWidget *parent)
     pPostavHLoyout->addWidget(m_pPostavshikCombo);
     pVMainLayout->addLayout(pPostavHLoyout);
 
+    QPushButton * pZakazsButton = new QPushButton("Доступные заказчики");
+    connect(pZakazsButton,SIGNAL(pressed()),this,SLOT(OnZakazsPressed()));
+    pVMainLayout->addWidget(pZakazsButton);
+
     QPushButton * pULButton = new QPushButton("Реквизиты ЮЛ");
     connect(pULButton,SIGNAL(pressed()),this,SLOT(OnULPressed()));
     pVMainLayout->addWidget(pULButton);
@@ -99,10 +105,20 @@ QWashPartnerCardWidget::QWashPartnerCardWidget(QWidget *parent)
     pPointsLabel->setAlignment(Qt::AlignHCenter);
     pVMainLayout->addWidget(pPointsLabel);
 
-
-
     m_pPointsListWidget = new QListWidget;
     pVMainLayout->addWidget(m_pPointsListWidget);
+
+    QHBoxLayout * pPointsButtonLayout = new QHBoxLayout;
+
+    QPushButton * pAddPointButton = new QPushButton("Добавить");
+    connect(pAddPointButton,SIGNAL(pressed()),this,SLOT(OnAddPointPressed()));
+    pPointsButtonLayout->addWidget(pAddPointButton);
+
+    QPushButton * pRemovePointButton = new QPushButton("Удалить");
+    connect(pRemovePointButton,SIGNAL(pressed()),this,SLOT(OnRemovePointPressed()));
+    pPointsButtonLayout->addWidget(pRemovePointButton);
+
+    pVMainLayout->addLayout(pPointsButtonLayout);
 
     this->setLayout(pVMainLayout);
 }
@@ -143,8 +159,58 @@ void QWashPartnerCardWidget::PostavshikIndexChanget(int idx)
 
 void QWashPartnerCardWidget::OnULPressed()
 {
+    if(m_strActivPartner==QString("NULL")) return;
+
     if(m_ulDlg.exec()==QDialog::Accepted)
         m_ulDlg.SaveToBD();
+}
+
+void QWashPartnerCardWidget::UpdatePointsList()
+{
+    m_pPointsListWidget->clear();
+
+    QString strPointsExec = QString("select Название, Адрес , id from \"Точки Партнеров\" where Партнер='%1' and Удалено<>'true'").arg(m_strActivPartner);
+
+    QSqlQuery PointsQuery;
+    PointsQuery.exec(strPointsExec);
+    while(PointsQuery.next())
+    {
+        QListWidgetItem * pItem = new QListWidgetItem;
+        pItem->setText(QString("%1 (%2)").arg(PointsQuery.value(0).toString()).arg(PointsQuery.value(1).toString()));
+        pItem->setData(Qt::UserRole , PointsQuery.value(2).toUuid());
+        m_pPointsListWidget->addItem(pItem);
+    }
+}
+
+void QWashPartnerCardWidget::OnAddPointPressed()
+{
+    if(m_strActivPartner==QString("NULL")) return;
+
+    QPointEditDlg dlg;
+    if(dlg.exec()==QDialog::Accepted)
+    {
+        dlg.SaveNewToBD(m_strActivPartner);
+    }
+
+    UpdatePointsList();
+}
+
+void QWashPartnerCardWidget::OnRemovePointPressed()
+{
+    if(m_strActivPartner==QString("NULL")) return;
+
+    QSqlQuery PointsQuery;
+    QString strPointsExec;
+
+    QListWidgetItem * pItem =  m_pPointsListWidget->currentItem();
+    if(pItem)
+    {
+        QString strPointUuid = pItem->data(Qt::UserRole).toString();
+        strPointsExec = QString("update \"Точки Партнеров\" set Удалено=true where id='%1'").arg(strPointUuid);
+        PointsQuery.exec(strPointsExec);
+    }
+
+    UpdatePointsList();
 }
 
 
@@ -181,23 +247,9 @@ void QWashPartnerCardWidget::SetActivPartner(QString strUuid)
         strPostavId = query.value(5).toString();
         m_ulDlg.LoadFromBD(query.value(9).toString());
     }
-    
-    
 
-    //Точки
 
-    m_pPointsListWidget->clear();
-
-    QString strPointsExec = QString("select Название, Адрес from \"Точки Партнеров\" where Партнер='%1' and Удалено<>'true'").arg(strUuid);
-
-    QSqlQuery PointsQuery;
-    PointsQuery.exec(strPointsExec);
-    while(PointsQuery.next())
-    {
-        QListWidgetItem * pItem = new QListWidgetItem;
-        pItem->setText(QString("%1 (%2)").arg(PointsQuery.value(0).toString()).arg(PointsQuery.value(1).toString()));
-        m_pPointsListWidget->addItem(pItem);
-    }
+    UpdatePointsList();
     
     
     m_pPostavshikCombo->clear();
@@ -209,4 +261,10 @@ void QWashPartnerCardWidget::SetActivPartner(QString strUuid)
     }
 
     m_pPostavshikCombo->setCurrentIndex(m_pPostavshikCombo->findData(QVariant(QUuid::fromString(strPostavId))));
+}
+
+void QWashPartnerCardWidget::OnZakazsPressed()
+{
+    QSelectAvailableZakazs dlg(m_strActivPartner);
+    dlg.exec();
 }

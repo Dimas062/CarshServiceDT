@@ -11,6 +11,7 @@ struct SSchetItem
     QString strUnitMeasure;
     double dblCount;
     double dblItemPrice;
+  //  QUuid uuidZakazchik;
 };
 
 

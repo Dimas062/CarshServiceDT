@@ -1168,7 +1168,7 @@ uint Worksheet::getImageCount()
         return false;
     }
 
-    int size = d->drawing->anchors.size();
+    int size = (int)(d->drawing->anchors.size());
     return uint(size);
 }
 

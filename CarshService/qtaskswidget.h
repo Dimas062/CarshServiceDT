@@ -5,6 +5,7 @@
 #include <QTableWidget>
 #include <QComboBox>
 #include <QDateTimeEdit>
+#include <QCheckBox>
 #include "TasksSubWidgets/qpenalparktaskfilterwidget.h"
 
 class QTasksWidget : public QWidget
@@ -22,15 +23,16 @@ public:
     QDateTimeEdit * m_pFromDateTimeEdit;
     QDateTimeEdit * m_pToDateTimeEdit;
     QLineEdit * m_pNumberEdit;
+    QCheckBox * m_pOnlyFinishedCheckBox;
 
-
-    QPenalParkTaskFilterWidget * m_pPenalParkTaskFilterWidget;
+        QPenalParkTaskFilterWidget * m_pPenalParkTaskFilterWidget;
     QString m_filtersStr;
 signals:
 public slots:
     void OnTasksDblClk(QTableWidgetItem*);
     void OnFilterApplyPressed();
     void TaskTypeComboChanged(int);
+    void OnSchetPressed();
 };
 
 #endif // QTASKSWIDGET_H

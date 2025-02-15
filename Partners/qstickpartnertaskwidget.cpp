@@ -1,4 +1,4 @@
-#include "qStickpartnertaskwidget.h"
+#include "qstickpartnertaskwidget.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -11,6 +11,10 @@
 #include <QStandardPaths>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QCheckBox>
+//#include "service/qselfrombddlg.h"
+
+extern int iUserType;
 
 QStickPartnerTaskWidget::QStickPartnerTaskWidget(QWidget *parent)
     : QWidget{parent}
@@ -42,19 +46,28 @@ QStickPartnerTaskWidget::QStickPartnerTaskWidget(QWidget *parent)
     connect(pFilterApplyButton,SIGNAL(pressed()),this,SLOT(OnFilterApplyPressed()));
     pFilterHLoyuot->addWidget(pFilterApplyButton);
 
-    QPushButton * pSchetButton = new QPushButton("Сформировать счет партнера");
-    connect(pSchetButton,SIGNAL(pressed()),this,SLOT(OnSchetPressed()));
-    pFilterHLoyuot->addWidget(pSchetButton);
-
     pVMainLayout->addLayout(pFilterHLoyuot);
+
+    QHBoxLayout * pSchetButtonsHLoyuot = new QHBoxLayout();
+
+    QPushButton * pSchetButton = new QPushButton("Сформировать счет/акт партнера");
+    connect(pSchetButton,SIGNAL(pressed()),this,SLOT(OnSchetPressed()));
+    if(iUserType == CarshService) pSchetButtonsHLoyuot->addWidget(pSchetButton);
+
+    QPushButton * pSchetZakazButton = new QPushButton("Сформировать счет/акт заказчика");
+    connect(pSchetZakazButton,SIGNAL(pressed()),this,SLOT(OnSchetZakazPressed()));
+    if(iUserType == CarshService) pSchetButtonsHLoyuot->addWidget(pSchetZakazButton);
+
+    pVMainLayout->addLayout(pSchetButtonsHLoyuot);
 
     pVMainLayout->addSpacing(5);
 
     m_pTasksTableWidget = new QTableWidget;
-    m_pTasksTableWidget->setColumnCount(6);
+    m_pTasksTableWidget->setColumnCount(8);
+    m_pTasksTableWidget->setColumnWidth(7, 20);
     //m_pTasksTableWidget->setColumnHidden(2,true);  //Скрыли зазказчика
     QStringList headers;
-    headers << "Дата/время" << "Точка" << "Номер"<<"Комментарий"<<"Заказчик"<<"Стоимость";
+    headers << "Дата/время" << "Точка" << "Номер"<<"Комментарий"<<"Поставщик"<<"Заказчик"<<"Стоимость"<<" ";
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
     connect(m_pTasksTableWidget , SIGNAL(itemDoubleClicked(QTableWidgetItem*)) , this , SLOT(OnTasksDblClk(QTableWidgetItem*)));
     pVMainLayout->addWidget(m_pTasksTableWidget);
@@ -67,12 +80,10 @@ void QStickPartnerTaskWidget::UpdateTasksList()
     m_pTasksTableWidget->clearSpans();
     m_pTasksTableWidget->setRowCount(0);
 
-    m_vCurrentSchetItems.clear();
-
     QStringList headers;
-    headers  << "Дата/время" << "Точка" << "Номер"<<"Комментарий"<<"Заказчик"<<"Стоимость";
+    headers  << "Дата/время" << "Точка" << "Номер"<<"Комментарий"<<"Поставщик"<<"Заказчик"<<"Стоимость"<<" ";
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
-    QString strQuery =  QString("select \"Задачи партнера Оклейка\".id , \"Задачи партнера Оклейка\".ДатаВремя, \"Точки Партнеров\".Название , \"Задачи партнера Оклейка\".Номер, \"Задачи партнера Оклейка\".Комментарий, Поставщики.Название, Партнеры.Поставщик from \"Задачи партнера Оклейка\", \"Точки Партнеров\" , Поставщики, Партнеры where Поставщики.id = Партнеры.Поставщик  and \"Задачи партнера Оклейка\".Партнер = Партнеры.id  and \"Точки Партнеров\".id = \"Задачи партнера Оклейка\".Точка and \"Задачи партнера Оклейка\".Партнер='%1' %2").arg(m_strUuidCurrentPartner).arg(m_filtersStr);
+    QString strQuery =  QString("select \"Задачи партнера Оклейка\".id , \"Задачи партнера Оклейка\".ДатаВремя, \"Точки Партнеров\".Название , \"Задачи партнера Оклейка\".Номер, \"Задачи партнера Оклейка\".Комментарий, Поставщики.Название, Партнеры.Поставщик, Заказчики.Название, Заказчики.ЮЛ , Заказчики.id from \"Задачи партнера Оклейка\", \"Точки Партнеров\" , Поставщики, Партнеры, Заказчики where Поставщики.id = Партнеры.Поставщик  and \"Задачи партнера Оклейка\".Партнер = Партнеры.id  and \"Точки Партнеров\".id = \"Задачи партнера Оклейка\".Точка and \"Задачи партнера Оклейка\".Заказчик=Заказчики.id and \"Задачи партнера Оклейка\".Партнер='%1' %2").arg(m_strUuidCurrentPartner).arg(m_filtersStr);
 
     QSqlQuery query;
     query.exec(strQuery);
@@ -84,11 +95,11 @@ void QStickPartnerTaskWidget::UpdateTasksList()
     int iRowCounter = 0;
     while(query.next())
     {
-        SSchetItem schetItem;
-
         /*Дата/время*/
         QTableWidgetItem * pItem = new QTableWidgetItem(QDateTime::fromSecsSinceEpoch(query.value(1).toInt()).toString("dd.MM.yyyy hh:mm"));
         pItem->setData(Qt::UserRole , query.value(0));
+        pItem->setData(Qt::UserRole + 1, query.value(8));
+        pItem->setData(Qt::UserRole + 2, query.value(9));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTasksTableWidget->setItem(iRowCounter , 0,  pItem);
 
@@ -112,11 +123,18 @@ void QStickPartnerTaskWidget::UpdateTasksList()
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTasksTableWidget->setItem(iRowCounter , 3,  pItem);
 
-        /*Заказчик*/
+        /*Поставщик*/
         pItem = new QTableWidgetItem(query.value(5).toString());
         pItem->setData(Qt::UserRole , query.value(0));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTasksTableWidget->setItem(iRowCounter , 4,  pItem);
+
+
+        /*Заказчик*/
+        pItem = new QTableWidgetItem(query.value(7).toString());
+        pItem->setData(Qt::UserRole , query.value(0));
+        pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        m_pTasksTableWidget->setItem(iRowCounter , 5,  pItem);
 
         QString strTypesExec=QString("select \"Типы задач Оклейка\".Цена , \"Типы задач Оклейка\".Тип from \"Задача Оклейка - Типы\" , \"Типы задач Оклейка\"  where \"Типы задач Оклейка\".id = \"Задача Оклейка - Типы\".Тип and  \"Задача Оклейка - Типы\".Задача = '%1'").arg(query.value(0).toString());
         QSqlQuery TypesQuery;
@@ -126,15 +144,74 @@ void QStickPartnerTaskWidget::UpdateTasksList()
         while(TypesQuery.next())
         {
             dblPrice = dblPrice + TypesQuery.value(0).toDouble();
+        }
+        QString strPrice = QString(" %1 руб.").arg(dblPrice);
 
-            schetItem.strName = strGosNomer + ": " + TypesQuery.value(1).toString();
+        /*Стоимость*/
+        pItem = new QTableWidgetItem(strPrice);
+        pItem->setData(Qt::UserRole , query.value(0));
+        pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        m_pTasksTableWidget->setItem(iRowCounter , 6,  pItem);
+
+        /*Чек-бокс*/
+        QCheckBox * pCheckBox = new QCheckBox();
+        pCheckBox->setChecked(true);
+        m_pTasksTableWidget->setCellWidget(iRowCounter , 7 , pCheckBox);
+
+        iRowCounter++;
+
+        m_strIdPostavshik = query.value(6).toString();
+    }
+}
+
+void QStickPartnerTaskWidget::OnSchetZakazPressed()
+{
+    QSqlQuery query;
+
+    QUuid uuidULZakazIdUL = QUuid();
+
+    //Заполнение массива элементов для счета
+    QVector<SSchetItem> vCurrentSchetItems;
+
+    SSchetItem schetItem;
+
+    int iRowCount = m_pTasksTableWidget->rowCount();
+
+
+    for(int iRowCounter = 0 ; iRowCounter<iRowCount ; iRowCounter++)
+    {
+        if(((QCheckBox *)m_pTasksTableWidget->cellWidget(iRowCounter , 7))->isChecked() == false) continue;
+
+        QUuid uuidCurrentLineZakazUL = m_pTasksTableWidget->item(iRowCounter , 0)->data(Qt::UserRole + 1).toUuid();
+        QUuid uuidCurrentLineZakaz   = m_pTasksTableWidget->item(iRowCounter , 0)->data(Qt::UserRole + 2).toUuid();
+
+        if(uuidULZakazIdUL != QUuid() && uuidULZakazIdUL!=uuidCurrentLineZakazUL)
+        {
+            QMessageBox::information(this , "Счет, акт для заказчика" , "В таблице отмечены позиции для разных заказчиков. Для формирования счета и акта для заказчика оставьте отмеченными только позиции одного заказчика");
+            return;
+        }
+        uuidULZakazIdUL = uuidCurrentLineZakazUL;
+
+        QString strTaskId = m_pTasksTableWidget->item(iRowCounter , 1)->data(Qt::UserRole).toString();
+
+        QString strTypesExec=QString("select ЦеныЗаказчиков.Цена , \"Типы задач Оклейка\".Тип from \"Задача Оклейка - Типы\" , \"Типы задач Оклейка\", ЦеныЗаказчиков  where ЦеныЗаказчиков.ТипЗадачи=\"Типы задач Оклейка\".id and ЦеныЗаказчиков.Заказчик = '%2' and \"Типы задач Оклейка\".id = \"Задача Оклейка - Типы\".Тип and  \"Задача Оклейка - Типы\".Задача = '%1'").arg(strTaskId).arg(uuidCurrentLineZakaz.toString());
+
+        QSqlQuery TypesQuery;
+
+        TypesQuery.exec(strTypesExec);
+        double dblPrice = 0;
+        while(TypesQuery.next())
+        {
+            dblPrice = dblPrice + TypesQuery.value(0).toDouble();
+
+            schetItem.strName = TypesQuery.value(1).toString();
             schetItem.strUnitMeasure =" шт.";
             schetItem.dblCount = 1;
             schetItem.dblItemPrice = TypesQuery.value(0).toDouble();
 
             /*Ищем такие же типы задач (по названию) в уже имеющимся списке, при нахождении не добавляем новый элемент, а к существующему плюсуем дополнительное засчитываемое количество*/
             bool bIsCaurrentAdded = false;
-            for(SSchetItem &item : m_vCurrentSchetItems)
+            for(SSchetItem &item : vCurrentSchetItems)
             {
                 if(item.strName == schetItem.strName)
                 {
@@ -143,29 +220,115 @@ void QStickPartnerTaskWidget::UpdateTasksList()
                     break;
                 }
             }
-            if(!bIsCaurrentAdded) m_vCurrentSchetItems.push_back(schetItem);
+            if(!bIsCaurrentAdded) vCurrentSchetItems.push_back(schetItem);
 
         }
-        QString strPrice = QString(" %1 руб.").arg(dblPrice);
+    }
 
-        /*Заказчик*/
-        pItem = new QTableWidgetItem(strPrice);
-        pItem->setData(Qt::UserRole , query.value(0));
-        pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        m_pTasksTableWidget->setItem(iRowCounter , 5,  pItem);
 
-        iRowCounter++;
+    QString strULPostavRequest = QString("select ЮЛ from Поставщики where id='%1'").arg(m_strIdPostavshik);
 
-        m_strIdPostavshik = query.value(6).toString();
+    QUuid uuidULPostavId;
+
+    query.exec(strULPostavRequest);
+    while(query.next())
+        uuidULPostavId = query.value(0).toUuid();
+
+
+    QString strFileName = QFileDialog::getSaveFileName(this , "Счет партнера Оклейка" , QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) , tr("Excel (*.xls *.xlsx)"));
+
+    if(strFileName.length()>5)
+    {
+        QString strTmpFile = GetTempFNameSchet();
+
+        QString strNumber = GenNextShcetActNumber();
+
+        WriteULsSchetInfo(strTmpFile , uuidULZakazIdUL , uuidULPostavId, vCurrentSchetItems , strNumber);
+
+        QFile::remove(strFileName);
+
+        if(QFile::copy(strTmpFile , strFileName))
+        {
+            QMessageBox::information(this , "КаршерингСервис" , "Счет сохранен " + strFileName);
+        }
+        else
+        {
+            QMessageBox::information(this , "КаршерингСервис" , "Не удалось сохранить счет " + strFileName);
+        }
+
+        strTmpFile = GetTempFNameAct();
+
+        WriteULsActInfo(strTmpFile , uuidULZakazIdUL , uuidULPostavId , vCurrentSchetItems , strNumber);
+
+        strFileName.insert(strFileName.length() - 4 , "_Акт");
+
+        QFile::remove(strFileName);
+
+
+        if(QFile::copy(strTmpFile , strFileName))
+        {
+            QMessageBox::information(this , "КаршерингСервис" , "Акт сохранен " + strFileName);
+        }
+        else
+        {
+            QMessageBox::information(this , "КаршерингСервис" , "Не удалось сохранить акт " + strFileName);
+        }
+
+        DeleteTempFiles();
     }
 }
 
 void QStickPartnerTaskWidget::OnSchetPressed()
-{
-    QSqlQuery query;
+{   
+    //Заполнение массива элементов для счета
+    QVector<SSchetItem> vCurrentSchetItems;
+
+    SSchetItem schetItem;
+
+    int iRowCount = m_pTasksTableWidget->rowCount();
+
+    for(int iRowCounter = 0 ; iRowCounter<iRowCount ; iRowCounter++)
+    {
+
+        if(((QCheckBox *)m_pTasksTableWidget->cellWidget(iRowCounter , 7))->isChecked() == false) continue;
+
+        QString strTaskId = m_pTasksTableWidget->item(iRowCounter , 1)->data(Qt::UserRole).toString();
+
+        QString strTypesExec=QString("select \"Типы задач Оклейка\".Цена , \"Типы задач Оклейка\".Тип from \"Задача Оклейка - Типы\" , \"Типы задач Оклейка\"  where \"Типы задач Оклейка\".id = \"Задача Оклейка - Типы\".Тип and  \"Задача Оклейка - Типы\".Задача = '%1'").arg(strTaskId);
+        QSqlQuery TypesQuery;
+
+        TypesQuery.exec(strTypesExec);
+        double dblPrice = 0;
+        while(TypesQuery.next())
+        {
+            dblPrice = dblPrice + TypesQuery.value(0).toDouble();
+
+            schetItem.strName = TypesQuery.value(1).toString();
+            schetItem.strUnitMeasure =" шт.";
+            schetItem.dblCount = 1;
+            schetItem.dblItemPrice = TypesQuery.value(0).toDouble();
+
+            /*Ищем такие же типы задач (по названию) в уже имеющимся списке, при нахождении не добавляем новый элемент, а к существующему плюсуем дополнительное засчитываемое количество*/
+            bool bIsCaurrentAdded = false;
+            for(SSchetItem &item : vCurrentSchetItems)
+            {
+                if(item.strName == schetItem.strName)
+                {
+                    item.dblCount = item.dblCount + schetItem.dblCount;
+                    bIsCaurrentAdded = true;
+                    break;
+                }
+            }
+            if(!bIsCaurrentAdded) vCurrentSchetItems.push_back(schetItem);
+
+        }
+    }
+
+
     QString strULPostavRequest = QString("select ЮЛ from Поставщики where id='%1'").arg(m_strIdPostavshik);
 
     QUuid uuidULPostavId;
+    QSqlQuery query;
     query.exec(strULPostavRequest);
     while(query.next())
         uuidULPostavId = query.value(0).toUuid();
@@ -185,7 +348,7 @@ void QStickPartnerTaskWidget::OnSchetPressed()
 
         QString strNumber = GenNextShcetActNumber();
 
-        WriteULsSchetInfo(strTmpFile , uuidULPostavId , uuidULPartnerId, m_vCurrentSchetItems , strNumber);
+        WriteULsSchetInfo(strTmpFile , uuidULPostavId , uuidULPartnerId, vCurrentSchetItems , strNumber);
 
         QFile::remove(strFileName);
 
@@ -200,7 +363,7 @@ void QStickPartnerTaskWidget::OnSchetPressed()
 
         strTmpFile = GetTempFNameAct();
 
-        WriteULsActInfo(strTmpFile , uuidULPostavId , uuidULPartnerId, m_vCurrentSchetItems , strNumber);
+        WriteULsActInfo(strTmpFile , uuidULPostavId , uuidULPartnerId, vCurrentSchetItems , strNumber);
 
         strFileName.insert(strFileName.length() - 4 , "_Акт");
 

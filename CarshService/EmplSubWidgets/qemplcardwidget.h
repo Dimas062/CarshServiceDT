@@ -30,6 +30,7 @@ public slots:
     void OnActivPressed();
     void OnFotoPictureClik();
     void OnRemovePressed();
+    void OnZakazsPressed();
 };
 
 #endif // QEMPLCARDWIDGET_H

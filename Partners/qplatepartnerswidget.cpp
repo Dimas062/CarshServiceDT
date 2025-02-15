@@ -15,9 +15,18 @@ QPlatePartnersWidget::QPlatePartnersWidget(QWidget *parent)
 
     QHBoxLayout * pHPlatePartnerLayout = new QHBoxLayout;
 
+    QVBoxLayout * pPartnersLayout = new QVBoxLayout;
+
+    QLabel * pPartnersLabel = new QLabel("Партнеры");
+    pPartnersLabel->setAlignment(Qt::AlignHCenter);
+
+    pPartnersLayout->addWidget(pPartnersLabel);
+
     m_pPlatePartnerListWidget = new QListWidget();
 
-    pHPlatePartnerLayout->addWidget(m_pPlatePartnerListWidget);
+    pPartnersLayout->addWidget(m_pPlatePartnerListWidget);
+
+    pHPlatePartnerLayout->addLayout(pPartnersLayout);
 
     m_pPlatePartnerTabWidget = new QTabWidget;
 

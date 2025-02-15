@@ -6,5 +6,6 @@
         <file>icons/CarshServiceIcon256.png</file>
         <file>templates/schet.xlsx</file>
         <file>templates/act.xlsx</file>
+        <file>icons/Splash.png</file>
     </qresource>
 </RCC>

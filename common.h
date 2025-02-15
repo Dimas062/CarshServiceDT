@@ -13,7 +13,7 @@ enum class PhotoTypes {DriverCard,    //Права
 
 enum     UserTypes {    Emploee,         //Сотрудник
                  CarshService,    //Карш-сервис
-                 Carsh,           //Карш-служба
+                 Carsh,           //Карш-служба (сами машины)
                  PartnerWasher,   //Партнёр мойка
                  PartnerPlate,    //Партнер номера
                  PartnerStick,    //Партнер оклейка

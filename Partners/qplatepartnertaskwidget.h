@@ -17,7 +17,7 @@ public:
     QTableWidget * m_pTasksTableWidget;
 
     void UpdateTasksList();
-    QVector<SSchetItem> m_vCurrentSchetItems;
+
 
     QDateTimeEdit * m_pFromDateTimeEdit;
     QDateTimeEdit * m_pToDateTimeEdit;
@@ -30,6 +30,7 @@ public slots:
     void OnTasksDblClk(QTableWidgetItem*);
     void OnFilterApplyPressed();
     void OnSchetPressed();
+    void OnSchetZakazPressed();
 signals:
 };
 

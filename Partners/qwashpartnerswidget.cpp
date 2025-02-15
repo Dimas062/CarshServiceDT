@@ -15,9 +15,19 @@ QWashPartnersWidget::QWashPartnersWidget(QWidget *parent)
 
     QHBoxLayout * pHWashPartnerLayout = new QHBoxLayout;
 
+
+    QVBoxLayout * pPartnersLayout = new QVBoxLayout;
+
+    QLabel * pPartnersLabel = new QLabel("Партнеры");
+    pPartnersLabel->setAlignment(Qt::AlignHCenter);
+
+    pPartnersLayout->addWidget(pPartnersLabel);
+
     m_pWashPartnerListWidget = new QListWidget();
 
-    pHWashPartnerLayout->addWidget(m_pWashPartnerListWidget);
+    pPartnersLayout->addWidget(m_pWashPartnerListWidget);
+
+    pHWashPartnerLayout->addLayout(pPartnersLayout);
 
     m_pWashPartnerTabWidget = new QTabWidget;
 

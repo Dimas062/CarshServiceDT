@@ -12,6 +12,7 @@
 #include "qcarshservicemaindlg.h"
 #include "Carshs/qcarshmaindlg.h"
 #include "common.h"
+#include <QSplashScreen>
 
 QRect screenGeometry;
 
@@ -25,6 +26,12 @@ QT_USE_NAMESPACE
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    QPixmap pixmap(":/icons/Splash.png");
+    QSplashScreen splash(pixmap);
+    splash.show();
+    splash.showMessage("Подключение к БД");
+
 
     screenGeometry = QRect(0,0,500,500);
 
@@ -41,6 +48,13 @@ int main(int argc, char *argv[])
         QMessageBox::information(NULL , "Злобин Каршеринг сервис", QString("Не удаётся соединиться с сервером: %1").arg(db.lastError().text()) , "Закрыть");
         return 0;
     }
+
+    QThread::msleep(200);
+
+    splash.showMessage("Загрузка модулей");
+
+    QThread::msleep(300);
+    splash.close();
 
     QLoginDlg loginDlg;
     iUserType = loginDlg.exec();

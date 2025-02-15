@@ -38,6 +38,7 @@ signals:
 public slots:
     void OnActivAccountPressed();
     void OnULPressed();
+    void OnZakazsPressed();
 };
 
 #endif // QPLATEPARTNERCARDWIDGET_H

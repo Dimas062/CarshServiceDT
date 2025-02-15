@@ -107,8 +107,8 @@ void QPenParkGraphWidget::UpdateGraph()
 
         for(QDate date = from; date <= to; date = date.addMonths(1))
         {
-            int time_from = QDateTime(QDate(date.year() , date.month() , 1) , QTime(0,0,0)).toSecsSinceEpoch();
-            int time_to   = QDateTime(QDate(date.year() , date.month() , date.daysInMonth()) , QTime(23,59,59)).toSecsSinceEpoch();
+            qint64 time_from = QDateTime(QDate(date.year() , date.month() , 1) , QTime(0,0,0)).toSecsSinceEpoch();
+            qint64 time_to   = QDateTime(QDate(date.year() , date.month() , date.daysInMonth()) , QTime(23,59,59)).toSecsSinceEpoch();
 
             QString strMonthName = date.toString("MM.yyyy");
 

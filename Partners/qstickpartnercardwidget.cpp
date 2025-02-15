@@ -4,6 +4,7 @@
 #include <QSqlQuery>
 #include <QListWidgetItem>
 #include "common.h"
+#include "service/qselectavailablezakazs.h"
 
 extern int iUserType;
 
@@ -70,6 +71,10 @@ QStickPartnerCardWidget::QStickPartnerCardWidget(QWidget *parent)
                                 color: black;");
     if(iUserType == CarshService)
         pVMainLayout->addWidget(m_pPasswordLabel);
+
+    QPushButton * pZakazsButton = new QPushButton("Доступные заказчики");
+    connect(pZakazsButton,SIGNAL(pressed()),this,SLOT(OnZakazsPressed()));
+    pVMainLayout->addWidget(pZakazsButton);
 
     QPushButton * pULButton = new QPushButton("Реквизиты ЮЛ");
     connect(pULButton,SIGNAL(pressed()),this,SLOT(OnULPressed()));
@@ -166,6 +171,12 @@ void QStickPartnerCardWidget::SetActivPartner(QString strUuid)
         pItem->setText(QString("%1 (%2)").arg(PointsQuery.value(0).toString()).arg(PointsQuery.value(1).toString()));
         m_pPointsListWidget->addItem(pItem);
     }
+}
+
+void QStickPartnerCardWidget::OnZakazsPressed()
+{
+    QSelectAvailableZakazs dlg(m_strActivPartner);
+    dlg.exec();
 }
 
 void QStickPartnerCardWidget::OnULPressed()

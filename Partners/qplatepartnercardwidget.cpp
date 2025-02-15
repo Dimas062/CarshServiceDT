@@ -4,6 +4,7 @@
 #include <QSqlQuery>
 #include <QListWidgetItem>
 #include "common.h"
+#include "service/qselectavailablezakazs.h"
 
 extern int iUserType;
 
@@ -58,8 +59,6 @@ QPlatePartnerCardWidget::QPlatePartnerCardWidget(QWidget *parent)
                                color: black;");
     pVMainLayout->addWidget(m_pScetLabel);
 
-
-
     m_pLoginLabel = new QLabel("Логин: ");
     m_pLoginLabel->setStyleSheet("font-size: 16px;\
                                 color: black;");
@@ -71,6 +70,10 @@ QPlatePartnerCardWidget::QPlatePartnerCardWidget(QWidget *parent)
                                 color: black;");
     if(iUserType == CarshService)
         pVMainLayout->addWidget(m_pPasswordLabel);
+
+    QPushButton * pZakazsButton = new QPushButton("Доступные заказчики");
+    connect(pZakazsButton,SIGNAL(pressed()),this,SLOT(OnZakazsPressed()));
+    pVMainLayout->addWidget(pZakazsButton);
 
     QPushButton * pULButton = new QPushButton("Реквизиты ЮЛ");
     connect(pULButton,SIGNAL(pressed()),this,SLOT(OnULPressed()));
@@ -167,6 +170,12 @@ void QPlatePartnerCardWidget::SetActivPartner(QString strUuid)
         pItem->setText(QString("%1 (%2)").arg(PointsQuery.value(0).toString()).arg(PointsQuery.value(1).toString()));
         m_pPointsListWidget->addItem(pItem);
     }
+}
+
+void QPlatePartnerCardWidget::OnZakazsPressed()
+{
+    QSelectAvailableZakazs dlg(m_strActivPartner);
+    dlg.exec();
 }
 
 void QPlatePartnerCardWidget::OnULPressed()

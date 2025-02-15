@@ -51,7 +51,7 @@ QEmplTasksWidget::QEmplTasksWidget(QWidget *parent)
 
     QLabel * pDateTimeFromLabel = new QLabel("c: ");
     pFilterHLoyuot->addWidget(pDateTimeFromLabel);
-    m_pFromDateTimeEdit = new QDateTimeEdit(QDateTime::currentDateTime().addDays(-1));
+    m_pFromDateTimeEdit = new QDateTimeEdit(QDateTime(QDate::currentDate().addDays(-(QDate::currentDate().day()) + 1) , QTime(0,0,0)));
     pFilterHLoyuot->addWidget(m_pFromDateTimeEdit);
 
 

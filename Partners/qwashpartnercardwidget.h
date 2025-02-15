@@ -37,6 +37,10 @@ public:
 
     QListWidget * m_pPointsListWidget;
 
+protected:
+
+    void UpdatePointsList();
+
 
 signals:
 
@@ -44,6 +48,9 @@ public slots:
     void OnActivAccountPressed();
     void PostavshikIndexChanget(int);
     void OnULPressed();
+    void OnZakazsPressed();
+    void OnAddPointPressed();
+    void OnRemovePointPressed();
 };
 
 #endif // QWashPARTNERCARDWIDGET_H

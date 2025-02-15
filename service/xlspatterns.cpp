@@ -152,6 +152,8 @@ void WriteULsActInfo(QString strFname , QUuid uuidZakaz , QUuid uuidIspoln, QVec
         double dblItemSummCount = 0;//Общее количество всех услуг
         foreach(SSchetItem item , vItems)
         {
+            if(item.dblItemPrice == 0) continue;
+
             iItemCounter++;
 
             QXlsx::Format itemFormat;
@@ -188,6 +190,8 @@ void WriteULsActInfo(QString strFname , QUuid uuidZakaz , QUuid uuidIspoln, QVec
             dblSummCost = dblSummCost + item.dblItemPrice * item.dblCount;
         }
 
+        iItemCount = iItemCounter;
+
         QXlsx::Format cellFormat;
         cellFormat.setHorizontalAlignment(Format::AlignRight);
 
@@ -212,7 +216,7 @@ void WriteULsActInfo(QString strFname , QUuid uuidZakaz , QUuid uuidIspoln, QVec
         cellFormat.setFontBold(false);
         cellFormat.setHorizontalAlignment(Format::AlignLeft);
         xlsx.mergeCells(CellRange(iHeaderSize + iItemCount + 5 , 2 , iHeaderSize + iItemCount + 5, 33), cellFormat);
-        QString strItogo = QString("Всего оказано услуг %1, на сумму %2,00 руб.").arg(dblItemSummCount).arg(dblSummCost);
+        QString strItogo = QString("Всего оказано услуг %1, на сумму %2,00 руб.").arg(dblItemSummCount).arg(QString::number(dblSummCost , 'f', 2));
         xlsx.write( iHeaderSize + iItemCount + 5 , 2 , QVariant(strItogo),cellFormat);
 
         cellFormat.setFontBold(true);
@@ -276,40 +280,10 @@ void WriteULsSchetInfo(QString strFname , QUuid uuidZakaz , QUuid uuidIspoln, QV
     {
 
         QSqlQuery query;
-        QString strIspolnQuery = QString("select Форма, Название, Адрес, ИНН, Банк, Счет, КПП, БИК, КоррСчет, ФамилияДиректора, ИмяДиректора ,ОтчествоДиректора from ЮЛ where id='%1'").arg(uuidIspoln.toString());
 
-        query.exec(strIspolnQuery);
-        while(query.next())
-        {
-            QVariant varPoluchatel = QString("%1 %2").arg(query.value(0).toString()).arg(query.value(1).toString());
-            xlsx.write(9,1,varPoluchatel);//Получатель денег
-            xlsx.write(7,3,query.value(3));//ИНН
-            xlsx.write(11,1,query.value(4));//Банк
-            xlsx.write(9,11,query.value(5));//Счет
-            xlsx.write(10,11,query.value(7));//БИК
-            xlsx.write(11,11,query.value(8));//КоррСчет
-            xlsx.write(7,5,query.value(6));//КПП
-            QVariant varDirector = QString("%1 %2.%3.").arg(query.value(9).toString()).arg(query.value(10).toString().first(1)).arg(query.value(11).toString().first(1));
-
-            //Подписи
-            xlsx.mergeCells(CellRange(iHeaderSize + iItemCount + 9 , 1 , iHeaderSize + iItemCount + 9, 4));
-            xlsx.write(iHeaderSize + iItemCount + 9 , 1 , QVariant("Руководитель предприятия") , rigthAlignFormat);
-            xlsx.mergeCells(CellRange(iHeaderSize + iItemCount + 9 , 5 , iHeaderSize + iItemCount + 9, 7), bottomLineFormat);
-            xlsx.mergeCells(CellRange(iHeaderSize + iItemCount + 9 , 9 , iHeaderSize + iItemCount + 9, 12), bottomLineFormat);
-            xlsx.write(iHeaderSize + iItemCount + 9 , 9 , varDirector);//Директор
-
-            xlsx.mergeCells(CellRange(iHeaderSize + iItemCount + 12 , 1 , iHeaderSize + iItemCount + 12, 4));
-            xlsx.write(iHeaderSize + iItemCount + 12 , 1 , QVariant("Главный бухгалтер") , rigthAlignFormat);
-            xlsx.mergeCells(CellRange(iHeaderSize + iItemCount + 12 , 5 , iHeaderSize + iItemCount + 12, 7), bottomLineFormat);
-            xlsx.mergeCells(CellRange(iHeaderSize + iItemCount + 12 , 9 , iHeaderSize + iItemCount + 12, 12), bottomLineFormat);
-            xlsx.write(iHeaderSize + iItemCount + 12 , 9 , varDirector);//Главбух
-
-            QVariant varFullPoluchatel = QString("%1 %2 ИНН:%4  Адрес:%5").arg(query.value(0).toString()).arg(query.value(1).toString()).arg(query.value(3).toString()).arg(query.value(2).toString());
-            xlsx.write(16,4,varFullPoluchatel);//Поставщик (получаль денег)
-        }
 
         QString strZakazQuery = QString("select Форма, Название, Адрес, ИНН, Банк, Счет, КПП, БИК, КоррСчет, ФамилияДиректора, ИмяДиректора ,ОтчествоДиректора from ЮЛ where id='%1'").arg(uuidZakaz.toString());
-
+        qDebug()<<"strZakazQuery ="<<strZakazQuery;
         query.exec(strZakazQuery);
         while(query.next())
         {
@@ -331,6 +305,8 @@ void WriteULsSchetInfo(QString strFname , QUuid uuidZakaz , QUuid uuidIspoln, QV
         double dblItemSummCount = 0;//Общее количество всех услуг
         foreach(SSchetItem item , vItems)
         {
+            if(item.dblItemPrice == 0) continue;
+
             iItemCounter++;
 
             QXlsx::Format itemFormat;
@@ -361,6 +337,8 @@ void WriteULsSchetInfo(QString strFname , QUuid uuidZakaz , QUuid uuidIspoln, QV
             xlsx.write( iHeaderSize + iItemCounter , 12 , QVariant(QString::number(item.dblItemPrice * item.dblCount, 'f', 2)));
             dblSummCost = dblSummCost + item.dblItemPrice * item.dblCount;
         }
+
+        iItemCount = iItemCounter;
 
         QXlsx::Format cellFormat;
         cellFormat.setHorizontalAlignment(Format::AlignRight);
@@ -458,6 +436,38 @@ void WriteULsSchetInfo(QString strFname , QUuid uuidZakaz , QUuid uuidIspoln, QV
         xlsx.write( iHeaderSize + iItemCount + 13, 9, QVariant("Ф.И.О."), topSmallTextFormat);
 
         xlsx.write( iHeaderSize + iItemCount + 16, 4, QVariant("М.П."));
+
+        QString strIspolnQuery = QString("select Форма, Название, Адрес, ИНН, Банк, Счет, КПП, БИК, КоррСчет, ФамилияДиректора, ИмяДиректора ,ОтчествоДиректора from ЮЛ where id='%1'").arg(uuidIspoln.toString());
+
+        query.exec(strIspolnQuery);
+        while(query.next())
+        {
+            QVariant varPoluchatel = QString("%1 %2").arg(query.value(0).toString()).arg(query.value(1).toString());
+            xlsx.write(9,1,varPoluchatel);//Получатель денег
+            xlsx.write(7,3,query.value(3));//ИНН
+            xlsx.write(11,1,query.value(4));//Банк
+            xlsx.write(9,11,query.value(5));//Счет
+            xlsx.write(10,11,query.value(7));//БИК
+            xlsx.write(11,11,query.value(8));//КоррСчет
+            xlsx.write(7,5,query.value(6));//КПП
+            QVariant varDirector = QString("%1 %2.%3.").arg(query.value(9).toString()).arg(query.value(10).toString().first(1)).arg(query.value(11).toString().first(1));
+
+            //Подписи
+            xlsx.mergeCells(CellRange(iHeaderSize + iItemCount + 9 , 1 , iHeaderSize + iItemCount + 9, 4));
+            xlsx.write(iHeaderSize + iItemCount + 9 , 1 , QVariant("Руководитель предприятия") , rigthAlignFormat);
+            xlsx.mergeCells(CellRange(iHeaderSize + iItemCount + 9 , 5 , iHeaderSize + iItemCount + 9, 7), bottomLineFormat);
+            xlsx.mergeCells(CellRange(iHeaderSize + iItemCount + 9 , 9 , iHeaderSize + iItemCount + 9, 12), bottomLineFormat);
+            xlsx.write(iHeaderSize + iItemCount + 9 , 9 , varDirector);//Директор
+
+            xlsx.mergeCells(CellRange(iHeaderSize + iItemCount + 12 , 1 , iHeaderSize + iItemCount + 12, 4));
+            xlsx.write(iHeaderSize + iItemCount + 12 , 1 , QVariant("Главный бухгалтер") , rigthAlignFormat);
+            xlsx.mergeCells(CellRange(iHeaderSize + iItemCount + 12 , 5 , iHeaderSize + iItemCount + 12, 7), bottomLineFormat);
+            xlsx.mergeCells(CellRange(iHeaderSize + iItemCount + 12 , 9 , iHeaderSize + iItemCount + 12, 12), bottomLineFormat);
+            xlsx.write(iHeaderSize + iItemCount + 12 , 9 , varDirector);//Главбух
+
+            QVariant varFullPoluchatel = QString("%1 %2 ИНН:%4  Адрес:%5").arg(query.value(0).toString()).arg(query.value(1).toString()).arg(query.value(3).toString()).arg(query.value(2).toString());
+            xlsx.write(16,4,varFullPoluchatel);//Поставщик (получаль денег)
+        }
 
         if(!xlsx.save())  qDebug()<<"QXlsx temp save error";
     }

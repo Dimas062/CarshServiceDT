@@ -1,4 +1,4 @@
-#include "qWashpartnertaskdlg.h"
+#include "qwashpartnertaskdlg.h"
 #include "common.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
