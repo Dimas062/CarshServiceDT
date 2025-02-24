@@ -106,12 +106,6 @@ QCostsWidget::QCostsWidget(QWidget *parent)
 
     m_pCostsTableWidget = new QTableWidget;
     m_pCostsTableWidget->setColumnCount(5);
-    m_pCostsTableWidget->setColumnWidth(0 ,250);
-    m_pCostsTableWidget->setColumnWidth(1 ,250);
-    m_pCostsTableWidget->setColumnWidth(2 ,250);
-    m_pCostsTableWidget->setColumnWidth(3 ,250);
-    m_pCostsTableWidget->setColumnWidth(4 ,250);
-
 
 
     connect(m_pCostsTableWidget , SIGNAL(itemDoubleClicked(QTableWidgetItem*)) , this , SLOT(OnCostsDblClk(QTableWidgetItem*)));
@@ -122,6 +116,7 @@ QCostsWidget::QCostsWidget(QWidget *parent)
     QStringList headers;
     headers << "Дата/время" << "Статья расходов" << "Товар"<<"Стоимость"<<"Сотрудник";
     m_pCostsTableWidget->setHorizontalHeaderLabels(headers);
+    m_pCostsTableWidget->resizeColumnsToContents();
 }
 
 
@@ -145,8 +140,6 @@ void QCostsWidget::UpdateCostsList()
 
     int iRowCounter = 0;
     double dblSumm = 0;
-
-
 
     while(Query.next())
     {
@@ -189,6 +182,8 @@ void QCostsWidget::UpdateCostsList()
     m_pCostsTableWidget->setSpan(iRowCounter , 0 , 1 , 5);
     QTableWidgetItem * pItem = new QTableWidgetItem(QString("Итого: %1 руб.").arg(dblSumm));
     m_pCostsTableWidget->setItem(iRowCounter , 0,  pItem);
+
+    m_pCostsTableWidget->resizeColumnsToContents();
 }
 
 void QCostsWidget::OnCostsDblClk(QTableWidgetItem* item)

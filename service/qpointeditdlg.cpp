@@ -15,6 +15,10 @@ QPointEditDlg::QPointEditDlg()
     m_pPointAdressLineText = new QLineText("Адрес");
     pVMainLayout->addWidget(m_pPointAdressLineText);
 
+    m_pAliasAdressLineText = new QLineText("Псевдоним");
+    m_pAliasAdressLineText->SetToolTip("Используется при идентификации точки альтернативным названием,\n например при выгрузке в Google-таблицу заказчика, где названия отличаются.\n Нужно ввести как у заказчика в таблице, что бы система нашла в таблице данную точку");
+    pVMainLayout->addWidget(m_pAliasAdressLineText);
+
 
     QHBoxLayout *pButtonsLayout = new QHBoxLayout;
 
@@ -48,6 +52,9 @@ QString QPointEditDlg::SaveUpdateToBD()
     strQuery = QString("update \"Точки Партнеров\" set Адрес='%1' where id='%2'").arg(m_pPointAdressLineText->getText()).arg(m_strIdPoint);
     query.exec(strQuery);
 
+    strQuery = QString("update \"Точки Партнеров\" set Псевдоним='%1' where id='%2'").arg(m_pAliasAdressLineText->getText()).arg(m_strIdPoint);
+    query.exec(strQuery);
+
     return m_strIdPoint;
 }
 
@@ -55,7 +62,7 @@ QString QPointEditDlg::SaveNewToBD(QString strPartnerUuid)
 {
     m_strIdPartner = strPartnerUuid;
     m_strIdPoint = QUuid::createUuid().toString();
-    QString strQuery = QString("insert into \"Точки Партнеров\" (id, Название, Адрес, Партнер) values ('%1' , '%2' ,'%3' ,'%4')  ").arg(m_strIdPoint).arg(m_pPointNameLineText->getText()).arg(m_pPointAdressLineText->getText()).arg(m_strIdPartner);
+    QString strQuery = QString("insert into \"Точки Партнеров\" (id, Название, Адрес, Партнер , Псевдоним) values ('%1' , '%2' ,'%3' ,'%4' , '%5')  ").arg(m_strIdPoint).arg(m_pPointNameLineText->getText()).arg(m_pPointAdressLineText->getText()).arg(m_strIdPartner).arg(m_pAliasAdressLineText->getText());
     QSqlQuery query;
     query.exec(strQuery);
     return m_strIdPoint;
@@ -64,7 +71,7 @@ QString QPointEditDlg::SaveNewToBD(QString strPartnerUuid)
 void QPointEditDlg::LoadFromBD(QString strIdPoint)
 {
     m_strIdPoint = strIdPoint;
-    QString strQuery = QString("select Название, Адрес, Партнер from \"Точки Партнеров\" where id='%1' ").arg(m_strIdPoint);
+    QString strQuery = QString("select Название, Адрес, Партнер, Псевдоним from \"Точки Партнеров\" where id='%1' ").arg(m_strIdPoint);
     QSqlQuery query;
     query.exec(strQuery);
     while(query.next())
@@ -72,5 +79,6 @@ void QPointEditDlg::LoadFromBD(QString strIdPoint)
         m_pPointNameLineText->setText(query.value(0).toString());
         m_pPointAdressLineText->setText(query.value(1).toString());
         m_strIdPartner = query.value(2).toString();
+        m_pAliasAdressLineText->setText(query.value(3).toString());
     }
 }

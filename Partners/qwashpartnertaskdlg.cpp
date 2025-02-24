@@ -208,6 +208,7 @@ void QWashPartnerTaskDlg::UpdateTable()
     m_pTypesTableWidget->setSpan(iRowCounter , 0 , 1 , 5);
     QTableWidgetItem * pItem = new QTableWidgetItem(QString("Итого (с учетом вычетов): %1 руб.").arg(dblSumm - dblPenSumm));
     m_pTypesTableWidget->setItem(iRowCounter , 0,  pItem);
+    m_pTypesTableWidget->resizeColumnsToContents();
 }
 
 void QWashPartnerTaskDlg::typesCellDoubleClicked(int r, int c)

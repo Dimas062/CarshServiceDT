@@ -13,7 +13,6 @@
 #include <QVBoxLayout>
 #include "common.h"
 #include <QCheckBox>
-#include "service/qselfrombddlg.h"
 #include "service/xlspatterns.h"
 
 extern int iUserType;
@@ -66,13 +65,13 @@ QWashPartnerTaskWidget::QWashPartnerTaskWidget(QWidget *parent)
 
     m_pTasksTableWidget = new QTableWidget;
     m_pTasksTableWidget->setColumnCount(7);
-    m_pTasksTableWidget->setColumnWidth(6, 20);
     //m_pTasksTableWidget->setColumnHidden(2,true);  //Скрыли заказчика
     QStringList headers;
     headers << "Дата/время" << "Точка" <<"Комментарий"<<"Поставщик"<<"Заказчик"<<"Стоимость"<<" ";
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
     connect(m_pTasksTableWidget , SIGNAL(itemDoubleClicked(QTableWidgetItem*)) , this , SLOT(OnTasksDblClk(QTableWidgetItem*)));
     pVMainLayout->addWidget(m_pTasksTableWidget);
+    m_pTasksTableWidget->resizeColumnsToContents();
     OnFilterApplyPressed();
 }
 
@@ -169,6 +168,8 @@ void QWashPartnerTaskWidget::UpdateTasksList()
         m_strIdPostavshik = query.value(5).toString();
     }
 
+    m_pTasksTableWidget->resizeColumnsToContents();
+
 }
 
 void QWashPartnerTaskWidget::SetActivPartner(QString strUuid)
@@ -225,7 +226,6 @@ void QWashPartnerTaskWidget::OnSchetZakazPressed()
 
         /*Детализация построчно (потипно) для счета, рассчет стоимости суммарно по каждой задача и штрафа суммарно для всех типов*/
         QString strTypesExec=QString("select ЦеныЗаказчиков.Цена, SUM(\"Задача Мойка - Типы\".Количество), \"Типы задач Мойка\".Тип, \"Задача Мойка - Типы\".Ночь , sum((select \"Отмена Мойки\".Количество from \"Отмена Мойки\" where \"Отмена Мойки\".Задача = \"Задача Мойка - Типы\".Задача and \"Отмена Мойки\".Тип = \"Задача Мойка - Типы\".Тип and \"Отмена Мойки\".Ночь = \"Задача Мойка - Типы\".Ночь and \"Отмена Мойки\".Удалено<>'true')) from \"Задача Мойка - Типы\" , \"Типы задач Мойка\", ЦеныЗаказчиков where \"Типы задач Мойка\".id = \"Задача Мойка - Типы\".Тип and ЦеныЗаказчиков.Заказчик='%2' and ЦеныЗаказчиков.ТипЗадачи = \"Типы задач Мойка\".id and \"Задача Мойка - Типы\".Задача = '%1' group by \"Типы задач Мойка\".Тип , \"Задача Мойка - Типы\".Ночь , ЦеныЗаказчиков.Цена").arg(strTaskId).arg(uuidCurrentLineZakaz.toString());
-        qDebug()<<strTypesExec;
         QSqlQuery TypesQuery;
         QString strWorks;
         TypesQuery.exec(strTypesExec);

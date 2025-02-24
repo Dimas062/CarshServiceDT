@@ -61,6 +61,8 @@ QDicEditDlg::QDicEditDlg(QString strTable ,QStringList fields , bool bIsRemovedF
     pVMainLayout->addLayout(pButtonsLayout);
 
     UpdateData();
+
+    setMinimumWidth(600);
 }
 
 void QDicEditDlg::UpdateData()
@@ -97,8 +99,6 @@ void QDicEditDlg::UpdateData()
 
     QSqlQuery query;
     query.exec(strQuery);
-    qDebug()<<strQuery;
-
 
     int iRowCount = query.size();
 
@@ -156,6 +156,7 @@ void QDicEditDlg::UpdateData()
         }
         iRowCounter++;
     }
+    m_pTableWidget->resizeColumnsToContents();
 }
 
 void QDicEditDlg::OnItemDblClk(QTableWidgetItem * item)

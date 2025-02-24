@@ -64,13 +64,13 @@ QPlatePartnerTaskWidget::QPlatePartnerTaskWidget(QWidget *parent)
 
     m_pTasksTableWidget = new QTableWidget;
     m_pTasksTableWidget->setColumnCount(7);
-    m_pTasksTableWidget->setColumnWidth(6, 20);
     //m_pTasksTableWidget->setColumnHidden(2,true);  //Скрыли зазказчика
     QStringList headers;
     headers << "Дата/время" << "Точка" << "Количество"<<"Комментарий"<<"Поставщик"<<"Заказчик"<<" ";
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
     connect(m_pTasksTableWidget , SIGNAL(itemDoubleClicked(QTableWidgetItem*)) , this , SLOT(OnTasksDblClk(QTableWidgetItem*)));
     pVMainLayout->addWidget(m_pTasksTableWidget);
+    m_pTasksTableWidget->resizeColumnsToContents();
     OnFilterApplyPressed();
 }
 
@@ -143,6 +143,7 @@ void QPlatePartnerTaskWidget::UpdateTasksList()
 
         m_strIdPostavshik = query.value(6).toString();
     }
+    m_pTasksTableWidget->resizeColumnsToContents();
 }
 
 void QPlatePartnerTaskWidget::OnSchetZakazPressed()
@@ -277,7 +278,6 @@ void QPlatePartnerTaskWidget::OnSchetPressed()
 
     for(int iRowCounter = 0 ; iRowCounter<iRowCount ; iRowCounter++)
     {
-        qDebug()<<"iRowCounter="<<iRowCounter;
         if(((QCheckBox *)m_pTasksTableWidget->cellWidget(iRowCounter , 6))->isChecked() == false) continue;
 
         QString strTaskId = m_pTasksTableWidget->item(iRowCounter , 1)->data(Qt::UserRole).toString();

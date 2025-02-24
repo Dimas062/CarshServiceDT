@@ -9,6 +9,7 @@
 #include "CarshService/qcostswidget.h"
 #include "Dictionary/qdicwidget.h"
 #include <QSqlQuery>
+#include <common.h>
 
 #include <QVBoxLayout>
 
@@ -20,28 +21,28 @@ QCarshServiceMainDlg::QCarshServiceMainDlg()
     QTabWidget * pTabs = new QTabWidget();
 
     QPartnersWidget * pPartnersWidget = new QPartnersWidget;
-    pTabs->addTab(pPartnersWidget , "Партнеры");
+    pTabs->addTab(pPartnersWidget ,QIcon(":/icons/partners_icon.png"), "Партнеры");
 
     QTasksWidget * pTasksWidget = new QTasksWidget;
-    pTabs->addTab(pTasksWidget , "Задачи");
+    pTabs->addTab(pTasksWidget ,QIcon(":/icons/tasks_icon.png"), "Задачи");
 
     QCostsWidget * pCostsWidget = new QCostsWidget;
-    pTabs->addTab(pCostsWidget , "Затраты");
+    pTabs->addTab(pCostsWidget ,QIcon(":/icons/pay_icon.png"), "Затраты");
 
     QCSGraphicsWidget * pGraphicsWidget = new QCSGraphicsWidget;
-    pTabs->addTab(pGraphicsWidget , QString("Графики"));
+    pTabs->addTab(pGraphicsWidget ,QIcon(":/icons/charts2_icon.png"), QString("Графики"));
 
     QCarshsWidget * pCarshWidget = new QCarshsWidget;
-    pTabs->addTab(pCarshWidget , "Службы каршеринга");
+    pTabs->addTab(pCarshWidget ,QIcon(":/icons/carshering_icon.png"), "Службы каршеринга");
 
     QProvidersWidget * pProvidersWidget = new QProvidersWidget;
-    pTabs->addTab(pProvidersWidget , "Поставщики услуг");
+    pTabs->addTab(pProvidersWidget ,QIcon(":/icons/man_icon.png"), "Поставщики услуг");
 
     QEmploeesWidget * pEmploeesWidget = new QEmploeesWidget;
-    pTabs->addTab(pEmploeesWidget , "Сотрудники");
+    pTabs->addTab(pEmploeesWidget ,QIcon(":/icons/driver_icon.png"), "Сотрудники");
 
     QDicWidget * pDicWidget = new QDicWidget;
-    pTabs->addTab(pDicWidget , "Словари");
+    pTabs->addTab(pDicWidget ,QIcon(":/icons/book_icon.png"), "Словари");
 
     pVMainLayout->addWidget(pTabs);
 
@@ -60,12 +61,8 @@ void QCarshServiceMainDlg::OnProcessingHeartbeatTimer()
 
     QSqlQuery query;
 
-    query.exec("select id from Поставщики");
-
-    if(query.next())
-        qDebug()<<"Hardbeat "<<query.value(0).toString();
-    else
-        qDebug()<<"Hardbeat no next()";
+    if(!executeQueryWithReconnect(query , "select id from Поставщики"))
+        qDebug()<<"Hardbeat no next() from bd";
 
     mHeartbeatTimer->start(m_iHeartbeatTime);
 }

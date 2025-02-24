@@ -107,6 +107,8 @@ QWashPartnerCardWidget::QWashPartnerCardWidget(QWidget *parent)
 
     m_pPointsListWidget = new QListWidget;
     pVMainLayout->addWidget(m_pPointsListWidget);
+    connect(m_pPointsListWidget , SIGNAL(itemDoubleClicked(QListWidgetItem*)) , this , SLOT(pointsDoubleClicked(QListWidgetItem*)));
+
 
     QHBoxLayout * pPointsButtonLayout = new QHBoxLayout;
 
@@ -121,6 +123,18 @@ QWashPartnerCardWidget::QWashPartnerCardWidget(QWidget *parent)
     pVMainLayout->addLayout(pPointsButtonLayout);
 
     this->setLayout(pVMainLayout);
+}
+
+void QWashPartnerCardWidget::pointsDoubleClicked(QListWidgetItem* pItem)
+{
+    QPointEditDlg dlg;
+    dlg.LoadFromBD(pItem->data(Qt::UserRole).toString());
+    if(dlg.exec()==QDialog::Accepted)
+    {
+        dlg.SaveUpdateToBD();
+    }
+
+    UpdatePointsList();
 }
 
 void QWashPartnerCardWidget::OnActivAccountPressed()

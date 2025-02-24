@@ -2,6 +2,7 @@
 #define COMMON_H
 #include <QImage>
 #include <QString>
+#include <QSqlQuery>
 
 QString bool_to_str(bool b);
 
@@ -25,6 +26,8 @@ enum PayTypes {
     Business,
     Undefined = -1
 };
+
+bool executeQueryWithReconnect(QSqlQuery &query, const QString &queryString);
 
 QString GenNextShcetActNumber();
 

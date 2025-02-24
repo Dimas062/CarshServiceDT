@@ -13,6 +13,7 @@ public:
 
     QLineText * m_pPointNameLineText;
     QLineText * m_pPointAdressLineText;
+    QLineText * m_pAliasAdressLineText;//Используетя для обнаружения выгрузки в гугл-таблицу
 
 
     QString SaveUpdateToBD();

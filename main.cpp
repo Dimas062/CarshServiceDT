@@ -21,6 +21,7 @@ QUuid uuidCurrentUser;
 int iButtonHeight = 50;
 int iUserType = 0;
 
+
 QT_USE_NAMESPACE
 
 int main(int argc, char *argv[])
@@ -31,7 +32,6 @@ int main(int argc, char *argv[])
     QSplashScreen splash(pixmap);
     splash.show();
     splash.showMessage("Подключение к БД");
-
 
     screenGeometry = QRect(0,0,500,500);
 

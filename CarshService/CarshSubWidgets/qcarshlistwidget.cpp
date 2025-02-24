@@ -12,6 +12,8 @@
 QCarshListWidget::QCarshListWidget(QWidget *parent)
     : QWidget{parent}
 {
+    m_strCurrentCarshUuid = "";
+
     QHBoxLayout * pHMainLayout = new QHBoxLayout;
     this->setLayout(pHMainLayout);
 
@@ -20,6 +22,8 @@ QCarshListWidget::QCarshListWidget(QWidget *parent)
     m_pCarshsListWidget = new QListWidget();
     m_pCarshsListWidget->setIconSize(QSize(100,30));
     connect(m_pCarshsListWidget , SIGNAL(itemDoubleClicked(QListWidgetItem*)) , this , SLOT(carshDoubleClicked(QListWidgetItem*)));
+    connect(m_pCarshsListWidget , SIGNAL(itemClicked(QListWidgetItem*)) , this , SLOT(carshClicked(QListWidgetItem*)));
+
 
     pVListLayout->addWidget(m_pCarshsListWidget);
 
@@ -35,13 +39,45 @@ QCarshListWidget::QCarshListWidget(QWidget *parent)
 
     pVListLayout->addLayout(pButtonsHLayout);
 
-    pHMainLayout->addLayout(pVListLayout);
+    pHMainLayout->addLayout(pVListLayout , 1);
 
-    QTabWidget * pTabWidget = new QTabWidget();
+    QVBoxLayout * pVSettingsLayout = new QVBoxLayout;
 
-    pHMainLayout->addWidget(pTabWidget);
+    m_pWashGoogleTableIdLineText = new QLineText("Id Google-таблицы моек");
+    m_pWashGoogleTableIdLineText->SetToolTip("Id Google-таблицы моек, в которую посуточно выгружается\n статистика по выполненным работам каждой точкой");
+    pVSettingsLayout->addWidget(m_pWashGoogleTableIdLineText);
+
+    QPushButton * pApplySettingsButton = new QPushButton("Применить");
+    connect(pApplySettingsButton,SIGNAL(pressed()),this,SLOT(OnApplySettingsPressed()));
+    pVSettingsLayout->addWidget(pApplySettingsButton);
+
+    pHMainLayout->addLayout(pVSettingsLayout , 3);
 
     UpdateCarshsList();
+}
+
+void QCarshListWidget::OnApplySettingsPressed()
+{
+    QString strExec = QString("update Заказчики set ГуглТаблицаМоек='%1'  where id = '%2'").arg(m_pWashGoogleTableIdLineText->getText()).arg(m_strCurrentCarshUuid);
+    QSqlQuery query;
+    query.exec(strExec);
+}
+
+void QCarshListWidget::UpdateSelectedCarshSettings()
+{
+    QString strExec = QString("select ГуглТаблицаМоек from Заказчики where id = '%1'").arg(m_strCurrentCarshUuid);
+    QSqlQuery query;
+    query.exec(strExec);
+    while(query.next())
+    {
+        m_pWashGoogleTableIdLineText->setText(query.value(0).toString());
+    }
+}
+
+void QCarshListWidget::carshClicked(QListWidgetItem * pItem)
+{
+    m_strCurrentCarshUuid = pItem->data(Qt::UserRole + 1).toString();
+    UpdateSelectedCarshSettings();
 }
 
 

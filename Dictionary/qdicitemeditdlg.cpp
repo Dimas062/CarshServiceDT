@@ -19,7 +19,7 @@ QDicItemEditDlg::QDicItemEditDlg(QString strTable , QString strId , QString strF
     pVMainLayout->addWidget(m_pLineEdit);
 
     QString strExec = QString("select \"%1\" from \"%2\" where id='%3'").arg(strField).arg(strTable).arg(strId);
-    qDebug()<<strExec;
+
     QSqlQuery query;
     query.exec(strExec);
     while(query.next())

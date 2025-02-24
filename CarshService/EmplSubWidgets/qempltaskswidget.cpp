@@ -86,6 +86,7 @@ QEmplTasksWidget::QEmplTasksWidget(QWidget *parent)
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
     connect(m_pTasksTableWidget , SIGNAL(itemDoubleClicked(QTableWidgetItem*)) , this , SLOT(OnTasksDblClk(QTableWidgetItem*)));
     pVMainLayout->addWidget(m_pTasksTableWidget);
+    m_pTasksTableWidget->resizeColumnsToContents();
     OnFilterApplyPressed();
 }
 
@@ -178,8 +179,6 @@ void QEmplTasksWidget::UpdateTasksList()
     double dblSumm = 0;
     while(query.next())
     {
-
-       // QTableWidgetItem * pItem = new QTableWidgetItem(QString("%1 - %2 (%3). %4 руб.").arg(QDateTime::fromSecsSinceEpoch(query.value(1).toInt()).toString("dd.MM.yyyy hh:mm")).arg(query.value(2).toString()).arg(query.value(5).toString()).arg(query.value(6).toString()));
         QTableWidgetItem * pItem = new QTableWidgetItem(QDateTime::fromSecsSinceEpoch(query.value(1).toInt()).toString("dd.MM.yyyy hh:mm"));
         pItem->setData(Qt::UserRole , query.value(0));
         pItem->setData(Qt::UserRole +1 , query.value(3));
@@ -225,6 +224,8 @@ void QEmplTasksWidget::UpdateTasksList()
     QFont font;
     font.setBold(true);
     m_pTasksTableWidget->item(iRowCounter, 0)->setFont(font);
+
+    m_pTasksTableWidget->resizeColumnsToContents();
 }
 
 void QEmplTasksWidget::OnFilterApplyPressed()

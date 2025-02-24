@@ -281,7 +281,6 @@ QString convertSharedFormula(const QString &rootFormula,
     // Replace "A1", "$A1", "A$1" segment with proper one.
     QStringList result;
     for (const auto &p : segments) {
-        // qDebug()<<p.first<<p.second;
         if (p.second != -1 && p.second != 3) {
             CellReference oldRef(p.first);
             int row = p.second & 0x02 ? oldRef.row() : oldRef.row() - rootCell.row() + cell.row();

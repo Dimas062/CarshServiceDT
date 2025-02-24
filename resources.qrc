@@ -7,5 +7,14 @@
         <file>templates/schet.xlsx</file>
         <file>templates/act.xlsx</file>
         <file>icons/Splash.png</file>
+        <file>icons/book_icon.png</file>
+        <file>icons/man_icon.png</file>
+        <file>icons/carshering_icon.png</file>
+        <file>icons/partners_icon.png</file>
+        <file>icons/pay_icon.png</file>
+        <file>icons/charts2_icon.png</file>
+        <file>icons/tasks_icon.png</file>
+        <file>icons/driver_icon.png</file>
+        <file>icons/driver_icon2.png</file>
     </qresource>
 </RCC>

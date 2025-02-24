@@ -1143,9 +1143,7 @@ bool Styles::readCellXfs(QXmlStreamReader &reader)
                 Format format;
                 const auto &xfAttrs = reader.attributes();
 
-                //        qDebug()<<reader.name()<<reader.tokenString()<<" .........";
                 //        for (int i=0; i<xfAttrs.size(); ++i)
-                //            qDebug()<<"... "<<i<<" "<<xfAttrs[i].name()<<xfAttrs[i].value();
 
                 if (xfAttrs.hasAttribute(QLatin1String("numFmtId"))) {
                     const auto numFmtIndex = xfAttrs.value(QLatin1String("numFmtId")).toInt();

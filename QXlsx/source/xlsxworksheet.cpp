@@ -1963,12 +1963,10 @@ double Worksheet::columnWidth(int column)
     // [dev54]
     if (columnInfoList.size() == 0) {
         // column information is not found
-        // qDebug() << "[debug]" << __FUNCTION__ <<  "column (info) is not found. " << column;
     }
 
     if (columnInfoList.count() == 1) {
         // column information is found
-        // qDebug() << "[debug]" << __FUNCTION__ <<  "column (info) is found. " << column <<
         // oneColWidth;
         double oneColWidth = columnInfoList.at(0)->width;
         bool isSetWidth    = columnInfoList.at(0)->isSetWidth;
@@ -2505,8 +2503,6 @@ void WorksheetPrivate::loadXmlColumnsInfo(QXmlStreamReader &reader)
                     info->outlineLevel = colAttrs.value(QLatin1String("outlineLevel")).toInt();
                 }
 
-                // qDebug() << "[debug] " << __FUNCTION__ << min << max << info->width << hasWidth;
-
                 colsInfo.insert(min, info);
                 for (int col = min; col <= max; ++col) {
                     colsInfoHelper[col] = info;
@@ -2852,7 +2848,6 @@ QVector<CellLocation> Worksheet::getFullCells(int *maxRow, int *maxCol)
     QVector<CellLocation> ret;
 
     // QString privateName = d->name; // name of sheet (not object type)
-    // qDebug() << privateName ;
 
     if (d->type == AbstractSheet::ST_WorkSheet) {
         // use current sheet

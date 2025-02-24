@@ -11,8 +11,6 @@ QPlatePartnersWidget::QPlatePartnersWidget(QWidget *parent)
     QVBoxLayout * pVMainLayout = new QVBoxLayout;
     this->setLayout(pVMainLayout);
 
-    QHBoxLayout * pHMainLayout = new QHBoxLayout;
-
     QHBoxLayout * pHPlatePartnerLayout = new QHBoxLayout;
 
     QVBoxLayout * pPartnersLayout = new QVBoxLayout;
@@ -26,7 +24,7 @@ QPlatePartnersWidget::QPlatePartnersWidget(QWidget *parent)
 
     pPartnersLayout->addWidget(m_pPlatePartnerListWidget);
 
-    pHPlatePartnerLayout->addLayout(pPartnersLayout);
+    pHPlatePartnerLayout->addLayout(pPartnersLayout , 1);
 
     m_pPlatePartnerTabWidget = new QTabWidget;
 
@@ -38,7 +36,7 @@ QPlatePartnersWidget::QPlatePartnersWidget(QWidget *parent)
 
     m_pPlatePartnerTabWidget->addTab(m_pPlatePartnerCardWidget , "Карточка");
 
-    pHPlatePartnerLayout->addWidget(m_pPlatePartnerTabWidget);
+    pHPlatePartnerLayout->addWidget(m_pPlatePartnerTabWidget , 3);
 
     pVMainLayout->addLayout(pHPlatePartnerLayout);
 
@@ -60,8 +58,6 @@ QPlatePartnersWidget::QPlatePartnersWidget(QWidget *parent)
     }
 
     connect(m_pPlatePartnerListWidget , SIGNAL(itemClicked(QListWidgetItem*)) , this , SLOT(PlatePartnerClicked(QListWidgetItem*)));
-
-    this->setLayout(pHMainLayout);
 }
 
 

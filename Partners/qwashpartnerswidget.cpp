@@ -11,10 +11,7 @@ QWashPartnersWidget::QWashPartnersWidget(QWidget *parent)
     QVBoxLayout * pVMainLayout = new QVBoxLayout;
     this->setLayout(pVMainLayout);
 
-    QHBoxLayout * pHMainLayout = new QHBoxLayout;
-
     QHBoxLayout * pHWashPartnerLayout = new QHBoxLayout;
-
 
     QVBoxLayout * pPartnersLayout = new QVBoxLayout;
 
@@ -27,7 +24,7 @@ QWashPartnersWidget::QWashPartnersWidget(QWidget *parent)
 
     pPartnersLayout->addWidget(m_pWashPartnerListWidget);
 
-    pHWashPartnerLayout->addLayout(pPartnersLayout);
+    pHWashPartnerLayout->addLayout(pPartnersLayout , 1);
 
     m_pWashPartnerTabWidget = new QTabWidget;
 
@@ -39,7 +36,7 @@ QWashPartnersWidget::QWashPartnersWidget(QWidget *parent)
 
     m_pWashPartnerTabWidget->addTab(m_pWashPartnerCardWidget , "Карточка");
 
-    pHWashPartnerLayout->addWidget(m_pWashPartnerTabWidget);
+    pHWashPartnerLayout->addWidget(m_pWashPartnerTabWidget , 3);
 
     pVMainLayout->addLayout(pHWashPartnerLayout);
 
@@ -58,8 +55,6 @@ QWashPartnersWidget::QWashPartnersWidget(QWidget *parent)
     }
 
     connect(m_pWashPartnerListWidget , SIGNAL(itemClicked(QListWidgetItem*)) , this , SLOT(WashPartnerClicked(QListWidgetItem*)));
-
-    this->setLayout(pHMainLayout);
 }
 
 

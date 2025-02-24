@@ -3,7 +3,41 @@
 #include <QDebug>
 #include <QSqlQuery>
 #include <QDate>
+#include <QSqlError>
 
+bool reconnectToDatabase(QSqlDatabase &db) {
+    if (db.isOpen()) {
+        db.close();
+    }
+    if (db.open()) {
+        qDebug() << "Reconnected to the database successfully.";
+        return true;
+    } else {
+        qDebug() << "Failed to reconnect to the database:" << db.lastError().text();
+        return false;
+    }
+}
+
+bool executeQueryWithReconnect(QSqlQuery & query ,const QString &queryString) {
+    if (!query.exec(queryString)) {
+        QSqlError error = query.lastError();
+        if (error.type() == QSqlError::ConnectionError) {
+            // Попытка переподключения
+            QSqlDatabase db = QSqlDatabase::database();
+            if (reconnectToDatabase(db)) {
+                // Повторное выполнение запроса после переподключения
+                return query.exec(queryString);
+            } else {
+                qDebug() << "Failed to execute query after reconnection.";
+                return false;
+            }
+        } else {
+            qDebug() << "Query execution failed:" << error.text();
+            return false;
+        }
+    }
+    return true;
+}
 
 QString bool_to_str(bool b)
 {

@@ -91,7 +91,7 @@ void QEmplGraphWidget::OnFilterApplyPressed()
 
 void QEmplGraphWidget::UpdateGraph()
 {
-
+    qDebug()<<"QEmplGraphWidget::UpdateGraph()";
     m_pBarSet->remove(0 , m_pBarSet->count());
 
     m_pAxisX->clear();
@@ -105,6 +105,8 @@ void QEmplGraphWidget::UpdateGraph()
         QDate from = m_pFromDateEdit->date();
         QDate to = m_pToDateEdit->date();
 
+        qDebug()<<"QEmplGraphWidget::UpdateGraph()";
+
         QSqlQuery query;
 
         for(QDate date = from; date <= to; date = date.addMonths(1))
@@ -115,7 +117,7 @@ void QEmplGraphWidget::UpdateGraph()
             QString strMonthName = date.toString("MM.yyyy");
 
             QString strQuery = QString("select SUM(\"Платежи сотрудников\".Сумма) from \"Платежи сотрудников\" where \"Платежи сотрудников\".id in (select \"Расширение задачи ШС\".\"Оплата парковки\" from \"Расширение задачи ШС\",Задачи where \"Расширение задачи ШС\".id = Задачи.Расширение and Задачи.\"Дата Время\">%1 and  Задачи.\"Дата Время\"<=%2 and Задачи.Исполнитель='%3')").arg(time_from).arg(time_to).arg(m_pEmplCombo->currentData().toString());
-
+            qDebug()<<strQuery;
             query.exec(strQuery);
             while(query.next())
             {

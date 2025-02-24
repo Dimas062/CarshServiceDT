@@ -72,7 +72,6 @@ SOURCES += \
     qregisterdlg.cpp \
     service/qdelopenpendlg.cpp \
     Dictionary/qdiceditdlg.cpp \
-    service/qgooglespreadsheets.cpp \
     service/qpointeditdlg.cpp \
     service/qselectavailablezakazs.cpp \
     service/qselfrombddlg.cpp \
@@ -139,7 +138,6 @@ HEADERS += \
     qregisterdlg.h \
     service/qdelopenpendlg.h \
     Dictionary/qdiceditdlg.h \
-    service/qgooglespreadsheets.h \
     service/qpointeditdlg.h \
     service/qselectavailablezakazs.h \
     service/qselfrombddlg.h \

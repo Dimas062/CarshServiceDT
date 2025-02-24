@@ -85,6 +85,7 @@ QCarshEmplTasksWidget::QCarshEmplTasksWidget()
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
     connect(m_pTasksTableWidget , SIGNAL(itemDoubleClicked(QTableWidgetItem*)) , this , SLOT(OnTasksDblClk(QTableWidgetItem*)));
     pVMainLayout->addWidget(m_pTasksTableWidget);
+    m_pTasksTableWidget->resizeColumnsToContents();
 
     /*Лаяуты с фиьтрами типов задач*/
     QHBoxLayout * pAddFiltresLayout = new QHBoxLayout;
@@ -171,7 +172,7 @@ void QCarshEmplTasksWidget::UpdateTasksList()
     query.exec(strQuery);
     m_pTasksTableWidget->setRowCount(query.size() + 1);
     int iRowCounter = 0;
-        double dblPay = 0;
+    double dblPay = 0;
     while(query.next())
     {
         QTableWidgetItem * pItem = new QTableWidgetItem(QDateTime::fromSecsSinceEpoch(query.value(1).toInt()).toString("dd.MM.yyyy hh:mm"));
@@ -224,6 +225,7 @@ void QCarshEmplTasksWidget::UpdateTasksList()
     QFont font;
     font.setBold(true);
     m_pTasksTableWidget->item(iRowCounter, 0)->setFont(font);
+    m_pTasksTableWidget->resizeColumnsToContents();
 }
 
 void QCarshEmplTasksWidget::OnTasksDblClk(QTableWidgetItem* item)

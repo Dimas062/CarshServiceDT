@@ -51,6 +51,7 @@ public slots:
     void OnZakazsPressed();
     void OnAddPointPressed();
     void OnRemovePointPressed();
+    void pointsDoubleClicked(QListWidgetItem*);
 };
 
 #endif // QWashPARTNERCARDWIDGET_H

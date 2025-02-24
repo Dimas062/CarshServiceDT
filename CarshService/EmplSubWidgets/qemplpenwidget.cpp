@@ -55,6 +55,7 @@ QEmplPenWidget::QEmplPenWidget(QWidget *parent)
     m_pPenTableWidget->setHorizontalHeaderLabels(headers);
     connect(m_pPenTableWidget , SIGNAL(itemDoubleClicked(QTableWidgetItem*)) , this , SLOT(OnPenDblClk(QTableWidgetItem*)));
     pVMainLayout->addWidget(m_pPenTableWidget);
+    m_pPenTableWidget->resizeColumnsToContents();
 
     QHBoxLayout * pButtonsLayout = new QHBoxLayout;
 
@@ -153,6 +154,5 @@ void QEmplPenWidget::UpdatePenList()
         iRowCounter++;
     }
 
-
-
+    m_pPenTableWidget->resizeColumnsToContents();
 }

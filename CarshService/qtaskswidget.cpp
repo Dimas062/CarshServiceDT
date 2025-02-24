@@ -37,8 +37,6 @@ QTasksWidget::QTasksWidget(QWidget *parent)
     QHBoxLayout * pFilterHLoyuot = new QHBoxLayout();
     QHBoxLayout * pFilterHLoyuot2 = new QHBoxLayout();
 
-    pFilterHLoyuot->addStretch();
-
     /*Типы задач*/
 
     QLabel * pTaskTypeLabel = new QLabel("Тип задачи");
@@ -98,11 +96,10 @@ QTasksWidget::QTasksWidget(QWidget *parent)
         m_pCarshsComboBox->addItem(CarshsQuery.value(1).toString() , CarshsQuery.value(0));
     }
 
-    m_pOnlyFinishedCheckBox = new QCheckBox("Только завершенные");
-    pFilterHLoyuot->addWidget(m_pOnlyFinishedCheckBox);
-
     pFilterHLoyuot->addStretch();
 
+    m_pOnlyFinishedCheckBox = new QCheckBox("Только завершенные");
+    pFilterHLoyuot->addWidget(m_pOnlyFinishedCheckBox);
 
     /*Период*/
     QLabel * pDateTimeFromLabel = new QLabel("c: ");
@@ -117,14 +114,13 @@ QTasksWidget::QTasksWidget(QWidget *parent)
     m_pToDateTimeEdit = new QDateTimeEdit(QDateTime::currentDateTime());
     pFilterHLoyuot2->addWidget(m_pToDateTimeEdit);
 
-    pFilterHLoyuot->addStretch();
+    pFilterHLoyuot2->addStretch();
 
     QLabel * pNumberLabel = new QLabel("ГРЗ: ");
     pFilterHLoyuot2->addWidget(pNumberLabel);
     m_pNumberEdit = new QLineEdit();
+    m_pNumberEdit->setFixedWidth(120);
     pFilterHLoyuot2->addWidget(m_pNumberEdit);
-
-    pFilterHLoyuot2->addStretch();
 
     pVMainLayout->addLayout(pFilterHLoyuot);
     pVMainLayout->addLayout(pFilterHLoyuot2);
@@ -144,14 +140,14 @@ QTasksWidget::QTasksWidget(QWidget *parent)
     pVMainLayout->addSpacing(5);
 
     m_pTasksTableWidget = new QTableWidget;
-    m_pTasksTableWidget->setColumnCount(8);
-    m_pTasksTableWidget->setColumnWidth(7, 20);
+    m_pTasksTableWidget->setColumnCount(9);
     //m_pTasksTableWidget->setColumnHidden(2,true);  //Скрыли зазказчика
     QStringList headers;
-    headers << "Дата/время" << "Задача" << "Заказчик"<<"Сумма сотруднику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<" ";
+    headers << "Дата/время" << "Задача" << "Заказчик"<<"Сумма сотруднику"<<"Сумма заказчику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<" ";
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
     connect(m_pTasksTableWidget , SIGNAL(itemDoubleClicked(QTableWidgetItem*)) , this , SLOT(OnTasksDblClk(QTableWidgetItem*)));
     pVMainLayout->addWidget(m_pTasksTableWidget);
+    m_pTasksTableWidget->resizeColumnsToContents();
 
     /*Лаяуты с фиьтрами типов задач*/
     QHBoxLayout * pAddFiltresLayout = new QHBoxLayout;
@@ -391,31 +387,27 @@ void QTasksWidget::UpdateTasksList()
     m_pTasksTableWidget->clear();
     m_pTasksTableWidget->clearSpans();
     m_pTasksTableWidget->setRowCount(0);
-    m_pTasksTableWidget->setColumnCount(8);
 
     /*Задачи пользователей*/
-
     QStringList headers;
 
+    QLocale locale(QLocale::Russian);
 
     /*Выбрана штрафстоянка - доп. столбцы штрафстоянки*/
     if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid::fromString("8078b7ce-e423-49ae-9ce6-17758b852b33"))
     {
-        headers << "Дата/время" << "Задача" << "Заказчик"<<"Сумма сотруднику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<"Причина задержания"<<" ";
-        m_pTasksTableWidget->setColumnCount(9);
-        m_pTasksTableWidget->setColumnWidth(7, 100);
-        m_pTasksTableWidget->setColumnWidth(8, 20);
+        headers << "Дата/время" << "Задача" << "Заказчик"<<"Сумма сотруднику"<<"Сумма заказчику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<"Причина задержания"<<" ";
+        m_pTasksTableWidget->setColumnCount(10);
     }
     else
     {
-        headers << "Дата/время" << "Задача" << "Заказчик"<<"Сумма сотруднику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<" ";
-        m_pTasksTableWidget->setColumnCount(8);
-        m_pTasksTableWidget->setColumnWidth(7, 20);
+        headers << "Дата/время" << "Задача" << "Заказчик"<<"Сумма сотруднику"<<"Сумма заказчику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<" ";
+        m_pTasksTableWidget->setColumnCount(9);
     }
 
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
     QString strQuery =  QString("SELECT Задачи.id, Задачи.\"Дата Время\", \"Типы задач\".\"Тип\" , \"Типы задач\".id , Задачи.\"Время выполнения\" , Заказчики.Название , Задачи.Цена , %3 , Пользователи.Имя, Пользователи.Фамилия , Пользователи. Отчество ,  Заказчики.id , Заказчики.ЮЛ, ЦеныЗаказчиков.Цена,  %4 FROM \"Типы задач\", Задачи, Заказчики, Пользователи, ЦеныЗаказчиков where ЦеныЗаказчиков.Заказчик=Заказчики.id and ЦеныЗаказчиков.ТипЗадачи=Задачи.Тип and Заказчики.id=Задачи.Заказчик and Задачи.Исполнитель=Пользователи.id and Задачи.Тип = \"Типы задач\".id and Задачи.Удалено<> 'true'  %2 order by Задачи.\"Дата Время\" desc").arg(m_filtersStr).arg(NUMBER_BY_TASK).arg(PAY_BY_TASK);
-    qDebug()<<strQuery;
+
     QSqlQuery query;
     query.exec(strQuery);
 
@@ -424,8 +416,9 @@ void QTasksWidget::UpdateTasksList()
     m_pTasksTableWidget->setRowCount(query.size() + 1);//+1 для итого
 
     int iRowCounter = 0;
-    double dblSumm = 0;
-    double dblPay = 0;
+    double dblSumm        = 0;//Итого сотрудникам
+    double dblPay         = 0;//Итого затраты
+    double dblZakazSumm   = 0;//Итого заказчику
     while(query.next())
     {
         if(m_pOnlyFinishedCheckBox->isChecked())
@@ -459,37 +452,45 @@ void QTasksWidget::UpdateTasksList()
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTasksTableWidget->setItem(iRowCounter , 2,  pItem);
 
-        /*Сумма*/
-        pItem = new QTableWidgetItem(query.value(6).toString());
+        /*Сумма сотруднику*/
+        pItem = new QTableWidgetItem(locale.toString(query.value(6).toInt()));
         pItem->setData(Qt::UserRole , query.value(0));
         pItem->setData(Qt::UserRole +1 , query.value(3));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTasksTableWidget->setItem(iRowCounter , 3,  pItem);
         dblSumm = dblSumm + query.value(6).toDouble();
 
+        /*Сумма для заказчика*/
+        pItem = new QTableWidgetItem(locale.toString(query.value(13).toInt()));
+        pItem->setData(Qt::UserRole , query.value(0));
+        pItem->setData(Qt::UserRole +1 , query.value(3));
+        pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        m_pTasksTableWidget->setItem(iRowCounter , 4,  pItem);
+        dblZakazSumm = dblZakazSumm + query.value(13).toDouble();
+
         /*ГРЗ*/
         pItem = new QTableWidgetItem(query.value(7).toString());
         pItem->setData(Qt::UserRole , query.value(0));
         pItem->setData(Qt::UserRole +1 , query.value(3));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        m_pTasksTableWidget->setItem(iRowCounter , 4,  pItem);
+        m_pTasksTableWidget->setItem(iRowCounter , 5,  pItem);
 
         /*Сотрудник*/
         pItem = new QTableWidgetItem(QString("%1 %2 %3").arg(query.value(8).toString()).arg(query.value(9).toString()).arg(query.value(10).toString()));
         pItem->setData(Qt::UserRole , query.value(0));
         pItem->setData(Qt::UserRole +1 , query.value(3));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        m_pTasksTableWidget->setItem(iRowCounter , 5,  pItem);
+        m_pTasksTableWidget->setItem(iRowCounter , 6,  pItem);
 
         /*Затраты*/
-        pItem = new QTableWidgetItem(query.value(14).toString());
+        pItem = new QTableWidgetItem(locale.toString(query.value(14).toInt()));
         pItem->setData(Qt::UserRole , query.value(0));
         pItem->setData(Qt::UserRole +1 , query.value(3));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        m_pTasksTableWidget->setItem(iRowCounter , 6,  pItem);
+        m_pTasksTableWidget->setItem(iRowCounter , 7,  pItem);
         dblPay = dblPay + query.value(14).toDouble();
 
-        int iChecBoxCol = 7;
+        int iChecBoxCol = 8;
 
         /*Выбрана штрафстоянка - доп. столбцы штрафстоянки*/
         if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid::fromString("8078b7ce-e423-49ae-9ce6-17758b852b33"))
@@ -504,10 +505,10 @@ void QTasksWidget::UpdateTasksList()
                 pItem->setData(Qt::UserRole , query.value(0));
                 pItem->setData(Qt::UserRole +1 , query.value(3));
                 pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-                m_pTasksTableWidget->setItem(iRowCounter , 7,  pItem);
+                m_pTasksTableWidget->setItem(iRowCounter , 8,  pItem);
 
             }
-            iChecBoxCol = 8;
+            iChecBoxCol = 9;
         }
 
         /*Чек-бокс*/
@@ -521,16 +522,24 @@ void QTasksWidget::UpdateTasksList()
     m_pTasksTableWidget->setRowCount(iRowCounter + 1);//+1 для итого
 
     /*Добавим Итого*/
-    m_pTasksTableWidget->setSpan(iRowCounter , 0 , 1 , 5);
-    QTableWidgetItem * pItem = new QTableWidgetItem(QString("Итого: %1 руб.").arg(dblSumm , 0, 'f', 2));
+    m_pTasksTableWidget->setSpan(iRowCounter , 0 , 1 , 3);
+    QTableWidgetItem * pItem = new QTableWidgetItem(QString("Итого: "));
     m_pTasksTableWidget->setItem(iRowCounter , 0,  pItem);
 
-    pItem = new QTableWidgetItem(QString(" %1 руб.").arg(dblPay , 0, 'f', 2));
-    m_pTasksTableWidget->setItem(iRowCounter , 6,  pItem);
+    pItem = new QTableWidgetItem(QString(" %1 руб.").arg(locale.toString((int)dblSumm)));
+    m_pTasksTableWidget->setItem(iRowCounter , 3,  pItem);
+
+    pItem = new QTableWidgetItem(QString(" %1 руб.").arg(locale.toString((int)dblZakazSumm)));
+    m_pTasksTableWidget->setItem(iRowCounter , 4,  pItem);
+
+    pItem = new QTableWidgetItem(QString(" %1 руб.").arg(locale.toString((int)dblPay)));
+    m_pTasksTableWidget->setItem(iRowCounter , 7,  pItem);
 
     QFont font;
     font.setBold(true);
     m_pTasksTableWidget->item(iRowCounter, 0)->setFont(font);
+
+    m_pTasksTableWidget->resizeColumnsToContents();
 }
 
 void QTasksWidget::OnFilterApplyPressed()

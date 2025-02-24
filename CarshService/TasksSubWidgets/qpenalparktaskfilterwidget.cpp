@@ -28,6 +28,8 @@ QPenalParkTaskFilterWidget::QPenalParkTaskFilterWidget(QWidget *parent)
         m_pGibddCombo->addItem(query.value(1).toString() , query.value(0));
     }
 
+    pMainHLayout->addStretch();
+
     QLabel * pParkingLabel = new QLabel("Штрафстоянка:");
     pMainHLayout->addWidget(pParkingLabel);
     m_pParkingCombo = new QComboBox;
@@ -41,6 +43,8 @@ QPenalParkTaskFilterWidget::QPenalParkTaskFilterWidget(QWidget *parent)
     {
         m_pParkingCombo->addItem(query.value(1).toString() , query.value(0));
     }
+
+    pMainHLayout->addStretch();
 
     QLabel * pReasonLabel = new QLabel("Причина задержания:");
     pMainHLayout->addWidget(pReasonLabel);

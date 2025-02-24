@@ -439,8 +439,6 @@ void DrawingAnchor::loadXmlObjectShape(QXmlStreamReader &reader)
     while (!reader.atEnd()) {
         reader.readNextStartElement();
 
-        // qDebug() << __FUNCTION__ << reader.name().toString();
-
         if (reader.tokenType() == QXmlStreamReader::StartElement) {
             if (reader.name() == QLatin1String("nvSpPr")) {
 
@@ -462,8 +460,6 @@ void DrawingAnchor::loadXmlObjectShape(QXmlStreamReader &reader)
     while (!reader.atEnd())
     {
         reader.readNextStartElement();
-
-        // qDebug() << __FUNCTION__ << reader.name().toString();
 
         if (reader.tokenType() == QXmlStreamReader::StartElement)
         {
