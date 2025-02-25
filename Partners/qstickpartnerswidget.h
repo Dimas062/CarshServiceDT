@@ -4,8 +4,8 @@
 #include <QWidget>
 #include <QTabWidget>
 #include <QListWidget>
-#include "partners/qstickpartnertaskwidget.h"
-#include "partners/qstickpartnercardwidget.h"
+#include "Partners/qstickpartnertaskwidget.h"
+#include "Partners/qstickpartnercardwidget.h"
 
 class QStickPartnersWidget : public QWidget
 {

@@ -1,4 +1,4 @@
-#include "qStickpartnerswidget.h"
+#include "qstickpartnerswidget.h"
 #include <QHBoxLayout>
 #include <QSqlQuery>
 #include "common.h"

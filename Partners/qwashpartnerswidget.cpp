@@ -1,4 +1,4 @@
-#include "qWashpartnerswidget.h"
+#include "qwashpartnerswidget.h"
 #include <QHBoxLayout>
 #include <QSqlQuery>
 #include "common.h"

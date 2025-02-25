@@ -1,4 +1,4 @@
-#include "qWashpartnercardwidget.h"
+#include "qwashpartnercardwidget.h"
 #include <QVBoxLayout>
 #include <QString>
 #include <QSqlQuery>

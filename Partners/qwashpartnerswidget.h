@@ -4,8 +4,8 @@
 #include <QWidget>
 #include <QTabWidget>
 #include <QListWidget>
-#include "partners/qWashpartnertaskwidget.h"
-#include "partners/qWashpartnercardwidget.h"
+#include "Partners/qwashpartnertaskwidget.h"
+#include "Partners/qwashpartnercardwidget.h"
 
 class QWashPartnersWidget : public QWidget
 {

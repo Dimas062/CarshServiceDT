@@ -1,4 +1,4 @@
-#include "qStickpartnercardwidget.h"
+#include "qstickpartnercardwidget.h"
 #include <QVBoxLayout>
 #include <QString>
 #include <QSqlQuery>

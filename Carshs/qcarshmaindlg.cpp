@@ -1,4 +1,4 @@
-#include "QCarshMainDlg.h"
+#include "qcarshmaindlg.h"
 #include <QTabWidget>
 #include <QVBoxLayout>
 #include "Carshs/qcarshempltaskswidget.h"
