@@ -244,7 +244,6 @@ void QTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
 //У задач сотрудников счет формируется только для заказчика, но в двух вариантах - услуги и затраты
 void QTasksWidget::OnSchetPressed()
 {
-    qDebug()<<"QTasksWidget::OnSchetPressed()";
     QSqlQuery query;
 
     QUuid uuidULZakazIdUL = QUuid();
@@ -252,7 +251,7 @@ void QTasksWidget::OnSchetPressed()
     /*Выбор поставщика тоже делаем диалогом*/
     QSelFromBdDlg selPostDlg("Поставщики" , "Название");
     if(selPostDlg.exec() == QDialog::Rejected) return;
-qDebug()<<"1";
+
     QUuid uuidULPostavId;
 
     QString strPostavULQueru = QString("select ЮЛ from Поставщики where id='%1'").arg(selPostDlg.m_strRetId);
@@ -263,7 +262,7 @@ qDebug()<<"1";
     //Заполнение массива элементов для счета
     QVector<SSchetItem> vCurrentSchetItems;
     QVector<SSchetItem> vCurrentSchetZatratiItems;
-qDebug()<<"2";
+
     SSchetItem schetItem;
 
     int iRowCount = m_pTasksTableWidget->rowCount();
@@ -272,11 +271,11 @@ qDebug()<<"2";
 
     /*Выбрана штрафстоянка - доп. столбцы штрафстоянки*/
     if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid::fromString("8078b7ce-e423-49ae-9ce6-17758b852b33")) iCheckBoxCol = 9;
-qDebug()<<"3"<<"iCheckBoxCol = "<<iCheckBoxCol;
+
     for(int iRowCounter = 0 ; iRowCounter<iRowCount - 1; iRowCounter++) //-1 - итого
     {
         if(((QCheckBox *)m_pTasksTableWidget->cellWidget(iRowCounter , iCheckBoxCol))->isChecked() == false) continue;
-qDebug()<<"4";
+
         QUuid uuidCurrentLineZakazUL = m_pTasksTableWidget->item(iRowCounter , 1)->data(Qt::UserRole + 5).toUuid();
         //QUuid uuidCurrentLineZakaz   = m_pTasksTableWidget->item(iRowCounter , 1)->data(Qt::UserRole + 6).toUuid();
 
@@ -286,24 +285,24 @@ qDebug()<<"4";
             return;
         }
         uuidULZakazIdUL = uuidCurrentLineZakazUL;
-qDebug()<<"5";
+
         schetItem.dblCount = 1;
         schetItem.strName = m_pTasksTableWidget->item(iRowCounter , 1)->text() + "(" + m_pTasksTableWidget->item(iRowCounter , 4)->text() + ")";
         schetItem.strUnitMeasure =" шт.";
         schetItem.dblItemPrice = m_pTasksTableWidget->item(iRowCounter , 1)->data(Qt::UserRole +4).toDouble();//Стоимость задачи для заказчика
-qDebug()<<"6";
+
         vCurrentSchetItems.push_back(schetItem);
-qDebug()<<"7";
+
         schetItem.dblItemPrice = m_pTasksTableWidget->item(iRowCounter , 1)->data(Qt::UserRole +2).toDouble();//Затраты
         vCurrentSchetZatratiItems.push_back(schetItem);
-qDebug()<<"8";
     }
 
-qDebug()<<"9";
+;
     QString strFileName = QFileDialog::getSaveFileName(this , "Счет" , QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) , tr("Excel (*.xls *.xlsx)"));
+    strFileName.append(".xls");
     QString strFileNameZatrati = strFileName;
     strFileNameZatrati.insert(strFileNameZatrati.length()-4 , "_Затраты");
-qDebug()<<"10";
+
     if(strFileName.length()>5)
     {
         QString strTmpFile = GetTempFNameSchet();
@@ -330,7 +329,6 @@ qDebug()<<"10";
         strFileName.insert(strFileName.length() - 4 , "_Акт");
 
         QFile::remove(strFileName);
-
 
         if(QFile::copy(strTmpFile , strFileName))
         {

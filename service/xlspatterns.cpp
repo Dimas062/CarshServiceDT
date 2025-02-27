@@ -37,15 +37,20 @@ QString months(int num)
 QString GetTempFNameSchet()
 {
     QString strTempFname(QStandardPaths::writableLocation(QStandardPaths::TempLocation));
-    strTempFname.append("tmp.xlsx");
+    strTempFname.append("/tmp.xlsx");
+
+    qDebug()<<"GetTempFNameSchet strTempFname="<<strTempFname;
 
     QFile::remove(strTempFname);
 
-    if(QFile::copy(":/templates/schet.xlsx", strTempFname))
+    QFile sourceFile(":/templates/schet.xlsx");
+
+    if(sourceFile.copy(strTempFname))
     {
         QFile::setPermissions(strTempFname, QFileDevice::ReadOwner|QFileDevice::WriteOwner);
         return strTempFname;
     }
+    qDebug()<<"no copy :/templates/schet.xlsx "<<sourceFile.errorString();
 
     return QString();
 }
@@ -54,7 +59,7 @@ QString GetTempFNameSchet()
 QString GetTempFNameAct()
 {
     QString strTempFname(QStandardPaths::writableLocation(QStandardPaths::TempLocation));
-    strTempFname.append("tmpAct.xlsx");
+    strTempFname.append("/tmpAct.xlsx");
 
     QFile::remove(strTempFname);
 
@@ -96,7 +101,11 @@ void WriteULsActInfo(QString strFname , QUuid uuidZakaz , QUuid uuidIspoln, QVec
         query.exec(strIspolnQuery);
         while(query.next())
         {
-            strIspolnDirector = QString("%1 %2.%3.").arg(query.value(9).toString()).arg(query.value(10).toString().first(1)).arg(query.value(11).toString().first(1));
+            QString strLetA = "";
+            if(query.value(10).toString().length()>0) strLetA=query.value(10).toString().first(1);
+            QString strLetB = "";
+            if(query.value(11).toString().length()>0) strLetB=query.value(11).toString().first(1);
+            strIspolnDirector = QString("%1 %2.%3.").arg(query.value(9).toString()).arg(strLetA).arg(strLetB);
             strIspolnUL = QString("%1 \"%2\"").arg(query.value(0).toString()).arg(query.value(1).toString());
             QString strIstpoln = query.value(0).toString();
             strIstpoln.append(" \"");
@@ -124,7 +133,11 @@ void WriteULsActInfo(QString strFname , QUuid uuidZakaz , QUuid uuidIspoln, QVec
         query.exec(strZakazQuery);
         while(query.next())
         {
-            strZakazDirector = QString("%1 %2.%3.").arg(query.value(9).toString()).arg(query.value(10).toString().first(1)).arg(query.value(11).toString().first(1));
+            QString strLetA = "";
+            if(query.value(10).toString().length()>0) strLetA=query.value(10).toString().first(1);
+            QString strLetB = "";
+            if(query.value(11).toString().length()>0) strLetB=query.value(11).toString().first(1);
+            strZakazDirector = QString("%1 %2.%3.").arg(query.value(9).toString()).arg(strLetA).arg(strLetB);
             strZakazUL = QString("%1 \"%2\"").arg(query.value(0).toString()).arg(query.value(1).toString());
             QString strZakaz = query.value(0).toString();
             strZakaz.append(" \"");
@@ -281,10 +294,10 @@ void WriteULsSchetInfo(QString strFname , QUuid uuidZakaz , QUuid uuidIspoln, QV
 
         QSqlQuery query;
 
-
         QString strZakazQuery = QString("select Форма, Название, Адрес, ИНН, Банк, Счет, КПП, БИК, КоррСчет, ФамилияДиректора, ИмяДиректора ,ОтчествоДиректора from ЮЛ where id='%1'").arg(uuidZakaz.toString());
         qDebug()<<"strZakazQuery ="<<strZakazQuery;
         query.exec(strZakazQuery);
+
         while(query.next())
         {
             QVariant varZakazPoluchatel = QString("%1 %2 ИНН:%4  Адрес:%5").arg(query.value(0).toString()).arg(query.value(1).toString()).arg(query.value(3).toString()).arg(query.value(2).toString());
@@ -450,7 +463,11 @@ void WriteULsSchetInfo(QString strFname , QUuid uuidZakaz , QUuid uuidIspoln, QV
             xlsx.write(10,11,query.value(7));//БИК
             xlsx.write(11,11,query.value(8));//КоррСчет
             xlsx.write(7,5,query.value(6));//КПП
-            QVariant varDirector = QString("%1 %2.%3.").arg(query.value(9).toString()).arg(query.value(10).toString().first(1)).arg(query.value(11).toString().first(1));
+            QString strLetA = "";
+            if(query.value(10).toString().length()>0) strLetA=query.value(10).toString().first(1);
+            QString strLetB = "";
+            if(query.value(11).toString().length()>0) strLetB=query.value(11).toString().first(1);
+            QVariant varDirector = QString("%1 %2.%3.").arg(query.value(9).toString()).arg(strLetA).arg(strLetB);
 
             //Подписи
             xlsx.mergeCells(CellRange(iHeaderSize + iItemCount + 9 , 1 , iHeaderSize + iItemCount + 9, 4));
@@ -470,6 +487,7 @@ void WriteULsSchetInfo(QString strFname , QUuid uuidZakaz , QUuid uuidIspoln, QV
         }
 
         if(!xlsx.save())  qDebug()<<"QXlsx temp save error";
+
     }
     else qDebug()<<"QXlsx not load file "<<strFname;
 }

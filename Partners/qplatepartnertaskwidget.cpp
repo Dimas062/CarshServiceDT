@@ -219,7 +219,7 @@ void QPlatePartnerTaskWidget::OnSchetZakazPressed()
 
 
     QString strFileName = QFileDialog::getSaveFileName(this , "Счет партнера Мойка" , QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) , tr("Excel (*.xls *.xlsx)"));
-
+    strFileName.append(".xls");
     if(strFileName.length()>5)
     {
         QString strTmpFile = GetTempFNameSchet();
@@ -323,6 +323,7 @@ void QPlatePartnerTaskWidget::OnSchetPressed()
         uuidULPartnerId = query.value(0).toUuid();
 
     QString strFileName = QFileDialog::getSaveFileName(this , "Счет партнера Мойка" , QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) , tr("Excel (*.xls *.xlsx)"));
+    strFileName.append(".xls");
 
     if(strFileName.length()>5)
     {
