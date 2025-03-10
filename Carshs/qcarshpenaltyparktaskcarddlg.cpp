@@ -104,19 +104,23 @@ QCarshPenaltyParkTaskCardDlg::QCarshPenaltyParkTaskCardDlg(QString strTaskUuid)
         QString strPicsExec = QString("select Документы.Изображение from Документы, \"Задача-Документы задач\" where Документы.id=\"Задача-Документы задач\".Документ and \"Задача-Документы задач\".Задача='%1'").arg(strTaskUuid);
         QSqlQuery PicsQuery;
         PicsQuery.exec(strPicsExec);
+
         while(PicsQuery.next())
         {
             QString tmpStr = PicsQuery.value(0).toString();
             QImage tmpImg = Base64ToImage(tmpStr);
+
             m_pPicturesWidget->AddImage(tmpImg);
         }
 
         strPicsExec = QString("select Изображение from Документы where id in (select Документ from \"Платеж сотрудника - Документы\" where Платеж = '%1')").arg(strPayId);
+
         PicsQuery.exec(strPicsExec);
         while(PicsQuery.next())
         {
             QString tmpStr = PicsQuery.value(0).toString();
             QImage tmpImg = Base64ToImage(tmpStr);
+
             m_pPicturesWidget->AddImage(tmpImg);
         }
     }

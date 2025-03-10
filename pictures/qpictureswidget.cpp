@@ -93,6 +93,7 @@ void QPicturesWidget::OnRightButton()
 
 bool QPicturesWidget::AddImage(QImage& img)
 {
+    qDebug()<<"QPicturesWidget::AddImage";
     m_Pictures.push_back(img);
     m_currentPictureIt = m_Pictures.end()-1;
     UpdatePictures();
@@ -101,6 +102,7 @@ bool QPicturesWidget::AddImage(QImage& img)
 
 bool QPicturesWidget::AddPicturePath(QString path , bool bUpdatePicture)
 {
+    qDebug()<<"QPicturesWidget::AddPicturePath";
     QImageReader reader(path);
     QImage CurrentImage;
 

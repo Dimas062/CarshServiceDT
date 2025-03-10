@@ -112,7 +112,7 @@ void QPenParkGraphWidget::UpdateGraph()
 
             QString strMonthName = date.toString("MM.yyyy");
 
-            QString strQuery = QString("select SUM(\"Платежи сотрудников\".Сумма) from \"Платежи сотрудников\" where \"Платежи сотрудников\".id in (select \"Расширение задачи ШС\".\"Оплата парковки\" from \"Расширение задачи ШС\",Задачи where \"Расширение задачи ШС\".id = Задачи.Расширение and Задачи.\"Дата Время\">%1 and  Задачи.\"Дата Время\"<=%2 and \"Расширение задачи ШС\".Штрафстоянка='%3')").arg(time_from).arg(time_to).arg(m_pParkingCombo->currentData().toString());
+            QString strQuery = QString("select SUM(\"Платежи сотрудников\".Сумма) from \"Платежи сотрудников\" where \"Платежи сотрудников\".id in (select \"Расширение задачи ШС\".\"Оплата парковки\" from \"Расширение задачи ШС\",Задачи where \"Расширение задачи ШС\".id = Задачи.Расширение and Задачи.\"Дата Время\">%1 and  Задачи.\"Дата Время\"<=%2 and Задачи.Удалено<> 'true' and \"Расширение задачи ШС\".Штрафстоянка='%3')").arg(time_from).arg(time_to).arg(m_pParkingCombo->currentData().toString());
             query.exec(strQuery);
             while(query.next())
             {

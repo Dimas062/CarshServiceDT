@@ -75,6 +75,7 @@ SOURCES += \
     service/qpointeditdlg.cpp \
     service/qselectavailablezakazs.cpp \
     service/qselfrombddlg.cpp \
+    service/qtaskhistorydlg.cpp \
     service/quleditdlg.cpp \
     service/xlspatterns.cpp
 
@@ -141,6 +142,7 @@ HEADERS += \
     service/qpointeditdlg.h \
     service/qselectavailablezakazs.h \
     service/qselfrombddlg.h \
+    service/qtaskhistorydlg.h \
     service/quleditdlg.h \
     service/xlspatterns.h
 
