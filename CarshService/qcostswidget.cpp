@@ -9,7 +9,9 @@
 #include <QDateTime>
 #include <QPushButton>
 #include <QMessageBox>
-#include <CarshService/EmplSubWidgets/qemplcostdlg.h>
+#include <QSplashScreen>
+//#include <CarshService/EmplSubWidgets/qemplcostdlg.h>
+#include "../CarshService/tasks/qcostsdialog.h"
 
 QCostsWidget::QCostsWidget(QWidget *parent)
     : QWidget{parent}
@@ -128,7 +130,6 @@ void QCostsWidget::UpdateCostsList()
     QSqlQuery Query;
     Query.exec(strExec);
 
-    //QMessageBox::information(NULL , "ddasda" , strExec);
 
     QStringList headers;
     headers << "Дата/время" << "Статья расходов" << "Товар"<<"Стоимость"<<"Сотрудник";
@@ -188,8 +189,18 @@ void QCostsWidget::UpdateCostsList()
 
 void QCostsWidget::OnCostsDblClk(QTableWidgetItem* item)
 {
-    QEmplCostDlg dlg(item->data(Qt::UserRole).toString());
+    //QEmplCostDlg dlg(item->data(Qt::UserRole).toString());
+
+    QPixmap pixmap(":/icons/CarshServiceIcon256.png");
+    QSplashScreen splash(pixmap);
+    splash.show();
+    splash.showMessage("Загрузка...");
+    //QRetToZoneCardDlg dlg(item->data(Qt::UserRole).toString());
+    QCostsDialog dlg;
+    dlg.LoadDataFromBD(QUuid::fromString(item->data(Qt::UserRole).toString()));
+    splash.finish(&dlg);
     dlg.exec();
+
 }
 
 void QCostsWidget::OnFilterApplyPressed()

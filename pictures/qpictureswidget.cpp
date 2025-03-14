@@ -5,7 +5,7 @@
 #include <QLabel>
 #include "qfullscreenpicdialog.h"
 #include "qimagereader.h"
-#include "../common.h"
+#include "common.h"
 
 double iButtonSize = 40;
 
@@ -93,7 +93,6 @@ void QPicturesWidget::OnRightButton()
 
 bool QPicturesWidget::AddImage(QImage& img)
 {
-    qDebug()<<"QPicturesWidget::AddImage";
     m_Pictures.push_back(img);
     m_currentPictureIt = m_Pictures.end()-1;
     UpdatePictures();
@@ -102,7 +101,6 @@ bool QPicturesWidget::AddImage(QImage& img)
 
 bool QPicturesWidget::AddPicturePath(QString path , bool bUpdatePicture)
 {
-    qDebug()<<"QPicturesWidget::AddPicturePath";
     QImageReader reader(path);
     QImage CurrentImage;
 
@@ -124,6 +122,7 @@ bool QPicturesWidget::AddPicturePath(QString path , bool bUpdatePicture)
 
 bool QPicturesWidget::RemovePicture()
 {
+    m_pCurrentPicLabel->SetCurrentImage(NULL);//Для отмены перерисовки до обновления
     if(m_Pictures.empty()) return false;
     m_currentPictureIt = m_Pictures.erase(m_currentPictureIt);
     if(((!m_Pictures.empty())&&(m_currentPictureIt == m_Pictures.end()))) m_currentPictureIt--;

@@ -7,6 +7,8 @@
 #include <QDateTimeEdit>
 #include <QCheckBox>
 #include "TasksSubWidgets/qpenalparktaskfilterwidget.h"
+#include <QMap>
+#include <QColor>
 
 class QTasksWidget : public QWidget
 {
@@ -24,15 +26,29 @@ public:
     QDateTimeEdit * m_pToDateTimeEdit;
     QLineEdit * m_pNumberEdit;
     QCheckBox * m_pOnlyFinishedCheckBox;
+    QCheckBox * m_pOnlyUnfinishedCheckBox;
 
-        QPenalParkTaskFilterWidget * m_pPenalParkTaskFilterWidget;
+
+    QPenalParkTaskFilterWidget * m_pPenalParkTaskFilterWidget;
     QString m_filtersStr;
+
+protected:
+    int m_iCheckBoxCol;//Чек-бокс всегда последний столбец! Важно! (По нему считается общее количество столбцов m_iCheckBoxCol+1)
+    QMap<int , QColor> m_ColorMap;//Будут захардкоженные номера для каждого столбца, аля его номер, т.к. цвета проверять для каждой ячейки, сравнение строк - накладно
+    QMap<QString , int> m_ColNameNumMap;//Собственно соответствие названий столбцов их номерам
+    QColor m_defaultColor = QColor("#FFFFFF"); // Белый цвет
+
+    void LoadColorMap();
+    void SaveColorMap();
 signals:
 public slots:
     void OnTasksDblClk(QTableWidgetItem*);
     void OnFilterApplyPressed();
     void TaskTypeComboChanged(int);
     void OnSchetPressed();
+    void onFinishedStateChanged(int state);
+    void onUnfinishedStateChanged(int state);
+    void onHeaderDoubleClicked(int logicalIndex);
 };
 
 #endif // QTASKSWIDGET_H

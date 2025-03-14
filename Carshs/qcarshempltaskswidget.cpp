@@ -12,7 +12,7 @@
 #include "qcarshparkingtaskcarddlg.h"
 #include "qrettozonecarddlg.h"
 #include "qsmenataskdlg.h"
-#include "qdocstaskdlg.h"
+#include "../CarshService/tasks/qdocstaskdlg.h"
 #include <QSplashScreen>
 #include "BDPatterns.h"
 #include <QPushButton>
@@ -288,7 +288,8 @@ void QCarshEmplTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         QSplashScreen splash(pixmap);
         splash.show();
         splash.showMessage("Загрузка...");
-        QDocsTaskDlg dlg(item->data(Qt::UserRole).toString());
+        QDocsTaskDlg dlg;//(item->data(Qt::UserRole).toString());
+        dlg.LoadDataFromBD(QUuid::fromString(item->data(Qt::UserRole).toString()));
         splash.finish(&dlg);
         dlg.exec();
     }

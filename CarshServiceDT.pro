@@ -1,8 +1,10 @@
-QT += core gui sql charts
+QT += core gui network sql charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
+
+INCLUDEPATH += $$PWD/../CarshService
 
 #LIBS += -L/usr/local/lib -lpq
 
@@ -13,9 +15,39 @@ CONFIG += c++17
 RC_ICONS = icons\CarshService.ico
 
 SOURCES += \
+    ../CarshService/carsh_service_widgets/qcarshserviceemploeecarddlg.cpp \
+    ../CarshService/common.cpp \
+    ../CarshService/emploee_widgets/QEmploeeTasksDlg.cpp \
+    ../CarshService/emploee_widgets/QSelectTaskEmploeer.cpp \
+    ../CarshService/qsocketbd.cpp \
+    ../CarshService/qsocketbdnetclient.cpp \
+    ../CarshService/service_widgets/QCSButton.cpp \
+    ../CarshService/service_widgets/qcalendardataselectdlg.cpp \
+    ../CarshService/service_widgets/qclicablelabel.cpp \
+    ../CarshService/service_widgets/qcsbasedialog.cpp \
+    ../CarshService/service_widgets/qcsbasedlgscrollwidget.cpp \
+    ../CarshService/service_widgets/qcsbaselistitemdelegate.cpp \
+    ../CarshService/service_widgets/qcsbaselistwidget.cpp \
+    ../CarshService/service_widgets/qcspaybasedialog.cpp \
+    ../CarshService/service_widgets/qcsscrollarea.cpp \
+    ../CarshService/service_widgets/qcsselectdialog.cpp \
+    ../CarshService/service_widgets/qcsselectdlgbuttonswidget.cpp \
     ../CarshService/service_widgets/qlinetext.cpp \
+    ../CarshService/service_widgets/qloaddoclinewidget.cpp \
+    ../CarshService/service_widgets/qloaddocsdlg.cpp \
+    ../CarshService/service_widgets/qnotecalendarwidget.cpp \
+    ../CarshService/service_widgets/qselprovidercarshwidget.cpp \
+    ../CarshService/service_widgets/qyesnodlg.cpp \
+    ../CarshService/tasks/qcostsdialog.cpp \
+    ../CarshService/tasks/qdocstaskdlg.cpp \
+    ../CarshService/tasks/qparkingtaskdialog.cpp \
+    ../CarshService/tasks/qpenaltyparkingdialog.cpp \
+    ../CarshService/tasks/qplatetaskdialog.cpp \
+    ../CarshService/tasks/qrettozonedialog.cpp \
+    ../CarshService/tasks/qsmenadlg.cpp \
     BDPatterns.cpp \
     CarshService/CarshSubWidgets/qcarshemplwidget.cpp \
+    CarshService/CarshSubWidgets/qcarshinputpenparktaskswidget.cpp \
     CarshService/CarshSubWidgets/qcarshlistwidget.cpp \
     CarshService/CarshSubWidgets/qcarshdlg.cpp \
     CarshService/EmplSubWidgets/qemplcostdlg.cpp \
@@ -42,7 +74,7 @@ SOURCES += \
     Carshs/qcarshparkingtaskcarddlg.cpp \
     Carshs/qcarshpenaltyparktaskcarddlg.cpp \
     Carshs/qcarshplatetaskcarddlg.cpp \
-    Carshs/qdocstaskdlg.cpp \
+  #  Carshs/qdocstaskdlg.cpp \
     Carshs/qregistercarshuserdlg.cpp \
     Carshs/qrettozonecarddlg.cpp \
     Carshs/qsmenataskdlg.cpp \
@@ -61,7 +93,7 @@ SOURCES += \
     Partners/qwashpartnerswidget.cpp \
     Partners/qwashpartnertaskdlg.cpp \
     Partners/qwashpartnertaskwidget.cpp \
-    common.cpp \
+    #common.cpp \
     main.cpp \
     pictures/imagewidget.cpp \
     pictures/qfullscreenpicdialog.cpp \
@@ -80,10 +112,40 @@ SOURCES += \
     service/xlspatterns.cpp
 
 HEADERS += \
+    ../CarshService/carsh_service_widgets/qcarshserviceemploeecarddlg.h \
+    ../CarshService/common.h \
+    ../CarshService/emploee_widgets/QSelectTaskEmploeer.h \
+    ../CarshService/emploee_widgets/qemploeetasksdlg.h \
+    ../CarshService/qsocketbd.h \
+    ../CarshService/qsocketbdnetclient.h \
+    ../CarshService/service_widgets/QCSButton.h \
+    ../CarshService/service_widgets/qcalendardataselectdlg.h \
+    ../CarshService/service_widgets/qclicablelabel.h \
+    ../CarshService/service_widgets/qcsbasedialog.h \
+    ../CarshService/service_widgets/qcsbasedlgscrollwidget.h \
+    ../CarshService/service_widgets/qcsbaselistitemdelegate.h \
+    ../CarshService/service_widgets/qcsbaselistwidget.h \
+    ../CarshService/service_widgets/qcspaybasedialog.h \
+    ../CarshService/service_widgets/qcsscrollarea.h \
+    ../CarshService/service_widgets/qcsselectdialog.h \
+    ../CarshService/service_widgets/qcsselectdlgbuttonswidget.h \
      ../CarshService/service_widgets/qlinetext.h \
     #BDPatterns.h \
+    ../CarshService/service_widgets/qloaddoclinewidget.h \
+    ../CarshService/service_widgets/qloaddocsdlg.h \
+    ../CarshService/service_widgets/qnotecalendarwidget.h \
+    ../CarshService/service_widgets/qselprovidercarshwidget.h \
+    ../CarshService/service_widgets/qyesnodlg.h \
+    ../CarshService/tasks/qcostsdialog.h \
+    ../CarshService/tasks/qdocstaskdlg.h \
+    ../CarshService/tasks/qparkingtaskdialog.h \
+    ../CarshService/tasks/qpenaltyparkingdialog.h \
+    ../CarshService/tasks/qplatetaskdialog.h \
+    ../CarshService/tasks/qrettozonedialog.h \
+    ../CarshService/tasks/qsmenadlg.h \
     BDPatterns.h \
     CarshService/CarshSubWidgets/qcarshemplwidget.h \
+    CarshService/CarshSubWidgets/qcarshinputpenparktaskswidget.h \
     CarshService/CarshSubWidgets/qcarshlistwidget.h \
     CarshService/CarshSubWidgets/qcarshdlg.h \
     CarshService/EmplSubWidgets/qemplcostdlg.h \
@@ -110,7 +172,7 @@ HEADERS += \
     Carshs/qcarshparkingtaskcarddlg.h \
     Carshs/qcarshpenaltyparktaskcarddlg.h \
     Carshs/qcarshplatetaskcarddlg.h \
-    Carshs/qdocstaskdlg.h \
+    #Carshs/qdocstaskdlg.h \
     Carshs/qregistercarshuserdlg.h \
     Carshs/qrettozonecarddlg.h \
     Carshs/qsmenataskdlg.h \
@@ -129,7 +191,7 @@ HEADERS += \
     Partners/qwashpartnerswidget.h \
     Partners/qwashpartnertaskdlg.h \
     Partners/qwashpartnertaskwidget.h \
-    common.h \
+    #common.h \
     pictures/imagewidget.h \
     pictures/qfullscreenpicdialog.h \
     pictures/qpiclabel.h \

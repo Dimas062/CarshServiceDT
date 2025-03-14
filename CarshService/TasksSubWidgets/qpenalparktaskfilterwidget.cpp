@@ -60,6 +60,36 @@ QPenalParkTaskFilterWidget::QPenalParkTaskFilterWidget(QWidget *parent)
         m_pReasonCombo->addItem(query.value(1).toString() , query.value(0));
     }
 
+    m_pOnlyFromZakazchikCheckBox = new QCheckBox("От заказчика");
+    pMainHLayout->addWidget(m_pOnlyFromZakazchikCheckBox);
+
+    m_pOnlyManualCreatedCheckBox= new QCheckBox("Созданные");
+    pMainHLayout->addWidget(m_pOnlyManualCreatedCheckBox);
+
+    connect(m_pOnlyFromZakazchikCheckBox, &QCheckBox::stateChanged,
+            this, &QPenalParkTaskFilterWidget::onOnlyFromZakazchikStateChanged);
+
+    connect(m_pOnlyManualCreatedCheckBox, &QCheckBox::stateChanged,
+            this, &QPenalParkTaskFilterWidget::onOnlyManualStateChanged);
+
 
     this->setLayout(pMainHLayout);
+}
+
+void QPenalParkTaskFilterWidget::onOnlyFromZakazchikStateChanged(int state) {
+    if (state == Qt::Checked) {
+        // Блокируем сигналы второго чекбокса на время изменения
+        m_pOnlyManualCreatedCheckBox->blockSignals(true);
+        m_pOnlyManualCreatedCheckBox->setChecked(false);
+        m_pOnlyManualCreatedCheckBox->blockSignals(false);
+    }
+}
+
+void QPenalParkTaskFilterWidget::onOnlyManualStateChanged(int state) {
+    if (state == Qt::Checked) {
+        // Блокируем сигналы первого чекбокса на время изменения
+        m_pOnlyFromZakazchikCheckBox->blockSignals(true);
+        m_pOnlyFromZakazchikCheckBox->setChecked(false);
+        m_pOnlyFromZakazchikCheckBox->blockSignals(false);
+    }
 }

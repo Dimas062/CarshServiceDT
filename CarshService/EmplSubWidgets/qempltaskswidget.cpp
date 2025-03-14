@@ -12,7 +12,8 @@
 #include "../../Carshs/qcarshparkingtaskcarddlg.h"
 #include "../../Carshs/qrettozonecarddlg.h"
 #include "../../Carshs/qsmenataskdlg.h"
-#include "../../Carshs/qdocstaskdlg.h"
+//#include "../../Carshs/qdocstaskdlg.h"
+#include "../CarshService/tasks/qdocstaskdlg.h"
 #include <QSplashScreen>
 #include <QPushButton>
 #include <QTableWidgetItem>
@@ -151,7 +152,8 @@ void QEmplTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         QSplashScreen splash(pixmap);
         splash.show();
         splash.showMessage("Загрузка...");
-        QDocsTaskDlg dlg(item->data(Qt::UserRole).toString());
+        QDocsTaskDlg dlg;//(item->data(Qt::UserRole).toString());
+        dlg.LoadDataFromBD(QUuid::fromString(item->data(Qt::UserRole).toString()));
         splash.finish(&dlg);
         dlg.exec();
     }
@@ -203,6 +205,7 @@ void QEmplTasksWidget::UpdateTasksList()
         pItem->setData(Qt::UserRole , query.value(0));
         pItem->setData(Qt::UserRole +1 , query.value(3));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        if(query.value(6).toInt() == 0) pItem->setBackground(QBrush(Qt::red));
         m_pTasksTableWidget->setItem(iRowCounter , 3,  pItem);
         dblSumm = dblSumm + query.value(6).toDouble();
 

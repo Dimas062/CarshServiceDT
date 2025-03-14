@@ -64,6 +64,7 @@ QEmplGraphWidget::QEmplGraphWidget(QWidget *parent)
     m_pAxisX = new QBarCategoryAxis();
     m_pChart->addAxis(m_pAxisX, Qt::AlignBottom);
     m_pSeries->attachAxis(m_pAxisX);
+    m_pSeries->setLabelsVisible(true);
 
     m_pAxisY = new QValueAxis();
 
@@ -91,7 +92,7 @@ void QEmplGraphWidget::OnFilterApplyPressed()
 
 void QEmplGraphWidget::UpdateGraph()
 {
-    qDebug()<<"QEmplGraphWidget::UpdateGraph()";
+
     m_pBarSet->remove(0 , m_pBarSet->count());
 
     m_pAxisX->clear();
@@ -105,8 +106,6 @@ void QEmplGraphWidget::UpdateGraph()
         QDate from = m_pFromDateEdit->date();
         QDate to = m_pToDateEdit->date();
 
-        qDebug()<<"QEmplGraphWidget::UpdateGraph()";
-
         QSqlQuery query;
 
         for(QDate date = from; date <= to; date = date.addMonths(1))
@@ -116,8 +115,9 @@ void QEmplGraphWidget::UpdateGraph()
 
             QString strMonthName = date.toString("MM.yyyy");
 
-            QString strQuery = QString("select SUM(\"Платежи сотрудников\".Сумма) from \"Платежи сотрудников\" where \"Платежи сотрудников\".id in (select \"Расширение задачи ШС\".\"Оплата парковки\" from \"Расширение задачи ШС\",Задачи where \"Расширение задачи ШС\".id = Задачи.Расширение and Задачи.\"Дата Время\">%1 and  Задачи.\"Дата Время\"<=%2 and Задачи.Удалено<> 'true' and Задачи.Исполнитель='%3')").arg(time_from).arg(time_to).arg(m_pEmplCombo->currentData().toString());
-            qDebug()<<strQuery;
+            //QString strQuery = QString("select SUM(\"Платежи сотрудников\".Сумма) from \"Платежи сотрудников\" where \"Платежи сотрудников\".id in (select \"Расширение задачи ШС\".\"Оплата парковки\" from \"Расширение задачи ШС\",Задачи where \"Расширение задачи ШС\".id = Задачи.Расширение and Задачи.\"Дата Время\">%1 and  Задачи.\"Дата Время\"<=%2 and Задачи.Удалено<> 'true' and Задачи.Исполнитель='%3')").arg(time_from).arg(time_to).arg(m_pEmplCombo->currentData().toString());
+            QString strQuery = QString("select SUM(Задачи.Цена) from Задачи where Задачи.\"Дата Время\">%1 and  Задачи.\"Дата Время\"<=%2 and Задачи.Удалено<>true and Задачи.Исполнитель='%3'").arg(time_from).arg(time_to).arg(m_pEmplCombo->currentData().toString());
+
             query.exec(strQuery);
             while(query.next())
             {
@@ -131,36 +131,37 @@ void QEmplGraphWidget::UpdateGraph()
         m_pSeries->append(m_pBarSet);
         m_pAxisX->append(categories);
         m_pChart->setTitle(m_pEmplCombo->currentText());
-        m_pBarSet->setLabel("Месяцы");
+        m_pBarSet->setLabel("Доход");
 
     }
-    // else
-    // {
-    //     QDate from = m_pFromDateEdit->date();
-    //     QDate to = m_pToDateEdit->date();
+    else
+    {
+        QDate from = m_pFromDateEdit->date();
+        QDate to = m_pToDateEdit->date();
 
-    //     QSqlQuery query;
+        QSqlQuery query;
 
 
-    //     int time_from = QDateTime(QDate(from.year() , from.month() , 1) , QTime(0,0,0)).toSecsSinceEpoch();
-    //     int time_to   = QDateTime(QDate(to.year() , to.month() , to.daysInMonth()) , QTime(23,59,59)).toSecsSinceEpoch();
+        int time_from = QDateTime(QDate(from.year() , from.month() , 1) , QTime(0,0,0)).toSecsSinceEpoch();
+        int time_to   = QDateTime(QDate(to.year() , to.month() , to.daysInMonth()) , QTime(23,59,59)).toSecsSinceEpoch();
 
-    //     QString strQuery = QString("select SUM(\"Платежи сотрудников\".Сумма),Штрафстоянки.Название from \"Платежи сотрудников\",Штрафстоянки where \"Платежи сотрудников\".id in (select \"Расширение задачи ШС\".\"Оплата парковки\" from \"Расширение задачи ШС\",Задачи where \"Расширение задачи ШС\".id = Задачи.Расширение and Задачи.\"Дата Время\">%1 and  Задачи.\"Дата Время\"<=%2 and \"Расширение задачи ШС\".Штрафстоянка=Штрафстоянки.id) group by Штрафстоянки.Название").arg(time_from).arg(time_to);
+        QString strQuery = QString("select SUM(Задачи.Цена),Пользователи.Фамилия from Задачи,Пользователи where Пользователи.id = Задачи.Исполнитель and Задачи.\"Дата Время\">%1 and  Задачи.\"Дата Время\"<=%2 and Задачи.Удалено<>true group by Пользователи.Фамилия").arg(time_from).arg(time_to);
 
-    //     query.exec(strQuery);
-    //     while(query.next())
-    //     {
-    //         *m_pBarSet<< query.value(0).toInt();
-    //         if(iMaxCash<query.value(0).toInt()) iMaxCash = query.value(0).toInt();
-    //         categories<< query.value(1).toString();
+        query.exec(strQuery);
+        while(query.next())
+        {
+            *m_pBarSet<< query.value(0).toInt();
+            if(iMaxCash<query.value(0).toInt()) iMaxCash = query.value(0).toInt();
+            categories<< query.value(1).toString();
 
-    //     }
+        }
 
-    //     m_pAxisY->setRange(0,iMaxCash);
-    //     m_pSeries->append(m_pBarSet);
-    //     m_pAxisX->append(categories);
-    //     m_pChart->setTitle(" ");
-    //     m_pBarSet->setLabel("Штрафстоянки");
+        m_pAxisY->setRange(0,iMaxCash);
+        m_pSeries->append(m_pBarSet);
+        m_pAxisX->append(categories);
+        m_pChart->setTitle(" ");
+        m_pBarSet->setLabel("Доход");
 
-    // }
+
+    }
 }

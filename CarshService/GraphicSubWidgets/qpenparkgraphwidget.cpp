@@ -62,6 +62,7 @@ QPenParkGraphWidget::QPenParkGraphWidget(QWidget *parent)
     m_pAxisX = new QBarCategoryAxis();
     m_pChart->addAxis(m_pAxisX, Qt::AlignBottom);
     m_pSeries->attachAxis(m_pAxisX);
+    m_pSeries->setLabelsVisible(true);
 
     m_pAxisY = new QValueAxis();
 
@@ -126,7 +127,7 @@ void QPenParkGraphWidget::UpdateGraph()
         m_pSeries->append(m_pBarSet);
         m_pAxisX->append(categories);
         m_pChart->setTitle(m_pParkingCombo->currentText());
-        m_pBarSet->setLabel("Месяцы");
+        m_pBarSet->setLabel("Затраты");
 
     }
     else
@@ -154,7 +155,7 @@ void QPenParkGraphWidget::UpdateGraph()
         m_pSeries->append(m_pBarSet);
         m_pAxisX->append(categories);
         m_pChart->setTitle(" ");
-        m_pBarSet->setLabel("Штрафстоянки");
+        m_pBarSet->setLabel("Затраты");
 
     }
 }

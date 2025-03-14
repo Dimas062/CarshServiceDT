@@ -16,5 +16,91 @@
         <file>icons/tasks_icon.png</file>
         <file>icons/driver_icon.png</file>
         <file>icons/driver_icon2.png</file>
+        <file>icons/video 3.png</file>
+        <file>icons/ViseoSapiens.png</file>
+        <file>icons/whatsapp_icon.png</file>
+        <file>icons/whatsapp_send_icon.png</file>
+        <file>icons/x1.png</file>
+        <file>icons/x2.png</file>
+        <file>icons/x4.png</file>
+        <file>icons/x8.png</file>
+        <file>icons/zip.png</file>
+        <file>icons/1_2.png</file>
+        <file>icons/1_4.png</file>
+        <file>icons/1_8.png</file>
+        <file>icons/1_16.png</file>
+        <file>icons/1.png</file>
+        <file>icons/1h.png</file>
+        <file>icons/2.png</file>
+        <file>icons/2h.png</file>
+        <file>icons/3.png</file>
+        <file>icons/4.png</file>
+        <file>icons/5 min.png</file>
+        <file>icons/5.png</file>
+        <file>icons/6.png</file>
+        <file>icons/6h.png</file>
+        <file>icons/7.png</file>
+        <file>icons/8.png</file>
+        <file>icons/9.png</file>
+        <file>icons/12h.png</file>
+        <file>icons/15 min.png</file>
+        <file>icons/24h.png</file>
+        <file>icons/30 min.png</file>
+        <file>icons/add_plus_icon.png</file>
+        <file>icons/bell_and_todate_h_icon.png</file>
+        <file>icons/bell_icon.png</file>
+        <file>icons/calendar_icon_48.png</file>
+        <file>icons/calendar_icon_64.png</file>
+        <file>icons/calendar_icon_128.png</file>
+        <file>icons/calendar_icon_256.png</file>
+        <file>icons/calendar_icon_512.png</file>
+        <file>icons/CarshService.ico</file>
+        <file>icons/CarshServiceIcon16.png</file>
+        <file>icons/CarshServiceIcon32.png</file>
+        <file>icons/CarshServiceIcon512.png</file>
+        <file>icons/clock_alarm.png</file>
+        <file>icons/clock.png</file>
+        <file>icons/color_icon.png</file>
+        <file>icons/done_icon.png</file>
+        <file>icons/exit_icon.png</file>
+        <file>icons/folder_close1.png</file>
+        <file>icons/folder_close2.png</file>
+        <file>icons/folder_close3.png</file>
+        <file>icons/folder_open1.png</file>
+        <file>icons/folder_open2.png</file>
+        <file>icons/folder_open3.png</file>
+        <file>icons/folder_private1.png</file>
+        <file>icons/folder.png</file>
+        <file>icons/fullscreen.png</file>
+        <file>icons/grey_bell_icon.png</file>
+        <file>icons/icon.png</file>
+        <file>icons/iosCarshServiceIcon.png</file>
+        <file>icons/list.png</file>
+        <file>icons/more_icon.png</file>
+        <file>icons/ok_icon.png</file>
+        <file>icons/one.png</file>
+        <file>icons/online_video.png</file>
+        <file>icons/photo_icon.png</file>
+        <file>icons/picture_add_icon.png</file>
+        <file>icons/picture_bell_icon.png</file>
+        <file>icons/picture_icon.png</file>
+        <file>icons/picture_remove_icon.png</file>
+        <file>icons/planlist_preesd.png</file>
+        <file>icons/planlist.png</file>
+        <file>icons/play_disabled.png</file>
+        <file>icons/play.png</file>
+        <file>icons/remove_bell_icon.png</file>
+        <file>icons/remove_icon.png</file>
+        <file>icons/search_icon.png</file>
+        <file>icons/set_bell_icon.png</file>
+        <file>icons/stop_disabled.png</file>
+        <file>icons/stop.png</file>
+        <file>icons/telegram_icon.png</file>
+        <file>icons/to_calendar_icon_256.png</file>
+        <file>icons/two.png</file>
+        <file>icons/undone_icon.png</file>
+        <file>icons/upload_icon.png</file>
+        <file>icons/video 1.png</file>
+        <file>icons/video 2.png</file>
     </qresource>
 </RCC>

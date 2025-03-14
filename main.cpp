@@ -13,6 +13,7 @@
 #include "Carshs/qcarshmaindlg.h"
 #include "common.h"
 #include <QSplashScreen>
+#include "qscreen.h"
 
 QRect screenGeometry;
 
@@ -21,6 +22,9 @@ QUuid uuidCurrentUser;
 int iButtonHeight = 50;
 int iUserType = 0;
 
+QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                   "dimas062",
+                   "CarshServiceDT");
 
 QT_USE_NAMESPACE
 
@@ -30,12 +34,16 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
+
+
     QPixmap pixmap(":/icons/Splash.png");
     QSplashScreen splash(pixmap);
     splash.show();
     splash.showMessage("Подключение к БД");
 
-    screenGeometry = QRect(0,0,500,500);
+    //screenGeometry(0, 0, qApp->screens()[0]->size().width() , qApp->screens()[0]->size().height());
+
+    screenGeometry = QRect(qApp->screens()[0]->size().width()/8,0,qApp->screens()[0]->size().width() - qApp->screens()[0]->size().width()/4 ,qApp->screens()[0]->size().height());
 
 
     QSqlDatabase db=QSqlDatabase::addDatabase("QPSQL");
@@ -45,11 +53,22 @@ int main(int argc, char *argv[])
     db.setUserName("postgres");
     db.setPort(5432);
 
+    // Установка параметров keepalive
+    db.setConnectOptions(
+        "keepalives=1;"
+        "keepalives_idle=30;"    // Время до первого keepalive (сек)
+        "keepalives_interval=10;"// Интервал между проверками (сек)
+        "keepalives_count=5;"    // Количество попыток
+        "connect_timeout=15"     // Таймаут подключения (опционально)
+        );
+
     if(!db.open())
     {
         QMessageBox::information(NULL , "Злобин Каршеринг сервис", QString("Не удаётся соединиться с сервером: %1").arg(db.lastError().text()) , "Закрыть");
         return 0;
     }
+
+    OpenServerBD();//Соединение с БД через прокси для мобилок для диалогов с мобилок
 
     QThread::msleep(200);
 

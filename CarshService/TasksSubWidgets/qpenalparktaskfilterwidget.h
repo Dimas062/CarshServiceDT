@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QComboBox>
+#include <QCheckBox>
 
 class QPenalParkTaskFilterWidget : public QWidget
 {
@@ -13,6 +14,14 @@ public:
     QComboBox * m_pGibddCombo;
     QComboBox * m_pParkingCombo;
     QComboBox * m_pReasonCombo;
+
+
+    QCheckBox * m_pOnlyFromZakazchikCheckBox;
+    QCheckBox * m_pOnlyManualCreatedCheckBox;
+
+public slots:
+    void onOnlyFromZakazchikStateChanged(int state);
+    void onOnlyManualStateChanged(int state);
 
 signals:
 };

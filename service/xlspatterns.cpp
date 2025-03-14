@@ -39,8 +39,6 @@ QString GetTempFNameSchet()
     QString strTempFname(QStandardPaths::writableLocation(QStandardPaths::TempLocation));
     strTempFname.append("/tmp.xlsx");
 
-    qDebug()<<"GetTempFNameSchet strTempFname="<<strTempFname;
-
     QFile::remove(strTempFname);
 
     QFile sourceFile(":/templates/schet.xlsx");
@@ -295,7 +293,7 @@ void WriteULsSchetInfo(QString strFname , QUuid uuidZakaz , QUuid uuidIspoln, QV
         QSqlQuery query;
 
         QString strZakazQuery = QString("select Форма, Название, Адрес, ИНН, Банк, Счет, КПП, БИК, КоррСчет, ФамилияДиректора, ИмяДиректора ,ОтчествоДиректора from ЮЛ where id='%1'").arg(uuidZakaz.toString());
-        qDebug()<<"strZakazQuery ="<<strZakazQuery;
+
         query.exec(strZakazQuery);
 
         while(query.next())

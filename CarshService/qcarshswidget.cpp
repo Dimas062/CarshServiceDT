@@ -4,6 +4,7 @@
 #include <QVBoxLayout>
 #include "CarshSubWidgets/qcarshlistwidget.h"
 #include "CarshSubWidgets/qcarshemplwidget.h"
+#include "CarshSubWidgets/qcarshinputpenparktaskswidget.h"
 
 
 QCarshsWidget::QCarshsWidget(QWidget *parent)
@@ -13,6 +14,9 @@ QCarshsWidget::QCarshsWidget(QWidget *parent)
     this->setLayout(pVMainLayout);
 
     QTabWidget * pTabs = new QTabWidget();
+
+    QCarshInputPenParkTasksWidget * pCarshInputPenParkTasksWidget = new QCarshInputPenParkTasksWidget;
+    pTabs->addTab(pCarshInputPenParkTasksWidget , "Заявки ШС");
 
     QCarshListWidget * pCarshsWidget = new QCarshListWidget;
     pTabs->addTab(pCarshsWidget , "Службы");
