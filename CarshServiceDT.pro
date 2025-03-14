@@ -115,6 +115,7 @@ SOURCES += \
 HEADERS += \
     ../CarshService/carsh_service_widgets/qcarshserviceemploeecarddlg.h \
     ../CarshService/common.h \
+    ../CarshService/emploee_widgets/QEmploeeTasksDlg.h \
     ../CarshService/emploee_widgets/QSelectTaskEmploeer.h \
     ../CarshService/emploee_widgets/qemploeetasksdlg.h \
     ../CarshService/qsocketbd.h \
