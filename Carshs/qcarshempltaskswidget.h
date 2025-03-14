@@ -8,6 +8,7 @@
 #include <QLineEdit>
 #include "../CarshService/TasksSubWidgets/qpenalparktaskfilterwidget.h"
 
+//Класс для отображения задач сотрудников службам каршеринга (яндексу, ситидрайву и тд)
 class QCarshEmplTasksWidget : public QWidget
 {
     Q_OBJECT

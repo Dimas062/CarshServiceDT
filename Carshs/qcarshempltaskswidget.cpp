@@ -12,7 +12,7 @@
 #include "qcarshparkingtaskcarddlg.h"
 #include "qrettozonecarddlg.h"
 #include "qsmenataskdlg.h"
-#include "../CarshService/tasks/qdocstaskdlg.h"
+#include "qcarshdocstaskdlg.h".h"
 #include <QSplashScreen>
 #include "BDPatterns.h"
 #include <QPushButton>
@@ -153,8 +153,6 @@ void QCarshEmplTasksWidget::OnFilterApplyPressed()
         numberFilterString=QString(" and Задачи.\"Расширение\" in ((select id from \"Расширение задачи Возврат в зону\" where Госномер ilike '%%1%')  union  (select id from \"Расширение задачи Номера\" where Госномер ilike '%%1%') union  (select id from \"Расширение задачи Парковка\" where Госномер ilike '%%1%') union  (select id from \"Расширение задачи ШС\" where Госномер ilike '%%1%'))").arg(m_pNumberEdit->text());
     }
 
-
-
     m_filtersStr = QString("and Задачи.\"Дата Время\">'%1' and Задачи.\"Дата Время\"<'%2' %3 %4").arg(m_pFromDateTimeEdit->dateTime().toSecsSinceEpoch()).arg(m_pToDateTimeEdit->dateTime().toSecsSinceEpoch()).arg(typeFilterString).arg(numberFilterString);
     UpdateTasksList();
 }
@@ -288,8 +286,7 @@ void QCarshEmplTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         QSplashScreen splash(pixmap);
         splash.show();
         splash.showMessage("Загрузка...");
-        QDocsTaskDlg dlg;//(item->data(Qt::UserRole).toString());
-        dlg.LoadDataFromBD(QUuid::fromString(item->data(Qt::UserRole).toString()));
+        QCarshDocsTaskDlg dlg(item->data(Qt::UserRole).toString());
         splash.finish(&dlg);
         dlg.exec();
     }

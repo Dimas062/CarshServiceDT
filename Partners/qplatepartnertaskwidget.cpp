@@ -11,7 +11,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QCheckBox>
-#include "service/qselfrombddlg.h"
+//#include "service/qselfrombddlg.h"
 
 extern int iUserType;
 

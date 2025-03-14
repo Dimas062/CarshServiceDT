@@ -69,6 +69,7 @@ SOURCES += \
     CarshService/qpartnerswidget.cpp \
     CarshService/qproviderswidget.cpp \
     CarshService/qtaskswidget.cpp \
+    Carshs/qcarshdocstaskdlg.cpp \
     Carshs/qcarshempltaskswidget.cpp \
     Carshs/qcarshmaindlg.cpp \
     Carshs/qcarshparkingtaskcarddlg.cpp \
@@ -167,6 +168,7 @@ HEADERS += \
     CarshService/qpartnerswidget.h \
     CarshService/qproviderswidget.h \
     CarshService/qtaskswidget.h \
+    Carshs/qcarshdocstaskdlg.h \
     Carshs/qcarshempltaskswidget.h \
     Carshs/qcarshmaindlg.h \
     Carshs/qcarshparkingtaskcarddlg.h \
