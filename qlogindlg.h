@@ -11,6 +11,7 @@ class QLoginDlg : public QDialog
     Q_OBJECT
 public:
     QLoginDlg();
+    QString m_strLastLoginedCarshId;
 
 protected:
     QLineEdit * m_pLoginLineEdit;

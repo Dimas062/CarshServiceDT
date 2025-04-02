@@ -4,6 +4,7 @@
 #include "common.h"
 
 extern int iUserType;
+extern QString strCurrentZakazId;
 
 QPlatePartnersWidget::QPlatePartnersWidget(QWidget *parent)
     : QWidget{parent}
@@ -34,7 +35,10 @@ QPlatePartnersWidget::QPlatePartnersWidget(QWidget *parent)
 
     m_pPlatePartnerCardWidget = new QPlatePartnerCardWidget;
 
-    m_pPlatePartnerTabWidget->addTab(m_pPlatePartnerCardWidget , "Карточка");
+    if(iUserType == CarshService)
+    {
+        m_pPlatePartnerTabWidget->addTab(m_pPlatePartnerCardWidget , "Карточка");
+    }
 
     pHPlatePartnerLayout->addWidget(m_pPlatePartnerTabWidget , 3);
 
@@ -44,7 +48,11 @@ QPlatePartnersWidget::QPlatePartnersWidget(QWidget *parent)
     /*Заполним пользователей*/
     QString strPlatePartnerQuery("select Партнеры.id , ЮЛ.Название from Партнеры, ЮЛ where Партнеры.ЮЛ = ЮЛ.id and Партнеры.Удалено<>true and Партнеры.Тип='9c671ee9-2749-4717-a343-b18825855c29'");
 
-    if(iUserType == Carsh) strPlatePartnerQuery.append(" and Партнеры.Подтвержден = true");
+    if(iUserType == Carsh)
+    {
+        QString strPartnerByCarshFilter = QString(" and Партнеры.Подтвержден = true and Партнеры.id in (select ИсполнительПартнер from ИсполнителиЗаказчики where Заказчик = '%1')").arg(strCurrentZakazId);
+        strPlatePartnerQuery.append(strPartnerByCarshFilter);
+    }
 
 
     QSqlQuery PlatePartnerQuery;
@@ -64,6 +72,6 @@ QPlatePartnersWidget::QPlatePartnersWidget(QWidget *parent)
 void QPlatePartnersWidget::PlatePartnerClicked(QListWidgetItem * item)
 {
     QString strPartnerUuid = item->data(Qt::UserRole).toString();
-    m_pPlatePartnerCardWidget->SetActivPartner(strPartnerUuid);
+    if(iUserType == CarshService) m_pPlatePartnerCardWidget->SetActivPartner(strPartnerUuid);
     m_pPlatePartnerTasksWidget->SetActivPartner(strPartnerUuid);
 }

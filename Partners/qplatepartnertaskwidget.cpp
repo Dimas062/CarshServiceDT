@@ -14,6 +14,7 @@
 //#include "service/qselfrombddlg.h"
 
 extern int iUserType;
+extern QString strCurrentZakazId;
 
 QPlatePartnerTaskWidget::QPlatePartnerTaskWidget(QWidget *parent)
     : QWidget{parent}
@@ -63,10 +64,15 @@ QPlatePartnerTaskWidget::QPlatePartnerTaskWidget(QWidget *parent)
     pVMainLayout->addSpacing(5);
 
     m_pTasksTableWidget = new QTableWidget;
-    m_pTasksTableWidget->setColumnCount(7);
+    m_pTasksTableWidget->setColumnCount(5);
     //m_pTasksTableWidget->setColumnHidden(2,true);  //Скрыли зазказчика
     QStringList headers;
-    headers << "Дата/время" << "Точка" << "Количество"<<"Комментарий"<<"Поставщик"<<"Заказчик"<<" ";
+    headers  << "Дата/время" << "Точка" << "Количество"<<"Комментарий"<<"Поставщик";
+    if(iUserType == CarshService)
+    {
+        m_pTasksTableWidget->setColumnCount(7);
+        headers<<"Заказчик"<<" ";
+    }
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
     connect(m_pTasksTableWidget , SIGNAL(itemDoubleClicked(QTableWidgetItem*)) , this , SLOT(OnTasksDblClk(QTableWidgetItem*)));
     pVMainLayout->addWidget(m_pTasksTableWidget);
@@ -82,11 +88,19 @@ void QPlatePartnerTaskWidget::UpdateTasksList()
 
 
     QStringList headers;
-    headers  << "Дата/время" << "Точка" << "Количество"<<"Комментарий"<<"Поставщик"<<"Заказчик"<<" ";
+    headers  << "Дата/время" << "Точка" << "Количество"<<"Комментарий"<<"Поставщик";
+    if(iUserType == CarshService) headers<<"Заказчик"<<" ";
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
 
     QSqlQuery query;
     QString strQuery =  QString("select \"Задачи партнера Номера\".id , \"Задачи партнера Номера\".ДатаВремя, \"Точки Партнеров\".Название , \"Задачи партнера Номера\".Количество, \"Задачи партнера Номера\".Комментарий, Поставщики.Название, Партнеры.Поставщик, Заказчики.Название, Заказчики.ЮЛ , Заказчики.id from \"Задачи партнера Номера\", \"Точки Партнеров\" , Поставщики, Партнеры, Заказчики where Поставщики.id = Партнеры.Поставщик  and \"Задачи партнера Номера\".Партнер = Партнеры.id  and \"Точки Партнеров\".id = \"Задачи партнера Номера\".Точка and \"Задачи партнера Номера\".Заказчик=Заказчики.id and \"Задачи партнера Номера\".Партнер='%1' %2").arg(m_strUuidCurrentPartner).arg(m_filtersStr);
+
+    if(iUserType == Carsh)
+    {
+        QString strCarshByPartnerFilter = QString(" and \"Задачи партнера Номера\".Заказчик='%1'").arg(strCurrentZakazId);
+        strQuery.append(strCarshByPartnerFilter);
+    }
+
     query.exec(strQuery);
 
     if(query.size() < 1) return;
@@ -128,16 +142,19 @@ void QPlatePartnerTaskWidget::UpdateTasksList()
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTasksTableWidget->setItem(iRowCounter , 4,  pItem);
 
-        /*Заказчик*/
-        pItem = new QTableWidgetItem(query.value(7).toString());
-        pItem->setData(Qt::UserRole , query.value(0));
-        pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        m_pTasksTableWidget->setItem(iRowCounter , 5,  pItem);
+        if(iUserType == CarshService)
+        {
+            /*Заказчик*/
+            pItem = new QTableWidgetItem(query.value(7).toString());
+            pItem->setData(Qt::UserRole , query.value(0));
+            pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+            m_pTasksTableWidget->setItem(iRowCounter , 5,  pItem);
 
-        /*Чек-бокс*/
-        QCheckBox * pCheckBox = new QCheckBox();
-        pCheckBox->setChecked(true);
-        m_pTasksTableWidget->setCellWidget(iRowCounter , 6 , pCheckBox);
+            /*Чек-бокс*/
+            QCheckBox * pCheckBox = new QCheckBox();
+            pCheckBox->setChecked(true);
+            m_pTasksTableWidget->setCellWidget(iRowCounter , 6 , pCheckBox);
+        }
 
         iRowCounter++;
 
@@ -219,7 +236,7 @@ void QPlatePartnerTaskWidget::OnSchetZakazPressed()
 
 
     QString strFileName = QFileDialog::getSaveFileName(this , "Счет партнера Мойка" , QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) , tr("Excel (*.xls *.xlsx)"));
-    strFileName.append(".xls");
+    strFileName.append(".xlsx");
     if(strFileName.length()>5)
     {
         QString strTmpFile = GetTempFNameSchet();
@@ -323,7 +340,7 @@ void QPlatePartnerTaskWidget::OnSchetPressed()
         uuidULPartnerId = query.value(0).toUuid();
 
     QString strFileName = QFileDialog::getSaveFileName(this , "Счет партнера Мойка" , QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) , tr("Excel (*.xls *.xlsx)"));
-    strFileName.append(".xls");
+    strFileName.append(".xlsx");
 
     if(strFileName.length()>5)
     {

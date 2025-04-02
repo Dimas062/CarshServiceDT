@@ -102,5 +102,6 @@
         <file>icons/upload_icon.png</file>
         <file>icons/video 1.png</file>
         <file>icons/video 2.png</file>
+        <file>icons/save_icon.png</file>
     </qresource>
 </RCC>

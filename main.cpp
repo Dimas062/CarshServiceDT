@@ -18,6 +18,7 @@
 QRect screenGeometry;
 
 QUuid uuidCurrentUser;
+QString strCurrentZakazId;
 
 int iButtonHeight = 50;
 int iUserType = 0;
@@ -91,8 +92,9 @@ int main(int argc, char *argv[])
     }
     if(iUserType == Carsh)
     {
-       QCarshMainDlg dlg;
-       dlg.show();
+        strCurrentZakazId = loginDlg.m_strLastLoginedCarshId;
+        QCarshMainDlg dlg;
+        dlg.show();
 
     return a.exec();
     }

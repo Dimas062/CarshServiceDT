@@ -33,6 +33,7 @@
 #include <QCoreApplication>
 #include <QHeaderView>
 #include <QColorDialog>
+#include "commondt.h"
 
 extern QSettings settings;
 
@@ -166,13 +167,17 @@ QTasksWidget::QTasksWidget(QWidget *parent)
 
     QHBoxLayout * pButtonsHLoyuot = new QHBoxLayout();
 
-    QPushButton * pFilterApplyButton = new QPushButton("Применть фильтры");
+    QPushButton * pFilterApplyButton = new QPushButton("Применить фильтры");
     connect(pFilterApplyButton,SIGNAL(pressed()),this,SLOT(OnFilterApplyPressed()));
     pButtonsHLoyuot->addWidget(pFilterApplyButton);
 
     QPushButton * pSchetApplyButton = new QPushButton("Счет/Акт");
     connect(pSchetApplyButton,SIGNAL(pressed()),this,SLOT(OnSchetPressed()));
     pButtonsHLoyuot->addWidget(pSchetApplyButton);
+
+    QPushButton * pExcelButton = new QPushButton("Экспорт в Excel");
+    connect(pExcelButton,SIGNAL(pressed()),this,SLOT(OnExcelPressed()));
+    pButtonsHLoyuot->addWidget(pExcelButton);
 
     pVMainLayout->addLayout(pButtonsHLoyuot);
 
@@ -374,6 +379,15 @@ void QTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
 
 }
 
+void QTasksWidget::OnExcelPressed()
+{
+    QString strFileName = QFileDialog::getSaveFileName(this , "Отчет" , QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) , tr("Excel (*.xls *.xlsx)"));
+    strFileName.append(".xlsx");
+
+    saveTableToExcel(m_pTasksTableWidget , strFileName , "Отчет по задачам");
+
+}
+
 //У задач сотрудников счет формируется только для заказчика, но в двух вариантах - услуги и затраты
 void QTasksWidget::OnSchetPressed()
 {
@@ -426,7 +440,7 @@ void QTasksWidget::OnSchetPressed()
     }
 
     QString strFileName = QFileDialog::getSaveFileName(this , "Счет" , QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) , tr("Excel (*.xls *.xlsx)"));
-    strFileName.append(".xls");
+    strFileName.append(".xlsx");
     QString strFileNameZatrati = strFileName;
     strFileNameZatrati.insert(strFileNameZatrati.length()-4 , "_Затраты");
 

@@ -111,7 +111,16 @@ void QLoginDlg::OnLoginPressed()
         }
         if(query.value(1).toUuid() == QUuid("ec3f998f-f5f4-4f2d-83a7-588934c58ecf")) //Служба каршеринга
         {
+            QString strZakazIdQuery = QString("select Заказчик from \"Заказчик-Пользователи\" where Пользователь = '%1'").arg(uuidCurrentUser.toString());
+            QSqlQuery queryZakaz;
 
+            queryZakaz.exec(strZakazIdQuery);
+            while(queryZakaz.next())
+            {
+                m_strLastLoginedCarshId = queryZakaz.value(0).toString();
+            }
+
+            //strLastLoginedCarsId
             done(Carsh);
         }
         if(query.value(1).toUuid() == QUuid("512c50c1-c4a9-4542-932a-55280886715a")) //Партнер номера

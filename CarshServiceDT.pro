@@ -95,6 +95,7 @@ SOURCES += \
     Partners/qwashpartnertaskdlg.cpp \
     Partners/qwashpartnertaskwidget.cpp \
     #common.cpp \
+    commondt.cpp \
     main.cpp \
     pictures/imagewidget.cpp \
     pictures/qfullscreenpicdialog.cpp \
@@ -117,7 +118,6 @@ HEADERS += \
     ../CarshService/common.h \
     ../CarshService/emploee_widgets/QEmploeeTasksDlg.h \
     ../CarshService/emploee_widgets/QSelectTaskEmploeer.h \
-    ../CarshService/emploee_widgets/qemploeetasksdlg.h \
     ../CarshService/qsocketbd.h \
     ../CarshService/qsocketbdnetclient.h \
     ../CarshService/service_widgets/QCSButton.h \
@@ -195,6 +195,7 @@ HEADERS += \
     Partners/qwashpartnertaskdlg.h \
     Partners/qwashpartnertaskwidget.h \
     #common.h \
+    commondt.h \
     pictures/imagewidget.h \
     pictures/qfullscreenpicdialog.h \
     pictures/qpiclabel.h \

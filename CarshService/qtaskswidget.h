@@ -49,6 +49,7 @@ public slots:
     void onFinishedStateChanged(int state);
     void onUnfinishedStateChanged(int state);
     void onHeaderDoubleClicked(int logicalIndex);
+    void OnExcelPressed();
 };
 
 #endif // QTASKSWIDGET_H

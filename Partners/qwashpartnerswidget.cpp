@@ -4,6 +4,7 @@
 #include "common.h"
 
 extern int iUserType;
+extern QString strCurrentZakazId;
 
 QWashPartnersWidget::QWashPartnersWidget(QWidget *parent)
     : QWidget{parent}
@@ -34,7 +35,10 @@ QWashPartnersWidget::QWashPartnersWidget(QWidget *parent)
 
     m_pWashPartnerCardWidget = new QWashPartnerCardWidget;
 
-    m_pWashPartnerTabWidget->addTab(m_pWashPartnerCardWidget , "Карточка");
+    if(iUserType == CarshService)
+    {
+        m_pWashPartnerTabWidget->addTab(m_pWashPartnerCardWidget , "Карточка");
+    }
 
     pHWashPartnerLayout->addWidget(m_pWashPartnerTabWidget , 3);
 
@@ -43,7 +47,12 @@ QWashPartnersWidget::QWashPartnersWidget(QWidget *parent)
 
     /*Заполним пользователей*/
     QString strWashPartnerQuery("select Партнеры.id , ЮЛ.Название from Партнеры, ЮЛ where Партнеры.ЮЛ = ЮЛ.id and Партнеры.Удалено<>true and Партнеры.Тип='932a4dc1-238b-478d-8911-3de46dd8da65'");
-    if(iUserType == Carsh) strWashPartnerQuery.append(" and Партнеры.Подтвержден = true");
+
+    if(iUserType == Carsh)
+    {
+        QString strPartnerByCarshFilter = QString(" and Партнеры.Подтвержден = true and Партнеры.id in (select ИсполнительПартнер from ИсполнителиЗаказчики where Заказчик = '%1')").arg(strCurrentZakazId);
+        strWashPartnerQuery.append(strPartnerByCarshFilter);
+    }
     QSqlQuery WashPartnerQuery;
     WashPartnerQuery.exec(strWashPartnerQuery);
     while(WashPartnerQuery.next())
@@ -61,6 +70,6 @@ QWashPartnersWidget::QWashPartnersWidget(QWidget *parent)
 void QWashPartnersWidget::WashPartnerClicked(QListWidgetItem * item)
 {
     QString strPartnerUuid = item->data(Qt::UserRole).toString();
-    m_pWashPartnerCardWidget->SetActivPartner(strPartnerUuid);
+    if(iUserType == CarshService) m_pWashPartnerCardWidget->SetActivPartner(strPartnerUuid);
     m_pWashPartnerTasksWidget->SetActivPartner(strPartnerUuid);
 }

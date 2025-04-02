@@ -15,6 +15,7 @@
 //#include "service/qselfrombddlg.h"
 
 extern int iUserType;
+extern QString strCurrentZakazId;
 
 QStickPartnerTaskWidget::QStickPartnerTaskWidget(QWidget *parent)
     : QWidget{parent}
@@ -63,10 +64,15 @@ QStickPartnerTaskWidget::QStickPartnerTaskWidget(QWidget *parent)
     pVMainLayout->addSpacing(5);
 
     m_pTasksTableWidget = new QTableWidget;
-    m_pTasksTableWidget->setColumnCount(8);
+    m_pTasksTableWidget->setColumnCount(6);
     //m_pTasksTableWidget->setColumnHidden(2,true);  //Скрыли зазказчика
     QStringList headers;
-    headers << "Дата/время" << "Точка" << "Номер"<<"Комментарий"<<"Поставщик"<<"Заказчик"<<"Стоимость"<<" ";
+    headers << "Дата/время" << "Точка" << "Номер"<<"Комментарий"<<"Поставщик"<<"Стоимость";
+    if(iUserType == CarshService)
+    {
+        m_pTasksTableWidget->setColumnCount(8);
+        headers<<"Заказчик"<<" ";
+    }
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
     connect(m_pTasksTableWidget , SIGNAL(itemDoubleClicked(QTableWidgetItem*)) , this , SLOT(OnTasksDblClk(QTableWidgetItem*)));
     pVMainLayout->addWidget(m_pTasksTableWidget);
@@ -81,9 +87,17 @@ void QStickPartnerTaskWidget::UpdateTasksList()
     m_pTasksTableWidget->setRowCount(0);
 
     QStringList headers;
-    headers  << "Дата/время" << "Точка" << "Номер"<<"Комментарий"<<"Поставщик"<<"Заказчик"<<"Стоимость"<<" ";
+    headers  << "Дата/время" << "Точка " << "Номер"<<"Комментарий"<<"Поставщик"<<"Стоимость";
+    if(iUserType == CarshService) headers<<"Заказчик"<<" ";
+
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
     QString strQuery =  QString("select \"Задачи партнера Оклейка\".id , \"Задачи партнера Оклейка\".ДатаВремя, \"Точки Партнеров\".Название , \"Задачи партнера Оклейка\".Номер, \"Задачи партнера Оклейка\".Комментарий, Поставщики.Название, Партнеры.Поставщик, Заказчики.Название, Заказчики.ЮЛ , Заказчики.id from \"Задачи партнера Оклейка\", \"Точки Партнеров\" , Поставщики, Партнеры, Заказчики where Поставщики.id = Партнеры.Поставщик  and \"Задачи партнера Оклейка\".Партнер = Партнеры.id  and \"Точки Партнеров\".id = \"Задачи партнера Оклейка\".Точка and \"Задачи партнера Оклейка\".Заказчик=Заказчики.id and \"Задачи партнера Оклейка\".Партнер='%1' %2").arg(m_strUuidCurrentPartner).arg(m_filtersStr);
+
+    if(iUserType == Carsh)
+    {
+        QString strCarshByPartnerFilter = QString(" and \"Задачи партнера Оклейка\".Заказчик='%1'").arg(strCurrentZakazId);
+        strQuery.append(strCarshByPartnerFilter);
+    }
 
     QSqlQuery query;
     query.exec(strQuery);
@@ -129,13 +143,7 @@ void QStickPartnerTaskWidget::UpdateTasksList()
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTasksTableWidget->setItem(iRowCounter , 4,  pItem);
 
-
-        /*Заказчик*/
-        pItem = new QTableWidgetItem(query.value(7).toString());
-        pItem->setData(Qt::UserRole , query.value(0));
-        pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        m_pTasksTableWidget->setItem(iRowCounter , 5,  pItem);
-
+        /*Стоимость*/
         QString strTypesExec=QString("select \"Типы задач Оклейка\".Цена , \"Типы задач Оклейка\".Тип from \"Задача Оклейка - Типы\" , \"Типы задач Оклейка\"  where \"Типы задач Оклейка\".id = \"Задача Оклейка - Типы\".Тип and  \"Задача Оклейка - Типы\".Задача = '%1'").arg(query.value(0).toString());
         QSqlQuery TypesQuery;
 
@@ -147,16 +155,26 @@ void QStickPartnerTaskWidget::UpdateTasksList()
         }
         QString strPrice = QString(" %1 руб.").arg(dblPrice);
 
-        /*Стоимость*/
+
         pItem = new QTableWidgetItem(strPrice);
         pItem->setData(Qt::UserRole , query.value(0));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        m_pTasksTableWidget->setItem(iRowCounter , 6,  pItem);
+        m_pTasksTableWidget->setItem(iRowCounter , 5,  pItem);
 
-        /*Чек-бокс*/
-        QCheckBox * pCheckBox = new QCheckBox();
-        pCheckBox->setChecked(true);
-        m_pTasksTableWidget->setCellWidget(iRowCounter , 7 , pCheckBox);
+
+        if(iUserType == CarshService)
+        {
+            /*Заказчик*/
+            pItem = new QTableWidgetItem(query.value(7).toString());
+            pItem->setData(Qt::UserRole , query.value(0));
+            pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+            m_pTasksTableWidget->setItem(iRowCounter , 6,  pItem);
+
+            /*Чек-бокс*/
+            QCheckBox * pCheckBox = new QCheckBox();
+            pCheckBox->setChecked(true);
+            m_pTasksTableWidget->setCellWidget(iRowCounter , 7 , pCheckBox);
+        }
 
         iRowCounter++;
 
@@ -237,7 +255,7 @@ void QStickPartnerTaskWidget::OnSchetZakazPressed()
 
 
     QString strFileName = QFileDialog::getSaveFileName(this , "Счет партнера Оклейка" , QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) , tr("Excel (*.xls *.xlsx)"));
-    strFileName.append(".xls");
+    strFileName.append(".xlsx");
     if(strFileName.length()>5)
     {
         QString strTmpFile = GetTempFNameSchet();
@@ -342,7 +360,7 @@ void QStickPartnerTaskWidget::OnSchetPressed()
         uuidULPartnerId = query.value(0).toUuid();
 
     QString strFileName = QFileDialog::getSaveFileName(this , "Счет партнера Мойка" , QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) , tr("Excel (*.xls *.xlsx)"));
-    strFileName.append(".xls");
+    strFileName.append(".xlsx");
     if(strFileName.length()>5)
     {
         QString strTmpFile = GetTempFNameSchet();

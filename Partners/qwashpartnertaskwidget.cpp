@@ -16,6 +16,7 @@
 #include "service/xlspatterns.h"
 
 extern int iUserType;
+extern QString strCurrentZakazId;
 
 QWashPartnerTaskWidget::QWashPartnerTaskWidget(QWidget *parent)
     : QWidget{parent}
@@ -69,6 +70,13 @@ QWashPartnerTaskWidget::QWashPartnerTaskWidget(QWidget *parent)
     QStringList headers;
     headers << "Дата/время" << "Точка" <<"Комментарий"<<"Поставщик"<<"Заказчик"<<"Стоимость"<<" ";
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
+
+    if(iUserType == Carsh)//У других партнеров для каршерингов делали невывод столбцов Заказчик и чекбокс, тут просто скроем их (так быстрее)
+    {
+        m_pTasksTableWidget->setColumnHidden(4,true);
+        m_pTasksTableWidget->setColumnHidden(6,true);
+    }
+
     connect(m_pTasksTableWidget , SIGNAL(itemDoubleClicked(QTableWidgetItem*)) , this , SLOT(OnTasksDblClk(QTableWidgetItem*)));
     pVMainLayout->addWidget(m_pTasksTableWidget);
     m_pTasksTableWidget->resizeColumnsToContents();
@@ -84,8 +92,15 @@ void QWashPartnerTaskWidget::UpdateTasksList()
     QStringList headers;
     headers  << "Дата/время" << "Точка" <<"Комментарий"<<"Поставщик"<<"Заказчик"<<"Стоимость"<<" ";
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
-    QString strQuery =  QString("select \"Задачи партнера Мойка\".id , \"Задачи партнера Мойка\".ДатаВремя, \"Точки Партнеров\".Название , \"Задачи партнера Мойка\".Комментарий, Поставщики.Название, Партнеры.Поставщик, Заказчики.Название, Заказчики.ЮЛ , Заказчики.id from \"Задачи партнера Мойка\", \"Точки Партнеров\" , Поставщики, Партнеры, Заказчики where Поставщики.id = Партнеры.Поставщик  and \"Задачи партнера Мойка\".Партнер = Партнеры.id  and \"Точки Партнеров\".id = \"Задачи партнера Мойка\".Точка and \"Задачи партнера Мойка\".Заказчик=Заказчики.id and \"Задачи партнера Мойка\".Партнер='%1' %2").arg(m_strUuidCurrentPartner).arg(m_filtersStr);
 
+
+
+    QString strQuery =  QString("select \"Задачи партнера Мойка\".id , \"Задачи партнера Мойка\".ДатаВремя, \"Точки Партнеров\".Название , \"Задачи партнера Мойка\".Комментарий, Поставщики.Название, Партнеры.Поставщик, Заказчики.Название, Заказчики.ЮЛ , Заказчики.id from \"Задачи партнера Мойка\", \"Точки Партнеров\" , Поставщики, Партнеры, Заказчики where Поставщики.id = Партнеры.Поставщик  and \"Задачи партнера Мойка\".Партнер = Партнеры.id  and \"Точки Партнеров\".id = \"Задачи партнера Мойка\".Точка and \"Задачи партнера Мойка\".Заказчик=Заказчики.id and \"Задачи партнера Мойка\".Партнер='%1' %2").arg(m_strUuidCurrentPartner).arg(m_filtersStr);
+    if(iUserType == Carsh)
+    {
+        QString strCarshByPartnerFilter = QString(" and \"Задачи партнера Мойка\".Заказчик='%1'").arg(strCurrentZakazId);
+        strQuery.append(strCarshByPartnerFilter);
+    }
     QSqlQuery query;
     query.exec(strQuery);
 
@@ -134,6 +149,12 @@ void QWashPartnerTaskWidget::UpdateTasksList()
 
         /*Детализация построчно (потипно) для счета, рассчет стоимости суммарно по каждой задача и штрафа суммарно для всех типов*/
         QString strTypesExec=QString("select \"Типы задач Мойка\".Цена, SUM(\"Задача Мойка - Типы\".Количество), \"Типы задач Мойка\".Тип, \"Задача Мойка - Типы\".Ночь , sum((select \"Отмена Мойки\".Количество from \"Отмена Мойки\" where \"Отмена Мойки\".Задача = \"Задача Мойка - Типы\".Задача and \"Отмена Мойки\".Тип = \"Задача Мойка - Типы\".Тип and \"Отмена Мойки\".Ночь = \"Задача Мойка - Типы\".Ночь and \"Отмена Мойки\".Удалено<>'true')) from \"Задача Мойка - Типы\" , \"Типы задач Мойка\" where \"Типы задач Мойка\".id = \"Задача Мойка - Типы\".Тип and  \"Задача Мойка - Типы\".Задача = '%1' group by \"Типы задач Мойка\".Тип , \"Задача Мойка - Типы\".Ночь , \"Типы задач Мойка\".Цена").arg(query.value(0).toString());
+        if(iUserType == Carsh)
+        {
+            strTypesExec=QString("select ЦеныЗаказчиков.Цена, SUM(\"Задача Мойка - Типы\".Количество), \"Типы задач Мойка\".Тип, \"Задача Мойка - Типы\".Ночь , 0  from \"Задача Мойка - Типы\" , \"Типы задач Мойка\" ,ЦеныЗаказчиков where ЦеныЗаказчиков.Заказчик='%2' and ЦеныЗаказчиков.ТипЗадачи = \"Типы задач Мойка\".id and \"Типы задач Мойка\".id = \"Задача Мойка - Типы\".Тип and  \"Задача Мойка - Типы\".Задача = '%1' group by \"Типы задач Мойка\".Тип , \"Задача Мойка - Типы\".Ночь , ЦеныЗаказчиков.Цена").arg(query.value(0).toString()).arg(strCurrentZakazId);
+        }
+
+
         QSqlQuery TypesQuery;
         TypesQuery.exec(strTypesExec);
 
@@ -281,7 +302,7 @@ void QWashPartnerTaskWidget::OnSchetZakazPressed()
 
 
     QString strFileName = QFileDialog::getSaveFileName(this , "Счет партнера Мойка" , QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) , tr("Excel (*.xls *.xlsx)"));
-    strFileName.append(".xls");
+    strFileName.append(".xlsx");
     if(strFileName.length()>5)
     {
         QString strTmpFile = GetTempFNameSchet();
@@ -403,7 +424,7 @@ void QWashPartnerTaskWidget::OnSchetPressed()
         uuidULPartnerId = query.value(0).toUuid();
 
     QString strFileName = QFileDialog::getSaveFileName(this , "Счет партнера Мойка" , QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) , tr("Excel (*.xls *.xlsx)"));
-    strFileName.append(".xls");
+    strFileName.append(".xlsx");
     if(strFileName.length()>5)
     {
         QString strTmpFile = GetTempFNameSchet();

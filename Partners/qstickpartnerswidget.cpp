@@ -4,6 +4,7 @@
 #include "common.h"
 
 extern int iUserType;
+extern QString strCurrentZakazId;
 
 QStickPartnersWidget::QStickPartnersWidget(QWidget *parent)
     : QWidget{parent}
@@ -34,7 +35,10 @@ QStickPartnersWidget::QStickPartnersWidget(QWidget *parent)
 
     m_pStickPartnerCardWidget = new QStickPartnerCardWidget;
 
-    m_pStickPartnerTabWidget->addTab(m_pStickPartnerCardWidget , "Карточка");
+    if(iUserType == CarshService)
+    {
+        m_pStickPartnerTabWidget->addTab(m_pStickPartnerCardWidget , "Карточка");
+    }
 
     pHStickPartnerLayout->addWidget(m_pStickPartnerTabWidget , 3);
 
@@ -43,7 +47,11 @@ QStickPartnersWidget::QStickPartnersWidget(QWidget *parent)
 
     /*Заполним пользователей*/
     QString strStickPartnerQuery("select Партнеры.id , ЮЛ.Название from Партнеры, ЮЛ where Партнеры.ЮЛ = ЮЛ.id and Партнеры.Удалено<>true and Партнеры.Тип='082cf73c-6f6f-4167-ae89-b87c347091b2'");
-    if(iUserType == Carsh) strStickPartnerQuery.append(" and Партнеры.Подтвержден = true");
+    if(iUserType == Carsh)
+    {
+        QString strPartnerByCarshFilter = QString(" and Партнеры.Подтвержден = true and Партнеры.id in (select ИсполнительПартнер from ИсполнителиЗаказчики where Заказчик = '%1')").arg(strCurrentZakazId);
+        strStickPartnerQuery.append(strPartnerByCarshFilter);
+    }
     QSqlQuery StickPartnerQuery;
     StickPartnerQuery.exec(strStickPartnerQuery);
     while(StickPartnerQuery.next())
@@ -61,6 +69,6 @@ QStickPartnersWidget::QStickPartnersWidget(QWidget *parent)
 void QStickPartnersWidget::StickPartnerClicked(QListWidgetItem * item)
 {
     QString strPartnerUuid = item->data(Qt::UserRole).toString();
-    m_pStickPartnerCardWidget->SetActivPartner(strPartnerUuid);
+    if(iUserType == CarshService) m_pStickPartnerCardWidget->SetActivPartner(strPartnerUuid);
     m_pStickPartnerTasksWidget->SetActivPartner(strPartnerUuid);
 }

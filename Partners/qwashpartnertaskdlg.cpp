@@ -11,7 +11,7 @@
 #include "service/qdelopenpendlg.h"
 
 extern int iUserType;
-
+extern QString strCurrentZakazId;
 
 QWashPartnerTaskDlg::QWashPartnerTaskDlg(QString strTaskUuid)
 {
@@ -99,14 +99,23 @@ QWashPartnerTaskDlg::QWashPartnerTaskDlg(QString strTaskUuid)
 void QWashPartnerTaskDlg::UpdateTable()
 {
     QStringList headers;
-    headers << "Вид работы" << "Время суток"<< "Количество" << "Цена"<<"Стоимость"<<"Отмена (кол-во)"<<"Отмена стоимость"<<"Итого";
+
     m_pTypesTableWidget->clear();
     m_pTypesTableWidget->clearSpans();
     m_pTypesTableWidget->setRowCount(0);
-    m_pTypesTableWidget->setColumnCount(8);
+    m_pTypesTableWidget->setColumnCount(5);
+    headers << "Вид работы" << "Время суток"<< "Количество" << "Цена"<<"Стоимость";
+    if(iUserType == CarshService)
+    {
+        m_pTypesTableWidget->setColumnCount(8);
+        headers <<"Отмена (кол-во)"<<"Отмена стоимость"<<"Итого";
+    }
+
     m_pTypesTableWidget->setHorizontalHeaderLabels(headers);
 
-    QString strTypesExec=QString("select \"Типы задач Мойка\".Тип, \"Типы задач Мойка\".Цена , \"Задача Мойка - Типы\".Количество, \"Задача Мойка - Типы\".Ночь , \"Типы задач Мойка\".id from \"Задача Мойка - Типы\" , \"Типы задач Мойка\" where \"Типы задач Мойка\".id = \"Задача Мойка - Типы\".Тип and \"Задача Мойка - Типы\".Задача = '%1'").arg(m_strTaskId);
+    QString strTypesExec=QString("select \"Типы задач Мойка\".Тип, \"Типы задач Мойка\".Цена , \"Задача Мойка - Типы\".Количество, \"Задача Мойка - Типы\".Ночь , \"Типы задач Мойка\".id from \"Задача Мойка - Типы\" , \"Типы задач Мойка\" where  \"Типы задач Мойка\".id = \"Задача Мойка - Типы\".Тип and \"Задача Мойка - Типы\".Задача = '%1'").arg(m_strTaskId);
+    if(iUserType == Carsh) strTypesExec=QString("select \"Типы задач Мойка\".Тип, \"Типы задач Мойка\".Цена , \"Задача Мойка - Типы\".Количество, \"Задача Мойка - Типы\".Ночь , \"Типы задач Мойка\".id , ЦеныЗаказчиков.Цена from \"Задача Мойка - Типы\" , \"Типы задач Мойка\" , ЦеныЗаказчиков where  ЦеныЗаказчиков.Заказчик='%2' and ЦеныЗаказчиков.ТипЗадачи = \"Типы задач Мойка\".id and \"Типы задач Мойка\".id = \"Задача Мойка - Типы\".Тип and \"Задача Мойка - Типы\".Задача = '%1'").arg(m_strTaskId).arg(strCurrentZakazId);
+
     QSqlQuery TypesQuery;
     QString strWorks;
     TypesQuery.exec(strTypesExec);
@@ -130,6 +139,7 @@ void QWashPartnerTaskDlg::UpdateTable()
             iPenCount = penQuery.value(1).toInt();
         }
 
+        /*Тип задачи*/
         QTableWidgetItem * pItem = new QTableWidgetItem(TypesQuery.value(0).toString());
         pItem->setData(Qt::UserRole , TypesQuery.value(4));//Тип
         pItem->setData(Qt::UserRole + 1, TypesQuery.value(3));//Ночь
@@ -137,6 +147,7 @@ void QWashPartnerTaskDlg::UpdateTable()
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTypesTableWidget->setItem(iRowCounter , 0,  pItem);
 
+        /*Время суток*/
         QString strDayTime;
         if(TypesQuery.value(3).toBool())
             strDayTime="Ночь";
@@ -149,6 +160,7 @@ void QWashPartnerTaskDlg::UpdateTable()
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTypesTableWidget->setItem(iRowCounter , 1,  pItem);
 
+        /*Количество*/
         pItem = new QTableWidgetItem(TypesQuery.value(2).toString());
         pItem->setData(Qt::UserRole , TypesQuery.value(4));
         pItem->setData(Qt::UserRole + 1, TypesQuery.value(3));
@@ -156,14 +168,19 @@ void QWashPartnerTaskDlg::UpdateTable()
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTypesTableWidget->setItem(iRowCounter , 2,  pItem);
 
-        pItem = new QTableWidgetItem(TypesQuery.value(1).toString());
+
+        /*Цена*/
+        QVariant price = TypesQuery.value(1);
+        if(iUserType == Carsh ) price = TypesQuery.value(5);
+        pItem = new QTableWidgetItem(price.toString());
         pItem->setData(Qt::UserRole , TypesQuery.value(4));
         pItem->setData(Qt::UserRole + 1, TypesQuery.value(3));
         pItem->setData(Qt::UserRole + 2, idPenWash); //Отмена/штраф
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTypesTableWidget->setItem(iRowCounter , 3,  pItem);
 
-        int iSumm = TypesQuery.value(1).toInt() * TypesQuery.value(2).toInt();
+        /*Стоимость (цена*количество) */
+        int iSumm = price.toInt() * TypesQuery.value(2).toInt();
 
         pItem = new QTableWidgetItem(QString("%1").arg(iSumm));
         pItem->setData(Qt::UserRole , TypesQuery.value(4));
@@ -174,32 +191,35 @@ void QWashPartnerTaskDlg::UpdateTable()
 
         dblSumm = dblSumm + iSumm;
 
-        //Количество штрафов
-        pItem = new QTableWidgetItem(QString("%1").arg(iPenCount));
-        pItem->setData(Qt::UserRole , TypesQuery.value(4));
-        pItem->setData(Qt::UserRole + 1, TypesQuery.value(3));
-        pItem->setData(Qt::UserRole + 2, idPenWash); //Отмена/штраф
-        pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        m_pTypesTableWidget->setItem(iRowCounter , 5,  pItem);
+        if(iUserType == CarshService)
+        {
+            //Количество штрафов
+            pItem = new QTableWidgetItem(QString("%1").arg(iPenCount));
+            pItem->setData(Qt::UserRole , TypesQuery.value(4));
+            pItem->setData(Qt::UserRole + 1, TypesQuery.value(3));
+            pItem->setData(Qt::UserRole + 2, idPenWash); //Отмена/штраф
+            pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+            m_pTypesTableWidget->setItem(iRowCounter , 5,  pItem);
 
-        int iPenSum = TypesQuery.value(1).toInt() * iPenCount;
-        dblPenSumm = dblPenSumm + iPenSum;
+            int iPenSum = TypesQuery.value(1).toInt() * iPenCount;
+            dblPenSumm = dblPenSumm + iPenSum;
 
-        //Сумма штрафов
-        pItem = new QTableWidgetItem(QString("%1").arg(iPenSum));
-        pItem->setData(Qt::UserRole , TypesQuery.value(4));
-        pItem->setData(Qt::UserRole + 1, TypesQuery.value(3));
-        pItem->setData(Qt::UserRole + 2, idPenWash); //Отмена/штраф
-        pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        m_pTypesTableWidget->setItem(iRowCounter , 6,  pItem);
+            //Сумма штрафов
+            pItem = new QTableWidgetItem(QString("%1").arg(iPenSum));
+            pItem->setData(Qt::UserRole , TypesQuery.value(4));
+            pItem->setData(Qt::UserRole + 1, TypesQuery.value(3));
+            pItem->setData(Qt::UserRole + 2, idPenWash); //Отмена/штраф
+            pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+            m_pTypesTableWidget->setItem(iRowCounter , 6,  pItem);
 
-        //Итого
-        pItem = new QTableWidgetItem(QString("%1").arg(iSumm - iPenSum));
-        pItem->setData(Qt::UserRole , TypesQuery.value(4));
-        pItem->setData(Qt::UserRole + 1, TypesQuery.value(3));
-        pItem->setData(Qt::UserRole + 2, idPenWash); //Отмена/штраф
-        pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        m_pTypesTableWidget->setItem(iRowCounter , 7,  pItem);
+            //Итого
+            pItem = new QTableWidgetItem(QString("%1").arg(iSumm - iPenSum));
+            pItem->setData(Qt::UserRole , TypesQuery.value(4));
+            pItem->setData(Qt::UserRole + 1, TypesQuery.value(3));
+            pItem->setData(Qt::UserRole + 2, idPenWash); //Отмена/штраф
+            pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+            m_pTypesTableWidget->setItem(iRowCounter , 7,  pItem);
+        }
 
         iRowCounter++;
     }
@@ -207,6 +227,7 @@ void QWashPartnerTaskDlg::UpdateTable()
     /*Добавим Итого*/
     m_pTypesTableWidget->setSpan(iRowCounter , 0 , 1 , 5);
     QTableWidgetItem * pItem = new QTableWidgetItem(QString("Итого (с учетом вычетов): %1 руб.").arg(dblSumm - dblPenSumm));
+    if(iUserType == Carsh) pItem->setText(QString("Итого: %1 руб.").arg(dblSumm));
     m_pTypesTableWidget->setItem(iRowCounter , 0,  pItem);
     m_pTypesTableWidget->resizeColumnsToContents();
 }

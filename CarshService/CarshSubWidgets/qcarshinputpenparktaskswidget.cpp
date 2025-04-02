@@ -60,7 +60,7 @@ QCarshInputPenParkTasksWidget::QCarshInputPenParkTasksWidget(QWidget *parent)
 
     pFilterHLoyuot->addStretch();
 
-    QPushButton * pFilterApplyButton = new QPushButton("Применть фильтры");
+    QPushButton * pFilterApplyButton = new QPushButton("Применить фильтры");
     connect(pFilterApplyButton,SIGNAL(pressed()),this,SLOT(OnFilterApplyPressed()));
     pFilterHLoyuot->addWidget(pFilterApplyButton);
 
