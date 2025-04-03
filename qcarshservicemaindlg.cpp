@@ -46,8 +46,9 @@ QCarshServiceMainDlg::QCarshServiceMainDlg()
 
     pVMainLayout->addWidget(pTabs);
 
-    //this->setWindowFlags(Qt::Window);
-    //this->showFullScreen();
+    setWindowFlags(windowFlags() |
+                   Qt::WindowMinimizeButtonHint |
+                   Qt::WindowMaximizeButtonHint);
 
     mHeartbeatTimer = std::make_shared<QTimer>(this);
     connect(mHeartbeatTimer.get() , &QTimer::timeout , this , &QCarshServiceMainDlg::OnProcessingHeartbeatTimer);

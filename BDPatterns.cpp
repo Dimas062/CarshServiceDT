@@ -49,19 +49,33 @@ QUuid CreatePayDocRecord(QUuid uuidPay , QString strImg)
     return uuidPayDoc;
 }
 
+//Возвращает гуид созданного документа (не связки документ-задача)
 QUuid CreateTaskDocRecord(QUuid uuidTask , QString strImg , QUuid uuidType)
 {
     QUuid uuidDoc = QUuid::createUuid();
     QUuid uuidTaskDoc = QUuid::createUuid();
 
     QString strExec = QString("insert into \"Документы\" (id,\"Тип\",\"Изображение\") values ('%1','%2','%3')").arg(uuidDoc.toString()).arg(uuidType.toString()).arg(strImg);
-    QSqlQuery query;
-    query.exec(strExec);
+    execMainBDQueryUpdate(strExec);
 
     strExec = QString("insert into \"Задача-Документы задач\" (id,\"Задача\",\"Документ\") values ('%1','%2','%3')").arg(uuidTaskDoc.toString()).arg(uuidTask.toString()).arg(uuidDoc.toString());
-    query.exec(strExec);
+    execMainBDQueryUpdate(strExec);
 
-    return uuidTaskDoc;
+    return uuidDoc;
+}
+
+QUuid CopyDocToTask(QUuid uuidTask , QUuid uuidSrcDoc)
+{
+    QUuid uuidDoc = QUuid::createUuid();
+    QUuid uuidTaskDoc = QUuid::createUuid();
+
+    QString strExec = QString("INSERT INTO \"Документы\" (id, \"Тип\", \"Изображение\") SELECT '%1', \"Тип\", \"Изображение\" FROM \"Документы\" WHERE id = '%2'").arg(uuidDoc.toString()).arg(uuidSrcDoc.toString());
+    execMainBDQueryUpdate(strExec);
+
+    strExec = QString("insert into \"Задача-Документы задач\" (id,\"Задача\",\"Документ\") values ('%1','%2','%3')").arg(uuidTaskDoc.toString()).arg(uuidTask.toString()).arg(uuidDoc.toString());
+    execMainBDQueryUpdate(strExec);
+
+    return uuidDoc;
 }
 
 void RemoveTaskDocs(QUuid uuidTask)

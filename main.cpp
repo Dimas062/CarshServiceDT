@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
         QCarshMainDlg dlg;
         dlg.show();
 
-    return a.exec();
+        return a.exec();
     }
 
     return a.exec();
