@@ -22,9 +22,9 @@ DefaultDirName={autopf}\{#MyAppName}
 DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputDir=C:\projects\CarshServiceDT\Setup
+OutputDir=C:\git\CarshService\CarshServiceDT\Setup
 OutputBaseFilename=CarshService
-SetupIconFile=C:\projects\CarshServiceDT\icons\CarshService.ico
+SetupIconFile=C:\git\CarshService\CarshServiceDT\icons\CarshService.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -36,24 +36,25 @@ Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\projects\build-CarshServiceDT-Desktop_Qt_6_6_2_MinGW_64_bit-Release\release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\build-CarshServiceDT-Desktop_Qt_6_6_2_MinGW_64_bit-Release\release\imageformats\*"; DestDir: "{app}\imageformats\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\projects\build-CarshServiceDT-Desktop_Qt_6_6_2_MinGW_64_bit-Release\release\platforms\*"; DestDir: "{app}\platforms\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "c:\git\CarshService\CarshServiceDT\build\Desktop_Qt_6_8_0_MinGW_64_bit-Release\release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\git\CarshService\CarshServiceDT\build\Desktop_Qt_6_8_0_MinGW_64_bit-Release\release\imageformats\*"; DestDir: "{app}\imageformats\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "c:\git\CarshService\CarshServiceDT\build\Desktop_Qt_6_8_0_MinGW_64_bit-Release\release\platforms\*"; DestDir: "{app}\platforms\"; Flags: ignoreversion recursesubdirs createallsubdirs
 ;Source: "C:\projects\build-CarshServiceDT-Desktop_Qt_6_6_2_MinGW_64_bit-Release\release\plugins\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\projects\build-CarshServiceDT-Desktop_Qt_6_6_2_MinGW_64_bit-Release\release\sqldrivers\*"; DestDir: "{app}\sqldrivers\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\projects\build-CarshServiceDT-Desktop_Qt_6_6_2_MinGW_64_bit-Release\release\libcrypto-1_1-x64.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\build-CarshServiceDT-Desktop_Qt_6_6_2_MinGW_64_bit-Release\release\libiconv-2.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\build-CarshServiceDT-Desktop_Qt_6_6_2_MinGW_64_bit-Release\release\libintl-8.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\build-CarshServiceDT-Desktop_Qt_6_6_2_MinGW_64_bit-Release\release\libpq.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\build-CarshServiceDT-Desktop_Qt_6_6_2_MinGW_64_bit-Release\release\libssl-1_1-x64.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\build-CarshServiceDT-Desktop_Qt_6_6_2_MinGW_64_bit-Release\release\Qt6Core.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\build-CarshServiceDT-Desktop_Qt_6_6_2_MinGW_64_bit-Release\release\Qt6Gui.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\build-CarshServiceDT-Desktop_Qt_6_6_2_MinGW_64_bit-Release\release\Qt6Sql.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\build-CarshServiceDT-Desktop_Qt_6_6_2_MinGW_64_bit-Release\release\Qt6Widgets.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\build-CarshServiceDT-Desktop_Qt_6_6_2_MinGW_64_bit-Release\release\Qt6Charts.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\build-CarshServiceDT-Desktop_Qt_6_6_2_MinGW_64_bit-Release\release\Qt6OpenGL.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\build-CarshServiceDT-Desktop_Qt_6_6_2_MinGW_64_bit-Release\release\Qt6OpenGLWidgets.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\build-CarshServiceDT-Desktop_Qt_6_6_2_MinGW_64_bit-Release\release\qwindows.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\git\CarshService\CarshServiceDT\build\Desktop_Qt_6_8_0_MinGW_64_bit-Release\release\sqldrivers\*"; DestDir: "{app}\sqldrivers\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "c:\git\CarshService\CarshServiceDT\build\Desktop_Qt_6_8_0_MinGW_64_bit-Release\release\libcrypto-1_1-x64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\git\CarshService\CarshServiceDT\build\Desktop_Qt_6_8_0_MinGW_64_bit-Release\release\libiconv-2.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\git\CarshService\CarshServiceDT\build\Desktop_Qt_6_8_0_MinGW_64_bit-Release\release\libintl-8.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\git\CarshService\CarshServiceDT\build\Desktop_Qt_6_8_0_MinGW_64_bit-Release\release\libpq.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\git\CarshService\CarshServiceDT\build\Desktop_Qt_6_8_0_MinGW_64_bit-Release\release\libssl-1_1-x64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\git\CarshService\CarshServiceDT\build\Desktop_Qt_6_8_0_MinGW_64_bit-Release\release\Qt6Core.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\git\CarshService\CarshServiceDT\build\Desktop_Qt_6_8_0_MinGW_64_bit-Release\release\Qt6Gui.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\git\CarshService\CarshServiceDT\build\Desktop_Qt_6_8_0_MinGW_64_bit-Release\release\Qt6Sql.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\git\CarshService\CarshServiceDT\build\Desktop_Qt_6_8_0_MinGW_64_bit-Release\release\Qt6Widgets.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\git\CarshService\CarshServiceDT\build\Desktop_Qt_6_8_0_MinGW_64_bit-Release\release\Qt6Charts.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\git\CarshService\CarshServiceDT\build\Desktop_Qt_6_8_0_MinGW_64_bit-Release\release\Qt6OpenGL.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\git\CarshService\CarshServiceDT\build\Desktop_Qt_6_8_0_MinGW_64_bit-Release\release\Qt6OpenGLWidgets.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\git\CarshService\CarshServiceDT\build\Desktop_Qt_6_8_0_MinGW_64_bit-Release\release\Qt6Network.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\git\CarshService\CarshServiceDT\build\Desktop_Qt_6_8_0_MinGW_64_bit-Release\release\qwindows.dll"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

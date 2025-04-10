@@ -15,9 +15,9 @@
 
 
 
-QUuid CreatePayRecord(double dblSum , PayTypes iPayType);
+QUuid CreatePayRecord(double dblSum , PayTypes iPayType, qint64 iDate);
 
-void UpdatePayRecord(QUuid uuidPay , double dblSum , PayTypes iPayType);
+void UpdatePayRecord(QUuid uuidPay , double dblSum , PayTypes iPayType, qint64 iDate);
 
 QUuid CreatePayDocRecord(QUuid uuidPay , QString strImg);
 
