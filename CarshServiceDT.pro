@@ -32,6 +32,7 @@ SOURCES += \
     ../CarshService/service_widgets/qcsscrollarea.cpp \
     ../CarshService/service_widgets/qcsselectdialog.cpp \
     ../CarshService/service_widgets/qcsselectdlgbuttonswidget.cpp \
+    ../CarshService/service_widgets/qfinddlg.cpp \
     ../CarshService/service_widgets/qlinetext.cpp \
     ../CarshService/service_widgets/qloaddoclinewidget.cpp \
     ../CarshService/service_widgets/qloaddocsdlg.cpp \
@@ -131,6 +132,7 @@ HEADERS += \
     ../CarshService/service_widgets/qcsscrollarea.h \
     ../CarshService/service_widgets/qcsselectdialog.h \
     ../CarshService/service_widgets/qcsselectdlgbuttonswidget.h \
+    ../CarshService/service_widgets/qfinddlg.h \
      ../CarshService/service_widgets/qlinetext.h \
     #BDPatterns.h \
     ../CarshService/service_widgets/qloaddoclinewidget.h \
