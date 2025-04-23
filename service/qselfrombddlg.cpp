@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QSqlQuery>
 #include <QPushButton>
+#include <QVariant>
 
 QSelFromBdDlg::QSelFromBdDlg(QString strTable , QString strShowField , bool bIsDeleteble)
 {

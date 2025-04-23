@@ -39,8 +39,14 @@ void QPicLabel::mousePressEvent(QMouseEvent* event)
         int iPicWidth = iw*scaleFactor;
         int iPicHeight = ih*scaleFactor;
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)// Для Qt 5
+        int x = event->localPos().x();
+        int y = event->localPos().y();
+#else
         int x = event->position().x();
         int y = event->position().y();
+#endif
+
 
         if( (x<((ww - iPicWidth)/2)) || (x>((ww - iPicWidth)/2) + iPicWidth))
         {

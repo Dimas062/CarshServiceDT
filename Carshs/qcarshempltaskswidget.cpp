@@ -103,7 +103,7 @@ void QCarshEmplTasksWidget::TaskTypeComboChanged(int )
 {
 
     /*Выбран тип Штрафстоянка*/
-    if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid::fromString("8078b7ce-e423-49ae-9ce6-17758b852b33"))
+    if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid(QString("8078b7ce-e423-49ae-9ce6-17758b852b33")))
     {
         m_pPenalParkTaskFilterWidget->show();
         return;
@@ -123,7 +123,7 @@ void QCarshEmplTasksWidget::OnFilterApplyPressed()
 
 
         /*Выбрана штрафстоянка - доп. фильтры штрафстоянки*/
-        if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid::fromString("8078b7ce-e423-49ae-9ce6-17758b852b33"))
+        if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid(QString("8078b7ce-e423-49ae-9ce6-17758b852b33")))
         {
             QString strPenParkFilter = "";
 
@@ -228,7 +228,7 @@ void QCarshEmplTasksWidget::UpdateTasksList()
 
 void QCarshEmplTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
 {
-    if(item->data(Qt::UserRole+1).toUuid() == QUuid::fromString("8078b7ce-e423-49ae-9ce6-17758b852b33"))
+    if(item->data(Qt::UserRole+1).toUuid() == QUuid(QString("8078b7ce-e423-49ae-9ce6-17758b852b33")))
     {
         QPixmap pixmap(":/icons/CarshServiceIcon256.png");
         QSplashScreen splash(pixmap);
@@ -238,7 +238,7 @@ void QCarshEmplTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         splash.finish(&dlg);
         dlg.exec();
     }
-    if(item->data(Qt::UserRole+1).toUuid() == QUuid::fromString("99b4e860-5a7b-42a4-9136-f96252ef4192"))
+    if(item->data(Qt::UserRole+1).toUuid() == QUuid(QString("99b4e860-5a7b-42a4-9136-f96252ef4192")))
     {
         QPixmap pixmap(":/icons/CarshServiceIcon256.png");
         QSplashScreen splash(pixmap);
@@ -248,7 +248,7 @@ void QCarshEmplTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         splash.finish(&dlg);
         dlg.exec();
     }
-    if(item->data(Qt::UserRole+1).toUuid() == QUuid::fromString("057b3b6f-2848-479b-a546-3f16cb531ffe"))
+    if(item->data(Qt::UserRole+1).toUuid() == QUuid(QString("057b3b6f-2848-479b-a546-3f16cb531ffe")))
     {
         QPixmap pixmap(":/icons/CarshServiceIcon256.png");
         QSplashScreen splash(pixmap);
@@ -259,7 +259,7 @@ void QCarshEmplTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         dlg.exec();
     }
 
-    if(item->data(Qt::UserRole+1).toUuid() == QUuid::fromString("fe81daf9-a838-4bac-84aa-595e038d3a12"))
+    if(item->data(Qt::UserRole+1).toUuid() == QUuid(QString("fe81daf9-a838-4bac-84aa-595e038d3a12")))
     {
         QPixmap pixmap(":/icons/CarshServiceIcon256.png");
         QSplashScreen splash(pixmap);
@@ -269,7 +269,7 @@ void QCarshEmplTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         splash.finish(&dlg);
         dlg.exec();
     }
-    if(item->data(Qt::UserRole+1).toUuid() == QUuid::fromString("78850df8-814b-41c8-8977-945c085f3021"))
+    if(item->data(Qt::UserRole+1).toUuid() == QUuid(QString("78850df8-814b-41c8-8977-945c085f3021")))
     {
         QPixmap pixmap(":/icons/CarshServiceIcon256.png");
         QSplashScreen splash(pixmap);
@@ -280,7 +280,7 @@ void QCarshEmplTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         dlg.exec();
     }
 
-    if(item->data(Qt::UserRole+1).toUuid() == QUuid::fromString("25695573-f5fe-43fd-93dc-76ee09e461fa"))
+    if(item->data(Qt::UserRole+1).toUuid() == QUuid(QString("25695573-f5fe-43fd-93dc-76ee09e461fa")))
     {
         QPixmap pixmap(":/icons/CarshServiceIcon256.png");
         QSplashScreen splash(pixmap);

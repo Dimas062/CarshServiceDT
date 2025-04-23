@@ -59,7 +59,7 @@ QCarshDocsTaskDlg::QCarshDocsTaskDlg(QString strTaskUuid)
             pCountLabel->setStyleSheet("font-size: 16px;");
 
             /*СТС - показываем оплату*/
-            if(QUuid::fromString(extendQuery.value(0).toString()) == QUuid::fromString("d7e6ca81-d6fe-405e-8a39-961ceb9bd1f6"))
+            if(QUuid::fromString(extendQuery.value(0).toString()) == QUuid(QString("d7e6ca81-d6fe-405e-8a39-961ceb9bd1f6")))
             {
                 strExtenQuery = QString("select \"Платежи сотрудников\".Сумма , \"Платежи сотрудников\".id from \"Расширение задачи Документы\", \"Платежи сотрудников\" where  \"Расширение задачи Документы\".Оплата=\"Платежи сотрудников\".id and \"Расширение задачи Документы\".id='%1'").arg(query.value(2).toString());
                 extendQuery.exec(strExtenQuery);

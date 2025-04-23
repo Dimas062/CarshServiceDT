@@ -225,6 +225,11 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+win32 {
+    DEFINES += WINVER=0x0601 _WIN32_WINNT=0x0601  # Windows 7
+    QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0601 -DWINVER=0x0601
+}
+
 macx{
     # ICON = Resources/icons/icon.icns
     ICON = Mac/icon.icns

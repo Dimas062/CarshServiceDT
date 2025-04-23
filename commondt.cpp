@@ -8,6 +8,7 @@
 #include "xlsxdocument.h"
 #include <QTableWidget>
 #include <QHeaderView>
+#include <QDebug>
 
 void saveTableToExcel(QTableWidget* table, const QString& fileName, const QString& title = "Report") {
     QXlsx::Document xlsx;

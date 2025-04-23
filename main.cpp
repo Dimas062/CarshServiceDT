@@ -1,6 +1,6 @@
 //#include "qmaindialog.h"
 
-
+#include <windows.h>
 //#include <QApplication>
 #include <QtWidgets/QApplication>
 #include <QUuid>
@@ -29,6 +29,15 @@ QSettings settings(QSettings::IniFormat, QSettings::UserScope,
 
 QT_USE_NAMESPACE
 
+
+
+
+extern "C" {
+__declspec(dllexport) DWORD GetCurrentPackageFullName(UINT32*, PWSTR) {
+    return 0x80073D54; // Ошибка "Пакет не найден" для классических приложений
+}
+}
+
 int main(int argc, char *argv[])
 {
     qputenv("QT_ASSUME_STDERR_HAS_CONSOLE", "1");
@@ -46,8 +55,8 @@ int main(int argc, char *argv[])
 
     screenGeometry = QRect(qApp->screens()[0]->size().width()/8,0,qApp->screens()[0]->size().width() - qApp->screens()[0]->size().width()/4 ,qApp->screens()[0]->size().height());
 
+    QSqlDatabase db = QSqlDatabase::addDatabase("QPSQL");
 
-    QSqlDatabase db=QSqlDatabase::addDatabase("QPSQL");
     db.setHostName("188.243.205.147");
     db.setDatabaseName("CarshService");
     db.setPassword("VthctltcWKR200");

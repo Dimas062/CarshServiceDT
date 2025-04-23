@@ -326,7 +326,7 @@ void QWashPartnerTaskWidget::OnSchetZakazPressed()
 
         WriteULsActInfo(strTmpFile , uuidULZakazIdUL , uuidULPostavId , vCurrentZakazSchetItems , strNumber);
 
-        strFileName.insert(strFileName.length() - 4 , "_Акт");
+        strFileName.insert(strFileName.length() - 5 , "_Акт");
 
         QFile::remove(strFileName);
 
@@ -448,7 +448,7 @@ void QWashPartnerTaskWidget::OnSchetPressed()
 
         WriteULsActInfo(strTmpFile , uuidULPostavId , uuidULPartnerId, vCurrentSchetItems , strNumber);
 
-        strFileName.insert(strFileName.length() - 4 , "_Акт");
+        strFileName.insert(strFileName.length() - 5 , "_Акт");
 
         QFile::remove(strFileName);
 

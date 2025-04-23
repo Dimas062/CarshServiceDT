@@ -4,12 +4,9 @@
 #include <QSqlQuery>
 #include <QDate>
 #include "common.h"
+#include <QDebug>
 
- #include "xlsxdocument.h"
-// #include "xlsxchartsheet.h"
-// #include "xlsxcellrange.h"
-// #include "xlsxchart.h"
-// #include "xlsxrichstring.h"
+#include "xlsxdocument.h"
 #include "xlsxworkbook.h"
 using namespace QXlsx;
 
@@ -100,9 +97,9 @@ void WriteULsActInfo(QString strFname , QUuid uuidZakaz , QUuid uuidIspoln, QVec
         while(query.next())
         {
             QString strLetA = "";
-            if(query.value(10).toString().length()>0) strLetA=query.value(10).toString().first(1);
+            if(query.value(10).toString().length()>0) strLetA=query.value(10).toString().left(1);
             QString strLetB = "";
-            if(query.value(11).toString().length()>0) strLetB=query.value(11).toString().first(1);
+            if(query.value(11).toString().length()>0) strLetB=query.value(11).toString().left(1);
             strIspolnDirector = QString("%1 %2.%3.").arg(query.value(9).toString()).arg(strLetA).arg(strLetB);
             strIspolnUL = QString("%1 \"%2\"").arg(query.value(0).toString()).arg(query.value(1).toString());
             QString strIstpoln = query.value(0).toString();
@@ -132,9 +129,9 @@ void WriteULsActInfo(QString strFname , QUuid uuidZakaz , QUuid uuidIspoln, QVec
         while(query.next())
         {
             QString strLetA = "";
-            if(query.value(10).toString().length()>0) strLetA=query.value(10).toString().first(1);
+            if(query.value(10).toString().length()>0) strLetA=query.value(10).toString().left(1);
             QString strLetB = "";
-            if(query.value(11).toString().length()>0) strLetB=query.value(11).toString().first(1);
+            if(query.value(11).toString().length()>0) strLetB=query.value(11).toString().left(1);
             strZakazDirector = QString("%1 %2.%3.").arg(query.value(9).toString()).arg(strLetA).arg(strLetB);
             strZakazUL = QString("%1 \"%2\"").arg(query.value(0).toString()).arg(query.value(1).toString());
             QString strZakaz = query.value(0).toString();
@@ -277,14 +274,12 @@ void WriteULsSchetInfo(QString strFname , QUuid uuidZakaz , QUuid uuidIspoln, QV
     bottomLineFormat.setBottomBorderStyle(Format::BorderThin);
     QXlsx::Format rigthAlignFormat;
     rigthAlignFormat.setHorizontalAlignment(Format::AlignRight);
-    QXlsx::Format centerAlignFormat;
+    //QXlsx::Format centerAlignFormat;
     rigthAlignFormat.setHorizontalAlignment(Format::AlignHCenter);
     QXlsx::Format topSmallTextFormat;
     topSmallTextFormat.setHorizontalAlignment(Format::AlignHCenter);
     topSmallTextFormat.setVerticalAlignment(Format::AlignTop);
     topSmallTextFormat.setFontSize(7);
-
-    int iItemCount = vItems.size();
 
     QXlsx::Document xlsx(strFname);
     if(xlsx.load())
@@ -349,7 +344,7 @@ void WriteULsSchetInfo(QString strFname , QUuid uuidZakaz , QUuid uuidIspoln, QV
             dblSummCost = dblSummCost + item.dblItemPrice * item.dblCount;
         }
 
-        iItemCount = iItemCounter;
+        int iItemCount = iItemCounter;
 
         QXlsx::Format cellFormat;
         cellFormat.setHorizontalAlignment(Format::AlignRight);
@@ -462,9 +457,9 @@ void WriteULsSchetInfo(QString strFname , QUuid uuidZakaz , QUuid uuidIspoln, QV
             xlsx.write(11,11,query.value(8));//КоррСчет
             xlsx.write(7,5,query.value(6));//КПП
             QString strLetA = "";
-            if(query.value(10).toString().length()>0) strLetA=query.value(10).toString().first(1);
+            if(query.value(10).toString().length()>0) strLetA=query.value(10).toString().at(0);
             QString strLetB = "";
-            if(query.value(11).toString().length()>0) strLetB=query.value(11).toString().first(1);
+            if(query.value(11).toString().length()>0) strLetB=query.value(11).toString().at(0);
             QVariant varDirector = QString("%1 %2.%3.").arg(query.value(9).toString()).arg(strLetA).arg(strLetB);
 
             //Подписи

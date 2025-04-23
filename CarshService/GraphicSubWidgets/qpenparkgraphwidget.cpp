@@ -6,7 +6,7 @@
 #include <QSqlQuery>
 #include <QPushButton>
 #include <QUuid>
-
+#include <common.h>
 
 QPenParkGraphWidget::QPenParkGraphWidget(QWidget *parent)
     : QWidget{parent}
@@ -137,13 +137,35 @@ void QPenParkGraphWidget::UpdateGraph()
 
         QSqlQuery query;
 
+        debug_TimeStamp("QPenParkGraphWidget UpdateGraph   1");
 
         int time_from = QDateTime(QDate(from.year() , from.month() , 1) , QTime(0,0,0)).toSecsSinceEpoch();
         int time_to   = QDateTime(QDate(to.year() , to.month() , to.daysInMonth()) , QTime(23,59,59)).toSecsSinceEpoch();
 
-        QString strQuery = QString("select SUM(\"Платежи сотрудников\".Сумма),Штрафстоянки.Название from \"Платежи сотрудников\",Штрафстоянки where \"Платежи сотрудников\".id in (select \"Расширение задачи ШС\".\"Оплата парковки\" from \"Расширение задачи ШС\",Задачи where \"Расширение задачи ШС\".id = Задачи.Расширение and Задачи.\"Дата Время\">%1 and  Задачи.\"Дата Время\"<=%2 and \"Расширение задачи ШС\".Штрафстоянка=Штрафстоянки.id) group by Штрафстоянки.Название").arg(time_from).arg(time_to);
+        //QString strQuery = QString("select SUM(\"Платежи сотрудников\".Сумма),Штрафстоянки.Название from \"Платежи сотрудников\",Штрафстоянки where \"Платежи сотрудников\".id in (select \"Расширение задачи ШС\".\"Оплата парковки\" from \"Расширение задачи ШС\",Задачи where \"Расширение задачи ШС\".id = Задачи.Расширение and Задачи.\"Дата Время\">%1 and  Задачи.\"Дата Время\"<=%2 and \"Расширение задачи ШС\".Штрафстоянка=Штрафстоянки.id) group by Штрафстоянки.Название").arg(time_from).arg(time_to);
+
+        QString strQuery = QString("SELECT \
+            SUM(ps.\"Сумма\") AS \"Сумма\",\
+            шт.\"Название\"          \
+            FROM \
+            \"Штрафстоянки\" шт \
+            JOIN   \
+               \"Расширение задачи ШС\" рз ON шт.id = рз.\"Штрафстоянка\"  \
+            JOIN \
+                 \"Задачи\" з ON рз.id = з.\"Расширение\"    \
+            JOIN \
+                \"Платежи сотрудников\" ps ON рз.\"Оплата парковки\" = ps.id   \
+            WHERE \
+                 з.\"Дата Время\" > %1 \
+            AND з.\"Дата Время\" <= %2 \
+                 GROUP BY \
+            шт.\"Название\"").arg(time_from).arg(time_to);
+
+        debug_TimeStamp("QPenParkGraphWidget UpdateGraph   2");
 
         query.exec(strQuery);
+
+        debug_TimeStamp("QPenParkGraphWidget UpdateGraph   2.1");
         while(query.next())
         {
             *m_pBarSet<< query.value(0).toInt();
@@ -151,11 +173,15 @@ void QPenParkGraphWidget::UpdateGraph()
             categories<< query.value(1).toString();
         }
 
+        debug_TimeStamp("QPenParkGraphWidget UpdateGraph   3");
+
         m_pAxisY->setRange(0,iMaxCash);
         m_pSeries->append(m_pBarSet);
         m_pAxisX->append(categories);
         m_pChart->setTitle(" ");
         m_pBarSet->setLabel("Затраты");
+
+        debug_TimeStamp("QPenParkGraphWidget UpdateGraph   4");
 
     }
 }

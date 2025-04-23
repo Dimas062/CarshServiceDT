@@ -279,7 +279,7 @@ void QStickPartnerTaskWidget::OnSchetZakazPressed()
 
         WriteULsActInfo(strTmpFile , uuidULZakazIdUL , uuidULPostavId , vCurrentSchetItems , strNumber);
 
-        strFileName.insert(strFileName.length() - 4 , "_Акт");
+        strFileName.insert(strFileName.length() - 5 , "_Акт");
 
         QFile::remove(strFileName);
 
@@ -384,7 +384,7 @@ void QStickPartnerTaskWidget::OnSchetPressed()
 
         WriteULsActInfo(strTmpFile , uuidULPostavId , uuidULPartnerId, vCurrentSchetItems , strNumber);
 
-        strFileName.insert(strFileName.length() - 4 , "_Акт");
+        strFileName.insert(strFileName.length() - 5 , "_Акт");
 
         QFile::remove(strFileName);
 

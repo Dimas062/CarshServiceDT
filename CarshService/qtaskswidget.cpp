@@ -247,7 +247,7 @@ void QTasksWidget::TaskTypeComboChanged(int )
 {
 
     /*Выбран тип Штрафстоянка*/
-    if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid::fromString("8078b7ce-e423-49ae-9ce6-17758b852b33"))
+    if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid(QString("8078b7ce-e423-49ae-9ce6-17758b852b33")))
     {
         m_pPenalParkTaskFilterWidget->show();
         m_iCheckBoxCol = 10;
@@ -255,7 +255,7 @@ void QTasksWidget::TaskTypeComboChanged(int )
     }
 
     /*Выбран тип Документы*/
-    if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid::fromString("25695573-f5fe-43fd-93dc-76ee09e461fa"))
+    if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid(QString("25695573-f5fe-43fd-93dc-76ee09e461fa")))
     {
         m_iCheckBoxCol = 10;
         return;
@@ -273,7 +273,7 @@ void QTasksWidget::onHeaderDoubleClicked(int logicalIndex)
     if (color.isValid()) {
 
         /*Выбрана штрафстоянка - доп. столбцы штрафстоянки*/
-        if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid::fromString("8078b7ce-e423-49ae-9ce6-17758b852b33")&&(logicalIndex==8 || logicalIndex==9 || logicalIndex==10))
+        if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid(QString("8078b7ce-e423-49ae-9ce6-17758b852b33"))&&(logicalIndex==8 || logicalIndex==9 || logicalIndex==10))
         {
             if(logicalIndex == 8) m_ColorMap[11] = color;
             if(logicalIndex == 9) m_ColorMap[12] = color;
@@ -283,7 +283,7 @@ void QTasksWidget::onHeaderDoubleClicked(int logicalIndex)
             return;
         }
         /*Выбран тип Документы*/
-        if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid::fromString("25695573-f5fe-43fd-93dc-76ee09e461fa")&&(logicalIndex==8 || logicalIndex==9 || logicalIndex==10))
+        if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid(QString("25695573-f5fe-43fd-93dc-76ee09e461fa"))&&(logicalIndex==8 || logicalIndex==9 || logicalIndex==10))
         {
             if(logicalIndex == 8) m_ColorMap[9] = color;
             if(logicalIndex == 9) m_ColorMap[10] = color;
@@ -302,7 +302,7 @@ void QTasksWidget::onHeaderDoubleClicked(int logicalIndex)
 
 void QTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
 {
-    if(item->data(Qt::UserRole+1).toUuid() == QUuid::fromString("8078b7ce-e423-49ae-9ce6-17758b852b33"))
+    if(item->data(Qt::UserRole+1).toUuid() == QUuid(QString("8078b7ce-e423-49ae-9ce6-17758b852b33")))
     {
         QPixmap pixmap(":/icons/CarshServiceIcon256.png");
         QSplashScreen splash(pixmap);
@@ -314,7 +314,7 @@ void QTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         splash.finish(&dlg);
         dlg.exec();
     }
-    if(item->data(Qt::UserRole+1).toUuid() == QUuid::fromString("99b4e860-5a7b-42a4-9136-f96252ef4192"))
+    if(item->data(Qt::UserRole+1).toUuid() == QUuid(QString("99b4e860-5a7b-42a4-9136-f96252ef4192")))
     {
         QPixmap pixmap(":/icons/CarshServiceIcon256.png");
         QSplashScreen splash(pixmap);
@@ -326,7 +326,7 @@ void QTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         splash.finish(&dlg);
         dlg.exec();
     }
-    if(item->data(Qt::UserRole+1).toUuid() == QUuid::fromString("057b3b6f-2848-479b-a546-3f16cb531ffe"))
+    if(item->data(Qt::UserRole+1).toUuid() == QUuid(QString("057b3b6f-2848-479b-a546-3f16cb531ffe")))
     {
         QPixmap pixmap(":/icons/CarshServiceIcon256.png");
         QSplashScreen splash(pixmap);
@@ -339,7 +339,7 @@ void QTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         dlg.exec();
     }
 
-    if(item->data(Qt::UserRole+1).toUuid() == QUuid::fromString("fe81daf9-a838-4bac-84aa-595e038d3a12"))
+    if(item->data(Qt::UserRole+1).toUuid() == QUuid(QString("fe81daf9-a838-4bac-84aa-595e038d3a12")))
     {
         QPixmap pixmap(":/icons/CarshServiceIcon256.png");
         QSplashScreen splash(pixmap);
@@ -352,7 +352,7 @@ void QTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         dlg.exec();
     }
 
-    if(item->data(Qt::UserRole+1).toUuid() == QUuid::fromString("78850df8-814b-41c8-8977-945c085f3021"))
+    if(item->data(Qt::UserRole+1).toUuid() == QUuid(QString("78850df8-814b-41c8-8977-945c085f3021")))
     {
         QPixmap pixmap(":/icons/CarshServiceIcon256.png");
         QSplashScreen splash(pixmap);
@@ -365,7 +365,7 @@ void QTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         dlg.exec();
     }
 
-    if(item->data(Qt::UserRole+1).toUuid() == QUuid::fromString("25695573-f5fe-43fd-93dc-76ee09e461fa"))
+    if(item->data(Qt::UserRole+1).toUuid() == QUuid(QString("25695573-f5fe-43fd-93dc-76ee09e461fa")))
     {
         QPixmap pixmap(":/icons/CarshServiceIcon256.png");
         QSplashScreen splash(pixmap);
@@ -442,7 +442,7 @@ void QTasksWidget::OnSchetPressed()
     QString strFileName = QFileDialog::getSaveFileName(this , "Счет" , QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) , tr("Excel (*.xls *.xlsx)"));
     strFileName.append(".xlsx");
     QString strFileNameZatrati = strFileName;
-    strFileNameZatrati.insert(strFileNameZatrati.length()-4 , "_Затраты");
+    strFileNameZatrati.insert(strFileNameZatrati.length()-5 , "_Затраты");
 
     if(strFileName.length()>5)
     {
@@ -467,7 +467,7 @@ void QTasksWidget::OnSchetPressed()
 
         WriteULsActInfo(strTmpFile , uuidULZakazIdUL , uuidULPostavId , vCurrentSchetItems , strNumber);
 
-        strFileName.insert(strFileName.length() - 4 , "_Акт");
+        strFileName.insert(strFileName.length() - 5 , "_Акт");
 
         QFile::remove(strFileName);
 
@@ -504,7 +504,7 @@ void QTasksWidget::OnSchetPressed()
 
         WriteULsActInfo(strTmpFile , uuidULZakazIdUL , uuidULPostavId , vCurrentSchetZatratiItems , strNumber);
 
-        strFileNameZatrati.insert(strFileNameZatrati.length() - 4 , "_Акт");
+        strFileNameZatrati.insert(strFileNameZatrati.length() - 5 , "_Акт");
 
         QFile::remove(strFileNameZatrati);
 
@@ -539,14 +539,14 @@ void QTasksWidget::UpdateTasksList()
     m_pTasksTableWidget->setColumnCount(m_iCheckBoxCol + 1);
 
     /*Выбрана штрафстоянка - доп. столбцы штрафстоянки*/
-    if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid::fromString("8078b7ce-e423-49ae-9ce6-17758b852b33"))
+    if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid(QString("8078b7ce-e423-49ae-9ce6-17758b852b33")))
     {
         headers.clear();
         headers << "Дата/время" << "Задача" << "Заказчик"<<"Сумма сотруднику"<<"Сумма заказчику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<"Причина задержания"<<"От заказчика"<<" ";
         strQuery =  QString("SELECT Задачи.id, Задачи.\"Дата Время\", \"Типы задач\".\"Тип\" , \"Типы задач\".id , Задачи.\"Время выполнения\" , Заказчики.Название , Задачи.Цена , %2 , Пользователи.Имя, Пользователи.Фамилия , Пользователи. Отчество ,  Заказчики.id , Заказчики.ЮЛ, ЦеныЗаказчиков.Цена,  %3 , \"Причины задержания\".Название , EXISTS(select 1 from ЗадачиЗаказчикаШС where ПереведенаВЗадачу = Задачи.id) FROM \"Типы задач\", Задачи, Заказчики, Пользователи, ЦеныЗаказчиков, \"Расширение задачи ШС\", \"Причины задержания\" where ЦеныЗаказчиков.Заказчик=Заказчики.id and ЦеныЗаказчиков.ТипЗадачи=Задачи.Тип and Заказчики.id=Задачи.Заказчик and Задачи.Исполнитель=Пользователи.id and Задачи.Тип = \"Типы задач\".id and Задачи.Удалено<> 'true' and Задачи.Расширение = \"Расширение задачи ШС\".id and \"Расширение задачи ШС\".\"Причина задержания\"=\"Причины задержания\".id %1 order by Задачи.\"Дата Время\" desc").arg(m_filtersStr).arg(NUMBER_BY_TASK).arg(PAY_BY_TASK);
     }
     /*Выбран тип Документы*/
-    if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid::fromString("25695573-f5fe-43fd-93dc-76ee09e461fa"))
+    if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid(QString("25695573-f5fe-43fd-93dc-76ee09e461fa")))
     {
         headers.clear();
         headers << "Дата/время" << "Задача" << "Заказчик"<<"Сумма сотруднику"<<"Сумма заказчику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<"Количество"<<"Тип документа"<<" ";
@@ -641,7 +641,7 @@ void QTasksWidget::UpdateTasksList()
         dblPay = dblPay + query.value(14).toDouble();
 
         /*Выбрана штрафстоянка - доп. столбцы штрафстоянки*/
-        if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid::fromString("8078b7ce-e423-49ae-9ce6-17758b852b33"))
+        if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid(QString("8078b7ce-e423-49ae-9ce6-17758b852b33")))
         {
             /*Причина задержания*/
             pItem = new QTableWidgetItem(query.value(15).toString());
@@ -663,7 +663,7 @@ void QTasksWidget::UpdateTasksList()
         }
 
         /*Выбран тип Документы*/
-        if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid::fromString("25695573-f5fe-43fd-93dc-76ee09e461fa"))
+        if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid(QString("25695573-f5fe-43fd-93dc-76ee09e461fa")))
         {
             /*Количество документов*/
             pItem = new QTableWidgetItem(query.value(15).toString());
@@ -732,7 +732,7 @@ void QTasksWidget::OnFilterApplyPressed()
         typeFilterString=QString(" and Задачи.Тип='%1' ").arg(m_pTaskTypeComboBox->currentData().toUuid().toString());
 
         /*Выбрана штрафстоянка - доп. фильтры штрафстоянки*/
-        if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid::fromString("8078b7ce-e423-49ae-9ce6-17758b852b33"))
+        if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid(QString("8078b7ce-e423-49ae-9ce6-17758b852b33")))
         {
             QString strPenParkFilter = "";
 

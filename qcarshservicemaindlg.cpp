@@ -23,6 +23,7 @@ QCarshServiceMainDlg::QCarshServiceMainDlg()
     QPartnersWidget * pPartnersWidget = new QPartnersWidget;
     pTabs->addTab(pPartnersWidget ,QIcon(":/icons/partners_icon.png"), "Партнеры");
 
+
     QTasksWidget * pTasksWidget = new QTasksWidget;
     pTabs->addTab(pTasksWidget ,QIcon(":/icons/tasks_icon.png"), "Задачи");
 

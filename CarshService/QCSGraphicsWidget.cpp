@@ -4,6 +4,7 @@
 #include "GraphicSubWidgets/qpenparkgraphwidget.h"
 #include "GraphicSubWidgets/qemplgraphwidget.h"
 
+
 QCSGraphicsWidget::QCSGraphicsWidget(QWidget *parent)
     : QWidget{parent}
 {

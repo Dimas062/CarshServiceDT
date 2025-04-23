@@ -6,6 +6,7 @@
 #include <QUuid>
 #include <QSqlQuery>
 #include <QDateTime>
+#include <QVariant>
 
 
 QSmenaTaskDlg::QSmenaTaskDlg(QString strTaskUuid)

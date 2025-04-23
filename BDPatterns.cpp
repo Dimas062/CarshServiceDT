@@ -13,7 +13,7 @@ QUuid CreatePayRecord(double dblSum , PayTypes iPayType, qint64 iDate)
     if(iPayType == Undefined) uuidPayType=QString("1be45f61-dd36-4209-9866-7b8c2987da34");
 
     QString strExec = QString("insert into \"Платежи сотрудников\" (id,\"Сумма\",\"Тип оплаты\",\"ДатаВремя\") values ('%1','%2','%3','%4')").arg(uuidPay.toString()).arg(dblSum).arg(uuidPayType).arg(iDate);
-    qDebug()<<"CreatePayRecord = " << strExec;
+
     QSqlQuery query;
     query.exec(strExec);
 
@@ -29,7 +29,7 @@ void UpdatePayRecord(QUuid uuidPay , double dblSum , PayTypes iPayType, qint64 i
     if(iPayType == Undefined) uuidPayType=QString("1be45f61-dd36-4209-9866-7b8c2987da34");
 
     QString strExec = QString("update \"Платежи сотрудников\" set \"Сумма\" = '%1' ,\"Тип оплаты\"='%2',\"ДатаВремя\"='%3'  where id='%4'").arg(dblSum).arg(uuidPayType).arg(iDate).arg(uuidPay.toString());
-    qDebug()<<"UpdatePayRecord = " << strExec;
+
     QSqlQuery query;
     query.exec(strExec);
 }
