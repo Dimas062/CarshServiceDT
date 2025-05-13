@@ -7,6 +7,7 @@
 #include "CarshService/qproviderswidget.h"
 #include "CarshService/QCSGraphicsWidget.h"
 #include "CarshService/qcostswidget.h"
+#include "CarshService/qwashwidget.h"
 #include "Dictionary/qdicwidget.h"
 #include <QSqlQuery>
 #include <common.h>
@@ -44,6 +45,11 @@ QCarshServiceMainDlg::QCarshServiceMainDlg()
 
     QDicWidget * pDicWidget = new QDicWidget;
     pTabs->addTab(pDicWidget ,QIcon(":/icons/book_icon.png"), "Словари");
+
+    QWashWidget * pWashWidget = new QWashWidget;
+    pTabs->addTab(pWashWidget ,QIcon(":/icons/wash.png"), "Мойка");
+
+
 
     pVMainLayout->addWidget(pTabs);
 

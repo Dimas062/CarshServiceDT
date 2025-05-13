@@ -26,7 +26,6 @@ public:
 public slots:
     void EmplClicked(QListWidgetItem*);
 
-signals:
 };
 
 #endif // QEMPLOEESWIDGET_H

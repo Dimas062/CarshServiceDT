@@ -15,7 +15,6 @@ public:
     explicit QCarshEmplWidget(QWidget *parent = nullptr);
     QListWidget * m_pEmploeeListWidget;
 
-    QLabel * m_pLogoLabel;
     QComboBox * m_pCarshsCombo;
     QComboBox * m_pActivCombo;
     QLineText * m_pLoginLineText;
@@ -35,8 +34,6 @@ public:
 public slots:
     void OnApplyCardPressed();
     void OnDeleteCardPressed();
-signals:
-public slots:
     void EmplClicked(QListWidgetItem*);
 };
 

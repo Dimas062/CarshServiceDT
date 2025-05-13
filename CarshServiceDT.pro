@@ -60,6 +60,8 @@ SOURCES += \
     CarshService/ProviderSubWidgets/qproviderempllistwidget.cpp \
     CarshService/ProviderSubWidgets/qproviderslistwidget.cpp \
     CarshService/TasksSubWidgets/qpenalparktaskfilterwidget.cpp \
+    CarshService/WashWidgets/qwashemplwidget.cpp \
+    CarshService/WashWidgets/qwashtaskwidget.cpp \
     CarshService/qcarshswidget.cpp \
     CarshService/EmplSubWidgets/qemplcardwidget.cpp \
     CarshService/qcostswidget.cpp \
@@ -70,6 +72,7 @@ SOURCES += \
     CarshService/qpartnerswidget.cpp \
     CarshService/qproviderswidget.cpp \
     CarshService/qtaskswidget.cpp \
+    CarshService/qwashwidget.cpp \
     Carshs/qcarshdocstaskdlg.cpp \
     Carshs/qcarshempltaskswidget.cpp \
     Carshs/qcarshmaindlg.cpp \
@@ -161,6 +164,8 @@ HEADERS += \
     CarshService/ProviderSubWidgets/qproviderempllistwidget.h \
     CarshService/ProviderSubWidgets/qproviderslistwidget.h \
     CarshService/TasksSubWidgets/qpenalparktaskfilterwidget.h \
+    CarshService/WashWidgets/qwashemplwidget.h \
+    CarshService/WashWidgets/qwashtaskwidget.h \
     CarshService/qcarshswidget.h \
     CarshService/EmplSubWidgets/qemplcardwidget.h \
     CarshService/qcostswidget.h \
@@ -171,6 +176,7 @@ HEADERS += \
     CarshService/qpartnerswidget.h \
     CarshService/qproviderswidget.h \
     CarshService/qtaskswidget.h \
+    CarshService/qwashwidget.h \
     Carshs/qcarshdocstaskdlg.h \
     Carshs/qcarshempltaskswidget.h \
     Carshs/qcarshmaindlg.h \
