@@ -1,6 +1,7 @@
 //#include "qmaindialog.h"
-
+#ifdef Q_OS_WINDOWS
 #include <windows.h>
+#endif
 //#include <QApplication>
 #include <QtWidgets/QApplication>
 #include <QUuid>
@@ -31,12 +32,13 @@ QT_USE_NAMESPACE
 
 
 
-
+#ifdef Q_OS_WINDOWS
 extern "C" {
 __declspec(dllexport) DWORD GetCurrentPackageFullName(UINT32*, PWSTR) {
     return 0x80073D54; // Ошибка "Пакет не найден" для классических приложений
 }
 }
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -44,14 +46,10 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-
-
     QPixmap pixmap(":/icons/Splash.png");
     QSplashScreen splash(pixmap);
     splash.show();
     splash.showMessage("Подключение к БД");
-
-    //screenGeometry(0, 0, qApp->screens()[0]->size().width() , qApp->screens()[0]->size().height());
 
     screenGeometry = QRect(qApp->screens()[0]->size().width()/8,0,qApp->screens()[0]->size().width() - qApp->screens()[0]->size().width()/4 ,qApp->screens()[0]->size().height());
 
