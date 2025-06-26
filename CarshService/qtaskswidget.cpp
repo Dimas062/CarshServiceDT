@@ -558,6 +558,8 @@ void QTasksWidget::UpdateTasksList()
     QSqlQuery query;
     query.exec(strQuery);
 
+    qDebug()<<strQuery;
+
     if(query.size() < 1) return;
 
     m_pTasksTableWidget->setRowCount(query.size() + 1);//+1 для итого
