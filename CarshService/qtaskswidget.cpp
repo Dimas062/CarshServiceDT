@@ -556,6 +556,9 @@ void QTasksWidget::UpdateTasksList()
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
 
     QSqlQuery query;
+
+    qDebug()<<"QTasksWidget::UpdateTasksList() query = "<<strQuery;
+
     query.exec(strQuery);
 
     qDebug()<<strQuery;
