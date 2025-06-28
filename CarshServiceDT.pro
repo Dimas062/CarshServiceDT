@@ -28,16 +28,19 @@ SOURCES += \
     ../CarshService/service_widgets/qcsbasedlgscrollwidget.cpp \
     ../CarshService/service_widgets/qcsbaselistitemdelegate.cpp \
     ../CarshService/service_widgets/qcsbaselistwidget.cpp \
+    ../CarshService/service_widgets/qcslineedit.cpp \
     ../CarshService/service_widgets/qcspaybasedialog.cpp \
     ../CarshService/service_widgets/qcsscrollarea.cpp \
     ../CarshService/service_widgets/qcsselectdialog.cpp \
     ../CarshService/service_widgets/qcsselectdlgbuttonswidget.cpp \
     ../CarshService/service_widgets/qfinddlg.cpp \
+    ../CarshService/service_widgets/qinputtextdlg.cpp \
     ../CarshService/service_widgets/qlinetext.cpp \
     ../CarshService/service_widgets/qloaddoclinewidget.cpp \
     ../CarshService/service_widgets/qloaddocsdlg.cpp \
     ../CarshService/service_widgets/qnotecalendarwidget.cpp \
     ../CarshService/service_widgets/qselprovidercarshwidget.cpp \
+    ../CarshService/service_widgets/qstringlistdlg.cpp \
     ../CarshService/service_widgets/qyesnodlg.cpp \
     ../CarshService/tasks/qcostsdialog.cpp \
     ../CarshService/tasks/qdocstaskdlg.cpp \
@@ -131,17 +134,20 @@ HEADERS += \
     ../CarshService/service_widgets/qcsbasedlgscrollwidget.h \
     ../CarshService/service_widgets/qcsbaselistitemdelegate.h \
     ../CarshService/service_widgets/qcsbaselistwidget.h \
+    ../CarshService/service_widgets/qcslineedit.h \
     ../CarshService/service_widgets/qcspaybasedialog.h \
     ../CarshService/service_widgets/qcsscrollarea.h \
     ../CarshService/service_widgets/qcsselectdialog.h \
     ../CarshService/service_widgets/qcsselectdlgbuttonswidget.h \
     ../CarshService/service_widgets/qfinddlg.h \
+    ../CarshService/service_widgets/qinputtextdlg.h \
      ../CarshService/service_widgets/qlinetext.h \
     #BDPatterns.h \
     ../CarshService/service_widgets/qloaddoclinewidget.h \
     ../CarshService/service_widgets/qloaddocsdlg.h \
     ../CarshService/service_widgets/qnotecalendarwidget.h \
     ../CarshService/service_widgets/qselprovidercarshwidget.h \
+    ../CarshService/service_widgets/qstringlistdlg.h \
     ../CarshService/service_widgets/qyesnodlg.h \
     ../CarshService/tasks/qcostsdialog.h \
     ../CarshService/tasks/qdocstaskdlg.h \

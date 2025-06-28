@@ -32,13 +32,13 @@ QT_USE_NAMESPACE
 
 
 
-#ifdef Q_OS_WINDOWS
-extern "C" {
-__declspec(dllexport) DWORD GetCurrentPackageFullName(UINT32*, PWSTR) {
-    return 0x80073D54; // Ошибка "Пакет не найден" для классических приложений
-}
-}
-#endif
+// #ifdef Q_OS_WINDOWS
+// extern "C" {
+// __declspec(dllexport) DWORD GetCurrentPackageFullName(UINT32*, PWSTR) {
+//     return 0x80073D54; // Ошибка "Пакет не найден" для классических приложений
+// }
+// }
+// #endif
 
 int main(int argc, char *argv[])
 {

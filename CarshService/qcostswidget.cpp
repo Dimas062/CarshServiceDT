@@ -10,7 +10,6 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QSplashScreen>
-//#include <CarshService/EmplSubWidgets/qemplcostdlg.h>
 #include "../CarshService/tasks/qcostsdialog.h"
 
 QCostsWidget::QCostsWidget(QWidget *parent)
@@ -125,6 +124,7 @@ QCostsWidget::QCostsWidget(QWidget *parent)
 void QCostsWidget::UpdateCostsList()
 {
     m_pCostsTableWidget->clear();
+    m_pCostsTableWidget->clearSpans();
    // QString strExec= QString("SELECT Расходы.id, Расходы.\"Дата Время\" , \"Платежи сотрудников\".Сумма , Товары.Товар  FROM Расходы, \"Платежи сотрудников\", Товары where Расходы.Удалено<>'true' and Расходы.Товар=Товары.id and Расходы.Оплата=\"Платежи сотрудников\".id and Расходы.Сотрудник='%1' order by Расходы.\"Дата Время\" desc").arg(m_userUuid.toString());
     QString strExec= QString("SELECT Расходы.id, Расходы.\"Дата Время\" , \"Платежи сотрудников\".Сумма , Товары.Товар , \"Статьи расходов\".\"Статья расходов\"  , Пользователи.Фамилия, Пользователи.Имя, Пользователи.Отчество FROM Расходы, \"Платежи сотрудников\", Товары , Пользователи , \"Статьи расходов\"  where Расходы.Удалено<>'true' and Расходы.Товар=Товары.id and Расходы.Оплата=\"Платежи сотрудников\".id and \"Статьи расходов\".id=Расходы.Статья  and Пользователи.id=Расходы.Сотрудник and Расходы.Удалено <> true %1 order by Расходы.\"Дата Время\" desc").arg(m_filtersStr);
     QSqlQuery Query;

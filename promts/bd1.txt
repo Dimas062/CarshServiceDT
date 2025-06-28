@@ -1,0 +1,152 @@
+Есть таблицы:
+
+CREATE TABLE IF NOT EXISTS public."Задачи"
+(
+    id uuid NOT NULL,
+    "Дата Время" integer,
+    "Тип" uuid,
+    "Комментарий" character varying COLLATE pg_catalog."default",
+    "Расширение" uuid,
+    "Исполнитель" uuid,
+    "Время выполнения" integer DEFAULT 0,
+    "Удалено" boolean DEFAULT false,
+    "Цена" integer DEFAULT 0,
+    "Заказчик" uuid,
+    "Поставщик" uuid,
+    "Отменено" boolean DEFAULT false,
+    "КомментарийЗаказчика" character varying COLLATE pg_catalog."default",
+    "ВыгруженаЗаказчику" boolean DEFAULT false,
+    CONSTRAINT "Задачи_pkey" PRIMARY KEY (id)
+)
+
+CREATE TABLE IF NOT EXISTS public."Расширение задачи ШС"
+(
+    id uuid NOT NULL,
+    "Оплата парковки" uuid,
+    "Госномер" character varying COLLATE pg_catalog."default",
+    "Отдел ГАИ" uuid,
+    "Причина задержания" uuid,
+    "Штрафстоянка" uuid,
+    "Возврат в зону" uuid,
+    CONSTRAINT "Расширение задачи ШС_pkey" PRIMARY KEY (id)
+)
+
+CREATE TABLE IF NOT EXISTS public."Типы задач"
+(
+    id uuid NOT NULL,
+    "Тип" character varying COLLATE pg_catalog."default",
+    "Цена" integer,
+    CONSTRAINT "Типы задач_pkey" PRIMARY KEY (id)
+)
+
+CREATE TABLE IF NOT EXISTS public."Заказчики"
+(
+    id uuid NOT NULL,
+    "Название" character varying COLLATE pg_catalog."default",
+    "Логотип" character varying COLLATE pg_catalog."default",
+    "Удалено" boolean DEFAULT false,
+    "Цвет" bigint,
+    "ЮЛ" uuid,
+    "ГуглТаблицаМоек" character varying COLLATE pg_catalog."default",
+    CONSTRAINT "Заказчики_pkey" PRIMARY KEY (id)
+)
+
+
+CREATE TABLE IF NOT EXISTS public."Пользователи"
+(
+    id uuid NOT NULL,
+    "Фамилия" character varying COLLATE pg_catalog."default",
+    "Имя" character varying COLLATE pg_catalog."default",
+    "Отчество" character varying COLLATE pg_catalog."default",
+    "Пароль" character varying COLLATE pg_catalog."default",
+    "Логин" character varying COLLATE pg_catalog."default",
+    "Роль" uuid,
+    "Подтвержден" boolean DEFAULT false,
+    "Дата регистрации" integer,
+    "Фото" character varying COLLATE pg_catalog."default",
+    "Удалено" boolean DEFAULT false,
+    "Телефон" character varying COLLATE pg_catalog."default",
+    "Почта" character varying COLLATE pg_catalog."default",
+    "Телеграм" character varying COLLATE pg_catalog."default",
+    "Должность" character varying COLLATE pg_catalog."default",
+    CONSTRAINT "Пользователи_pkey" PRIMARY KEY (id)
+)
+
+CREATE TABLE IF NOT EXISTS public."ЗадачиЗаказчикаШС"
+(
+    id uuid NOT NULL,
+    "Штрафстоянка" uuid,
+    "Госномер" character varying COLLATE pg_catalog."default",
+    "ДатаВремяПомещения" integer,
+    "Заказчик" uuid,
+    "ПереведенаВЗадачу" uuid,
+    CONSTRAINT "ЗадачиЗаказчикаШС_pkey" PRIMARY KEY (id)
+)
+
+CREATE TABLE IF NOT EXISTS public."Причины задержания"
+(
+    id uuid NOT NULL,
+    "Название" character varying COLLATE pg_catalog."default",
+    CONSTRAINT "Причины задержания_pkey" PRIMARY KEY (id)
+)
+
+CREATE TABLE IF NOT EXISTS public."ЦеныЗаказчиков"
+(
+    id uuid NOT NULL,
+    "Заказчик" uuid,
+    "ТипЗадачи" uuid,
+    "Цена" integer,
+    CONSTRAINT "ЦеныЗаказчиков_pkey" PRIMARY KEY (id)
+)
+
+CREATE TABLE IF NOT EXISTS public."Платежи сотрудников"
+(
+    id uuid NOT NULL,
+    "Сумма" double precision,
+    "Тип оплаты" uuid,
+    "ДатаВремя" integer DEFAULT (EXTRACT(epoch FROM CURRENT_TIMESTAMP))::bigint,
+    CONSTRAINT "Платежи сотрудников_pkey" PRIMARY KEY (id)
+)
+
+CREATE TABLE IF NOT EXISTS public."Расширение задачи Документы"
+(
+    id uuid NOT NULL,
+    "Количество" integer,
+    "Документ" uuid,
+    "Оплата" uuid,
+    CONSTRAINT "Расширение задачи Документы_pkey" PRIMARY KEY (id)
+)
+
+CREATE TABLE IF NOT EXISTS public."Документы задачи документы"
+(
+    id uuid NOT NULL,
+    "Документ" character varying COLLATE pg_catalog."default",
+    CONSTRAINT "Документы задачи документы_pkey" PRIMARY KEY (id)
+)
+
+CREATE TABLE IF NOT EXISTS public."Документы"
+(
+    id uuid,
+    "Тип" uuid,
+    "Изображение" character varying COLLATE pg_catalog."default"
+)
+
+Запрос в коде формируется так:
+        strQuery =  QString("SELECT Задачи.id, Задачи."Дата Время", "Типы задач"."Тип" , "Типы задач".id , Задачи."Время выполнения" , Заказчики.Название , Задачи.Цена , %2 , Пользователи.Имя, Пользователи.Фамилия , Пользователи. Отчество ,  Заказчики.id , Заказчики.ЮЛ, ЦеныЗаказчиков.Цена,  %3 , "Причины задержания".Название , EXISTS(select 1 from ЗадачиЗаказчикаШС where ПереведенаВЗадачу = Задачи.id) FROM "Типы задач", Задачи, Заказчики, Пользователи, ЦеныЗаказчиков, "Расширение задачи ШС", "Причины задержания" where ЦеныЗаказчиков.Заказчик=Заказчики.id and ЦеныЗаказчиков.ТипЗадачи=Задачи.Тип and Заказчики.id=Задачи.Заказчик and Задачи.Исполнитель=Пользователи.id and Задачи.Тип = "Типы задач".id and Задачи.Удалено<> 'true' and Задачи.Расширение = "Расширение задачи ШС".id and "Расширение задачи ШС"."Причина задержания"="Причины задержания".id %1 order by Задачи."Дата Время" desc").arg(m_filtersStr).arg(NUMBER_BY_TASK).arg(PAY_BY_TASK);
+, где m_filtersStr заполняется динамически, в примере ниже добавлен диапазон времени и Задачи.Цена = 0, что означает, что задача не завершена.
+
+#define NUMBER_BY_TASK  "(select Госномер  from "Расширение задачи ШС" where id=Задачи.Расширение union select Госномер from "Расширение задачи Возврат в зону" where id=Задачи.Расширение union select Госномер from "Расширение задачи Номера" where id=Задачи.Расширение union select Госномер from "Расширение задачи Парковка" where id=Задачи.Расширение)"
+
+#define PAY_BY_TASK "(select SUM("Платежи сотрудников".Сумма) from "Платежи сотрудников" where \
+ "Платежи сотрудников".id in (select "Расширение задачи ШС"."Оплата парковки" from "Расширение задачи ШС" where "Расширение задачи ШС".id = Задачи.Расширение) or \
+ "Платежи сотрудников".id in (select "Расширение задачи Документы".Оплата from "Расширение задачи Документы" where "Расширение задачи Документы".id = Задачи.Расширение) or\
+ "Платежи сотрудников".id in (select "Расширение задачи Парковка"."Оплата парковки" from "Расширение задачи Парковка" where "Расширение задачи Парковка".id = Задачи.Расширение))"
+
+
+В результате получается, например, такой:
+
+"SELECT Задачи.id, Задачи."Дата Время", "Типы задач"."Тип" , "Типы задач".id , Задачи."Время выполнения" , Заказчики.Название , Задачи.Цена , (select Госномер  from "Расширение задачи ШС" where id=Задачи.Расширение union select Госномер from "Расширение задачи Возврат в зону" where id=Задачи.Расширение union select Госномер from "Расширение задачи Номера" where id=Задачи.Расширение union select Госномер from "Расширение задачи Парковка" where id=Задачи.Расширение) , Пользователи.Имя, Пользователи.Фамилия , Пользователи. Отчество ,  Заказчики.id , Заказчики.ЮЛ, ЦеныЗаказчиков.Цена,  (select SUM("Платежи сотрудников".Сумма) from "Платежи сотрудников" where  "Платежи сотрудников".id in (select "Расширение задачи ШС"."Оплата парковки" from "Расширение задачи ШС" where "Расширение задачи ШС".id = Задачи.Расширение) or  "Платежи сотрудников".id in (select "Расширение задачи Документы".Оплата from "Расширение задачи Документы" where "Расширение задачи Документы".id = Задачи.Расширение) or "Платежи сотрудников".id in (select "Расширение задачи Парковка"."Оплата парковки" from "Расширение задачи Парковка" where "Расширение задачи Парковка".id = Задачи.Расширение)) , "Причины задержания".Название , EXISTS(select 1 from ЗадачиЗаказчикаШС where ПереведенаВЗадачу = Задачи.id) FROM "Типы задач", Задачи, Заказчики, Пользователи, ЦеныЗаказчиков, "Расширение задачи ШС", "Причины задержания" where ЦеныЗаказчиков.Заказчик=Заказчики.id and ЦеныЗаказчиков.ТипЗадачи=Задачи.Тип and Заказчики.id=Задачи.Заказчик and Задачи.Исполнитель=Пользователи.id and Задачи.Тип = "Типы задач".id and Задачи.Удалено<> 'true' and Задачи.Расширение = "Расширение задачи ШС".id and "Расширение задачи ШС"."Причина задержания"="Причины задержания".id and Задачи."Дата Время">'1748725200' and Задачи."Дата Время"<'1751096005'  and Задачи.Тип='{8078b7ce-e423-49ae-9ce6-17758b852b33}'      and Задачи.Цена = 0  order by Задачи."Дата Время" desc"
+
+ШС - это штрафстоянка.
+
+При этом, если не задана причина задержания, то строка не выводится. Как сделать, что бы выводились все задачи.
