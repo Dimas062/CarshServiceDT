@@ -27,6 +27,7 @@ public:
     QLineEdit * m_pNumberEdit;
     QCheckBox * m_pOnlyFinishedCheckBox;
     QCheckBox * m_pOnlyUnfinishedCheckBox;
+    QCheckBox * m_pDateByEndOfTask;
 
 
     QPenalParkTaskFilterWidget * m_pPenalParkTaskFilterWidget;
@@ -35,7 +36,7 @@ public:
 protected:
     int m_iCheckBoxCol;//Чек-бокс всегда последний столбец! Важно! (По нему считается общее количество столбцов m_iCheckBoxCol+1)
     QMap<int , QColor> m_ColorMap;//Будут захардкоженные номера для каждого столбца, аля его номер, т.к. цвета проверять для каждой ячейки, сравнение строк - накладно
-    QMap<QString , int> m_ColNameNumMap;//Собственно соответствие названий столбцов их номерам
+    //QMap<QString , int> m_ColNameNumMap;//Собственно соответствие названий столбцов их номерам
     QColor m_defaultColor = QColor("#FFFFFF"); // Белый цвет
 
     void LoadColorMap();

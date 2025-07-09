@@ -35,19 +35,19 @@ extern QSettings settings;
 QTasksWidget::QTasksWidget(QWidget *parent)
     : QWidget{parent}
 {
-    m_ColNameNumMap["QTasksWidget_DateTime"]         = 1;
-    m_ColNameNumMap["QTasksWidget_Task"]             = 2;
-    m_ColNameNumMap["QTasksWidget_Zakazchik"]        = 3;
-    m_ColNameNumMap["QTasksWidget_Summa_sotr"]       = 4;
-    m_ColNameNumMap["QTasksWidget_Summa_zak"]        = 5;
-    m_ColNameNumMap["QTasksWidget_GRZ"]              = 6;
-    m_ColNameNumMap["QTasksWidget_Sotr"]             = 7;
-    m_ColNameNumMap["QTasksWidget_Zatrati"]          = 8;
-    m_ColNameNumMap["QTasksWidget_Doc_Num"]          = 9;
-    m_ColNameNumMap["QTasksWidget_Doc_Type"]         = 10;
-    m_ColNameNumMap["QTasksWidget_Prichina_Zaderzg"] = 11;
-    m_ColNameNumMap["QTasksWidget_Ot_Zak_PenPark"]   = 12;
-    m_ColNameNumMap["QTasksWidget_Check"]            = 13;
+    // m_ColNameNumMap["QTasksWidget_DateTime"]         = 1;
+    // m_ColNameNumMap["QTasksWidget_Task"]             = 2;
+    // m_ColNameNumMap["QTasksWidget_Zakazchik"]        = 3;
+    // m_ColNameNumMap["QTasksWidget_Summa_sotr"]       = 4;
+    // m_ColNameNumMap["QTasksWidget_Summa_zak"]        = 5;
+    // m_ColNameNumMap["QTasksWidget_GRZ"]              = 6;
+    // m_ColNameNumMap["QTasksWidget_Sotr"]             = 7;
+    // m_ColNameNumMap["QTasksWidget_Zatrati"]          = 8;
+    // m_ColNameNumMap["QTasksWidget_Doc_Num"]          = 9;
+    // m_ColNameNumMap["QTasksWidget_Doc_Type"]         = 10;
+    // m_ColNameNumMap["QTasksWidget_Prichina_Zaderzg"] = 11;
+    // m_ColNameNumMap["QTasksWidget_Ot_Zak_PenPark"]   = 12;
+    // m_ColNameNumMap["QTasksWidget_Check"]            = 13;
 
     LoadColorMap();
 
@@ -142,12 +142,13 @@ QTasksWidget::QTasksWidget(QWidget *parent)
     m_pFromDateTimeEdit = new QDateTimeEdit(QDateTime(QDate::currentDate().addDays(-(QDate::currentDate().day()) + 1) , QTime(0,0,0)));
     pFilterHLoyuot2->addWidget(m_pFromDateTimeEdit);
 
-
-
     QLabel * pDateTimeToLabel = new QLabel("по: ");
     pFilterHLoyuot2->addWidget(pDateTimeToLabel);
     m_pToDateTimeEdit = new QDateTimeEdit(QDateTime::currentDateTime());
     pFilterHLoyuot2->addWidget(m_pToDateTimeEdit);
+
+    m_pDateByEndOfTask = new QCheckBox("Время завершения задачи");
+    pFilterHLoyuot2->addWidget(m_pDateByEndOfTask);
 
     pFilterHLoyuot2->addStretch();
 
@@ -529,7 +530,12 @@ void QTasksWidget::UpdateTasksList()
 
     QLocale locale(QLocale::Russian);
 
-    QString strQuery =  QString("SELECT Задачи.id, Задачи.\"Дата Время\", \"Типы задач\".\"Тип\" , \"Типы задач\".id , Задачи.\"Время выполнения\" , Заказчики.Название , Задачи.Цена , %3 , Пользователи.Имя, Пользователи.Фамилия , Пользователи. Отчество ,  Заказчики.id , Заказчики.ЮЛ, ЦеныЗаказчиков.Цена,  %4 FROM \"Типы задач\", Задачи, Заказчики, Пользователи, ЦеныЗаказчиков where ЦеныЗаказчиков.Заказчик=Заказчики.id and ЦеныЗаказчиков.ТипЗадачи=Задачи.Тип and Заказчики.id=Задачи.Заказчик and Задачи.Исполнитель=Пользователи.id and Задачи.Тип = \"Типы задач\".id and Задачи.Удалено<> 'true'  %2 order by Задачи.\"Дата Время\" desc").arg(m_filtersStr).arg(NUMBER_BY_TASK).arg(PAY_BY_TASK);
+    QString strTimeBase("\"Дата Время\"");
+    if(m_pDateByEndOfTask->isChecked())
+        strTimeBase=QString("\"Время выполнения\"");
+
+
+    QString strQuery =  QString("SELECT Задачи.id, Задачи.\"Дата Время\", \"Типы задач\".\"Тип\" , \"Типы задач\".id , Задачи.\"Время выполнения\" , Заказчики.Название , Задачи.Цена , %3 , Пользователи.Имя, Пользователи.Фамилия , Пользователи. Отчество ,  Заказчики.id , Заказчики.ЮЛ, ЦеныЗаказчиков.Цена , %4 FROM \"Типы задач\", Задачи, Заказчики, Пользователи, ЦеныЗаказчиков where ЦеныЗаказчиков.Заказчик=Заказчики.id and ЦеныЗаказчиков.ТипЗадачи=Задачи.Тип and Заказчики.id=Задачи.Заказчик and Задачи.Исполнитель=Пользователи.id and Задачи.Тип = \"Типы задач\".id and Задачи.Удалено<> 'true'  %2 order by Задачи.%5 desc").arg(m_filtersStr).arg(NUMBER_BY_TASK).arg(PAY_BY_TASK).arg(strTimeBase);
     headers << "Дата/время" << "Задача" << "Заказчик"<<"Сумма сотруднику"<<"Сумма заказчику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<" ";
     m_pTasksTableWidget->setColumnCount(m_iCheckBoxCol + 1);
 
@@ -570,11 +576,12 @@ void QTasksWidget::UpdateTasksList()
                        "WHERE "
                        "Задачи.\"Удалено\" <> 'true' "
                        "%3 "  // Фильтры (m_filtersStr)
-                       "ORDER BY Задачи.\"Дата Время\" DESC"
+                       "ORDER BY Задачи.%4 DESC"
                        )
                        .arg(NUMBER_BY_TASK)   // %1
                        .arg(PAY_BY_TASK)      // %2
-                       .arg(m_filtersStr);    // %3
+                       .arg(m_filtersStr)     // %3
+                       .arg(strTimeBase);     // %4
     }
     /*Выбран тип Документы*/
     if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid(QString("25695573-f5fe-43fd-93dc-76ee09e461fa")))
@@ -613,11 +620,12 @@ void QTasksWidget::UpdateTasksList()
                        "WHERE "
                        "Задачи.\"Удалено\" <> 'true' "
                        "%3 "  // Фильтры (m_filtersStr)
-                       "ORDER BY Задачи.\"Дата Время\" DESC"
+                       "ORDER BY Задачи.%4 DESC"
                        )
                        .arg(NUMBER_BY_TASK)   // %1
                        .arg(PAY_BY_TASK)      // %2
-                       .arg(m_filtersStr);    // %3
+                       .arg(m_filtersStr)     // %3
+                       .arg(strTimeBase);     // %4
     }
 
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
@@ -639,8 +647,12 @@ void QTasksWidget::UpdateTasksList()
     double dblZakazSumm   = 0;//Итого заказчику
     while(query.next())
     {
-        QTableWidgetItem * pItem = new QTableWidgetItem(QDateTime::fromSecsSinceEpoch(query.value(1).toInt()).toString("dd.MM.yyyy hh:mm"));
+        /*Время*/
+        int iTimeColumnNum = 1;
+        if(m_pDateByEndOfTask->isChecked()) iTimeColumnNum = 4;
+        QTableWidgetItem * pItem = new QTableWidgetItem(QDateTime::fromSecsSinceEpoch(query.value(iTimeColumnNum).toInt()).toString("dd.MM.yyyy hh:mm"));
         pItem->setData(Qt::UserRole , query.value(0));
+
         pItem->setData(Qt::UserRole +1 , query.value(3));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         pItem->setBackground(QBrush(m_ColorMap[1]));
@@ -668,7 +680,8 @@ void QTasksWidget::UpdateTasksList()
         m_pTasksTableWidget->setItem(iRowCounter , 2,  pItem);
 
         /*Сумма сотруднику*/
-        pItem = new QTableWidgetItem(locale.toString(query.value(6).toInt()));
+        //pItem = new QTableWidgetItem(locale.toString(query.value(6).toInt()));
+        pItem = new QTableWidgetItem(query.value(6).toString());
         pItem->setData(Qt::UserRole , query.value(0));
         pItem->setData(Qt::UserRole +1 , query.value(3));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
@@ -678,7 +691,8 @@ void QTasksWidget::UpdateTasksList()
         dblSumm = dblSumm + query.value(6).toDouble();
 
         /*Сумма для заказчика*/
-        pItem = new QTableWidgetItem(locale.toString(query.value(13).toInt()));
+        //pItem = new QTableWidgetItem(locale.toString(query.value(13).toInt()));
+        pItem = new QTableWidgetItem(query.value(13).toString());
         pItem->setData(Qt::UserRole , query.value(0));
         pItem->setData(Qt::UserRole +1 , query.value(3));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
@@ -703,7 +717,8 @@ void QTasksWidget::UpdateTasksList()
         m_pTasksTableWidget->setItem(iRowCounter , 6,  pItem);
 
         /*Затраты*/
-        pItem = new QTableWidgetItem(locale.toString(query.value(14).toInt()));
+        //pItem = new QTableWidgetItem(locale.toString(query.value(14).toInt()));
+        pItem = new QTableWidgetItem(query.value(14).toString());
         pItem->setData(Qt::UserRole , query.value(0));
         pItem->setData(Qt::UserRole +1 , query.value(3));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
@@ -860,7 +875,11 @@ void QTasksWidget::OnFilterApplyPressed()
         FinishFilterString = " and Задачи.Цена = 0 ";
     }
 
-    m_filtersStr = QString("and Задачи.\"Дата Время\">'%1' and Задачи.\"Дата Время\"<'%2' %3 %4 %5 %6 %7").arg(m_pFromDateTimeEdit->dateTime().toSecsSinceEpoch()).arg(m_pToDateTimeEdit->dateTime().toSecsSinceEpoch()).arg(typeFilterString).arg(numberFilterString).arg(emplFilterString).arg(CarshsFilterString).arg(FinishFilterString);
+    QString strTimeBase("\"Дата Время\"");
+    if(m_pDateByEndOfTask->isChecked())
+        strTimeBase=QString("\"Время выполнения\"");
+
+    m_filtersStr = QString("and Задачи.%8>'%1' and Задачи.%8<'%2' %3 %4 %5 %6 %7").arg(m_pFromDateTimeEdit->dateTime().toSecsSinceEpoch()).arg(m_pToDateTimeEdit->dateTime().toSecsSinceEpoch()).arg(typeFilterString).arg(numberFilterString).arg(emplFilterString).arg(CarshsFilterString).arg(FinishFilterString).arg(strTimeBase);
     UpdateTasksList();
 }
 
