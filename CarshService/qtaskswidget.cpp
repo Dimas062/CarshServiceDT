@@ -29,6 +29,8 @@
 #include <QHeaderView>
 #include <QColorDialog>
 #include "commondt.h"
+#include "TasksSubWidgets/qnewtaskdlg.h"
+#include "service/qselempldlg.h"
 
 extern QSettings settings;
 
@@ -152,6 +154,10 @@ QTasksWidget::QTasksWidget(QWidget *parent)
     QPushButton * pFilterApplyButton = new QPushButton("Применить фильтры");
     connect(pFilterApplyButton,SIGNAL(pressed()),this,SLOT(OnFilterApplyPressed()));
     pButtonsHLoyuot->addWidget(pFilterApplyButton);
+
+    QPushButton * pCreateTaskButton = new QPushButton("Создать задачу");
+    connect(pCreateTaskButton,SIGNAL(pressed()),this,SLOT(OnCreateTaskPressed()));
+    pButtonsHLoyuot->addWidget(pCreateTaskButton);
 
     QPushButton * pSchetApplyButton = new QPushButton("Счет/Акт");
     connect(pSchetApplyButton,SIGNAL(pressed()),this,SLOT(OnSchetPressed()));
@@ -879,11 +885,24 @@ void QTasksWidget::onFinishedStateChanged(int state) {
     }
 }
 
-void QTasksWidget::onUnfinishedStateChanged(int state) {
+void QTasksWidget::onUnfinishedStateChanged(int state)
+{
     if (state == Qt::Checked) {
         // Блокируем сигналы первого чекбокса на время изменения
         m_pOnlyFinishedCheckBox->blockSignals(true);
         m_pOnlyFinishedCheckBox->setChecked(false);
         m_pOnlyFinishedCheckBox->blockSignals(false);
+    }
+}
+
+void QTasksWidget::OnCreateTaskPressed()
+{
+    //Выбор сотрудника кому
+    QSelEmplDlg dlgSelEmpl;
+    if(dlgSelEmpl.exec() == QDialog::Accepted)
+    {
+        //Назначение задачи
+        QNewTaskDlg dlgNewTask(dlgSelEmpl.m_uuidSelectedEmpl);
+        dlgNewTask.exec();
     }
 }

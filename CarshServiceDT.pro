@@ -64,6 +64,7 @@ SOURCES += \
     CarshService/ProviderSubWidgets/qproviderdlg.cpp \
     CarshService/ProviderSubWidgets/qproviderempllistwidget.cpp \
     CarshService/ProviderSubWidgets/qproviderslistwidget.cpp \
+    CarshService/TasksSubWidgets/qnewtaskdlg.cpp \
     CarshService/TasksSubWidgets/qpenalparktaskfilterwidget.cpp \
     CarshService/WashWidgets/qwashemplwidget.cpp \
     CarshService/WashWidgets/qwashtaskwidget.cpp \
@@ -117,6 +118,7 @@ SOURCES += \
     Dictionary/qdiceditdlg.cpp \
     service/qpointeditdlg.cpp \
     service/qselectavailablezakazs.cpp \
+    service/qselempldlg.cpp \
     service/qselfrombddlg.cpp \
     service/qtaskhistorydlg.cpp \
     service/quleditdlg.cpp \
@@ -173,6 +175,7 @@ HEADERS += \
     CarshService/ProviderSubWidgets/qproviderdlg.h \
     CarshService/ProviderSubWidgets/qproviderempllistwidget.h \
     CarshService/ProviderSubWidgets/qproviderslistwidget.h \
+    CarshService/TasksSubWidgets/qnewtaskdlg.h \
     CarshService/TasksSubWidgets/qpenalparktaskfilterwidget.h \
     CarshService/WashWidgets/qwashemplwidget.h \
     CarshService/WashWidgets/qwashtaskwidget.h \
@@ -225,6 +228,7 @@ HEADERS += \
     Dictionary/qdiceditdlg.h \
     service/qpointeditdlg.h \
     service/qselectavailablezakazs.h \
+    service/qselempldlg.h \
     service/qselfrombddlg.h \
     service/qtaskhistorydlg.h \
     service/quleditdlg.h \
