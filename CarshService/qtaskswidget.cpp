@@ -35,20 +35,6 @@ extern QSettings settings;
 QTasksWidget::QTasksWidget(QWidget *parent)
     : QWidget{parent}
 {
-    // m_ColNameNumMap["QTasksWidget_DateTime"]         = 1;
-    // m_ColNameNumMap["QTasksWidget_Task"]             = 2;
-    // m_ColNameNumMap["QTasksWidget_Zakazchik"]        = 3;
-    // m_ColNameNumMap["QTasksWidget_Summa_sotr"]       = 4;
-    // m_ColNameNumMap["QTasksWidget_Summa_zak"]        = 5;
-    // m_ColNameNumMap["QTasksWidget_GRZ"]              = 6;
-    // m_ColNameNumMap["QTasksWidget_Sotr"]             = 7;
-    // m_ColNameNumMap["QTasksWidget_Zatrati"]          = 8;
-    // m_ColNameNumMap["QTasksWidget_Doc_Num"]          = 9;
-    // m_ColNameNumMap["QTasksWidget_Doc_Type"]         = 10;
-    // m_ColNameNumMap["QTasksWidget_Prichina_Zaderzg"] = 11;
-    // m_ColNameNumMap["QTasksWidget_Ot_Zak_PenPark"]   = 12;
-    // m_ColNameNumMap["QTasksWidget_Check"]            = 13;
-
     LoadColorMap();
 
     m_filtersStr = QString("");

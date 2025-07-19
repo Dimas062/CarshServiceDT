@@ -9,6 +9,7 @@
 #include <QDateTime>
 #include <QPushButton>
 #include "common.h"
+#include "qcarshinputpenparkeditdlg.h"
 
 QCarshInputPenParkTasksWidget::QCarshInputPenParkTasksWidget(QWidget *parent)
     : QWidget{parent}
@@ -21,13 +22,10 @@ QCarshInputPenParkTasksWidget::QCarshInputPenParkTasksWidget(QWidget *parent)
     QHBoxLayout * pFilterHLoyuot = new QHBoxLayout();
 
     /*Период*/
-
     QLabel * pDateTimeFromLabel = new QLabel("c: ");
     pFilterHLoyuot->addWidget(pDateTimeFromLabel);
     m_pFromDateTimeEdit = new QDateTimeEdit(QDateTime(QDate::currentDate().addDays(-(QDate::currentDate().day()) + 1) , QTime(0,0,0)));
     pFilterHLoyuot->addWidget(m_pFromDateTimeEdit);
-
-
 
     QLabel * pDateTimeToLabel = new QLabel("по: ");
     pFilterHLoyuot->addWidget(pDateTimeToLabel);
@@ -69,8 +67,16 @@ QCarshInputPenParkTasksWidget::QCarshInputPenParkTasksWidget(QWidget *parent)
     m_pTasksTableWidget = new QTableWidget;
     m_pTasksTableWidget->setColumnCount(3);
     pVMainLayout->addWidget(m_pTasksTableWidget);
+    connect(m_pTasksTableWidget , SIGNAL(itemDoubleClicked(QTableWidgetItem*)) , this , SLOT(OnTasksDblClk(QTableWidgetItem*)));
 
     OnFilterApplyPressed();
+}
+
+void QCarshInputPenParkTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
+{
+    QCarshInputPenParkEditDlg dlg(item->data(Qt::UserRole).toUuid() , item->data(Qt::UserRole + 1).toString() , item->data(Qt::UserRole + 2).toString() , item->data(Qt::UserRole + 3).toString());
+    dlg.exec();
+    UpdateTasksList();
 }
 
 void QCarshInputPenParkTasksWidget::UpdateTasksList()
@@ -81,7 +87,7 @@ void QCarshInputPenParkTasksWidget::UpdateTasksList()
     headers << "Дата/время помещения" << "Штрафстоянка" << "ГРЗ";
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
 
-    QString strExec= QString("SELECT ЗадачиЗаказчикаШС.Госномер, ЗадачиЗаказчикаШС.ДатаВремяПомещения , Штрафстоянки.Название from ЗадачиЗаказчикаШС, Штрафстоянки  where ЗадачиЗаказчикаШС.Штрафстоянка = Штрафстоянки.id and ЗадачиЗаказчикаШС.ПереведенаВЗадачу IS NULL %1 order by ЗадачиЗаказчикаШС.ДатаВремяПомещения").arg(m_filtersStr);
+    QString strExec= QString("SELECT ЗадачиЗаказчикаШС.Госномер, ЗадачиЗаказчикаШС.ДатаВремяПомещения , Штрафстоянки.Название , ЗадачиЗаказчикаШС.id from ЗадачиЗаказчикаШС, Штрафстоянки  where ЗадачиЗаказчикаШС.Штрафстоянка = Штрафстоянки.id and ЗадачиЗаказчикаШС.ПереведенаВЗадачу IS NULL %1 order by ЗадачиЗаказчикаШС.ДатаВремяПомещения").arg(m_filtersStr);
     QSqlQuery Query;
     Query.exec(strExec);
 
@@ -94,20 +100,30 @@ void QCarshInputPenParkTasksWidget::UpdateTasksList()
     while(Query.next())
     {
         /*Дата время*/
-        QTableWidgetItem * pItem = new QTableWidgetItem(QDateTime::fromSecsSinceEpoch(Query.value(1).toInt()).toString("dd.MM.yyyy hh:mm"));
-        //pItem->setData(Qt::UserRole , Query.value(0));
+        QString strTaskDateTime = QDateTime::fromSecsSinceEpoch(Query.value(1).toInt()).toString("dd.MM.yyyy hh:mm");
+        QTableWidgetItem * pItem = new QTableWidgetItem(strTaskDateTime);
+        pItem->setData(Qt::UserRole , Query.value(3)); //id задачи ШС от заказчика
+        pItem->setData(Qt::UserRole + 1, Query.value(0).toString());//ГРЗ
+        pItem->setData(Qt::UserRole + 2, strTaskDateTime);//Время
+        pItem->setData(Qt::UserRole + 3, Query.value(2).toString());//Название ШС
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTasksTableWidget->setItem(iRowCounter , 0,  pItem);
 
         /*Штрафстоянка*/
         pItem = new QTableWidgetItem(Query.value(2).toString());
-       // pItem->setData(Qt::UserRole , Query.value(0));
+        pItem->setData(Qt::UserRole , Query.value(3)); //id задачи ШС от заказчика
+        pItem->setData(Qt::UserRole + 1, Query.value(0).toString());//ГРЗ
+        pItem->setData(Qt::UserRole + 2, strTaskDateTime);//Время
+        pItem->setData(Qt::UserRole + 3, Query.value(2).toString());//Название ШС
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTasksTableWidget->setItem(iRowCounter , 1,  pItem);
 
         /*ГРЗ*/
         pItem = new QTableWidgetItem(Query.value(0).toString());
-       // pItem->setData(Qt::UserRole , Query.value(0));
+        pItem->setData(Qt::UserRole , Query.value(3)); //id задачи ШС от заказчика
+        pItem->setData(Qt::UserRole + 1, Query.value(0).toString());//ГРЗ
+        pItem->setData(Qt::UserRole + 2, strTaskDateTime);//Время
+        pItem->setData(Qt::UserRole + 3, Query.value(2).toString());//Название ШС
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         m_pTasksTableWidget->setItem(iRowCounter , 2,  pItem);
 

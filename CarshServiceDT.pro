@@ -51,9 +51,11 @@ SOURCES += \
     ../CarshService/tasks/qsmenadlg.cpp \
     BDPatterns.cpp \
     CarshService/CarshSubWidgets/qcarshemplwidget.cpp \
+    CarshService/CarshSubWidgets/qcarshinputpenparkeditdlg.cpp \
     CarshService/CarshSubWidgets/qcarshinputpenparktaskswidget.cpp \
     CarshService/CarshSubWidgets/qcarshlistwidget.cpp \
     CarshService/CarshSubWidgets/qcarshdlg.cpp \
+    CarshService/CarshSubWidgets/qsetemplforpenparktaskdlg.cpp \
     CarshService/EmplSubWidgets/qemplcostdlg.cpp \
     CarshService/EmplSubWidgets/qemplpendlg.cpp \
     CarshService/EmplSubWidgets/qemplpenwidget.cpp \
@@ -158,9 +160,11 @@ HEADERS += \
     ../CarshService/tasks/qsmenadlg.h \
     BDPatterns.h \
     CarshService/CarshSubWidgets/qcarshemplwidget.h \
+    CarshService/CarshSubWidgets/qcarshinputpenparkeditdlg.h \
     CarshService/CarshSubWidgets/qcarshinputpenparktaskswidget.h \
     CarshService/CarshSubWidgets/qcarshlistwidget.h \
     CarshService/CarshSubWidgets/qcarshdlg.h \
+    CarshService/CarshSubWidgets/qsetemplforpenparktaskdlg.h \
     CarshService/EmplSubWidgets/qemplcostdlg.h \
     CarshService/EmplSubWidgets/qemplpendlg.h \
     CarshService/EmplSubWidgets/qemplpenwidget.h \

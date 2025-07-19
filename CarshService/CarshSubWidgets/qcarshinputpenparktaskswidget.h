@@ -21,6 +21,7 @@ public:
     QString m_filtersStr;
 
 public slots:
+    void OnTasksDblClk(QTableWidgetItem*);
     void OnFilterApplyPressed();
 };
 
