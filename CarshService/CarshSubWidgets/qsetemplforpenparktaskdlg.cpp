@@ -4,6 +4,7 @@
 #include <QSqlQuery>
 #include <QMessageBox>
 #include "BDPatterns.h"
+#include <QDebug>
 
 QSetEmplForPenParkTaskDlg::QSetEmplForPenParkTaskDlg(QUuid penTaskId)
 {

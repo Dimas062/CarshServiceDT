@@ -7,7 +7,7 @@
 #include <QStandardPaths>
 #include <QTableWidget>
 #include <QDateTime>
-
+#include <QDebug>
 
 void saveTableToExcel(QTableWidget* table, const QString& fileName, const QString& title);
 

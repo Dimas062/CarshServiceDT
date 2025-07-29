@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Злобин КаршСервис"
-#define MyAppVersion "1.5"
+#define MyAppVersion "1.6"
 #define MyAppPublisher "Злобин КаршСервис"
 #define MyAppURL "https://www.example.com/"
 #define MyAppExeName "CarshServiceDT.exe"

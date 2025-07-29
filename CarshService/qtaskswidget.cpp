@@ -31,6 +31,7 @@
 #include "commondt.h"
 #include "TasksSubWidgets/qnewtaskdlg.h"
 #include "service/qselempldlg.h"
+#include <QDebug>
 
 extern QSettings settings;
 

@@ -4,7 +4,7 @@
 #include <QPushButton>
 #include <QUuid>
 #include <QSqlQuery>
-
+#include <QDebug>
 //#include "qcarshservicemaindlg.h"
 #include "common.h"
 #include "qregisterdlg.h"
@@ -124,14 +124,14 @@ QString generateMonthlyReport(int year, int month) {
 
 QLoginDlg::QLoginDlg()
 {
-    QString str = generateMonthlyReport(2025,5);
-    qDebug()<<"report len="<<str.length();
-    const QString qPath("/Users/dimas/Documents/forTlg.txt");
-    QFile qFile(qPath);
-    if (qFile.open(QIODevice::WriteOnly)) {
-        QTextStream out(&qFile); out << str;
-        qFile.close();
-    }
+    // QString str = generateMonthlyReport(2025,5);
+    // qDebug()<<"report len="<<str.length();
+    // const QString qPath("/Users/dimas/Documents/forTlg.txt");
+    // QFile qFile(qPath);
+    // if (qFile.open(QIODevice::WriteOnly)) {
+    //     QTextStream out(&qFile); out << str;
+    //     qFile.close();
+    // }
 
 
 
