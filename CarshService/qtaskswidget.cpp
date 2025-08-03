@@ -212,6 +212,9 @@ void QTasksWidget::LoadColorMap()
     m_ColorMap[11] = settings.value("QTasksWidget_Prichina_Zaderzg" , m_defaultColor).value<QColor>();
     m_ColorMap[12] = settings.value("QTasksWidget_Ot_Zak_PenPark" , m_defaultColor).value<QColor>();
     m_ColorMap[13] = settings.value("QTasksWidget_Check" , m_defaultColor).value<QColor>();
+    m_ColorMap[14] = settings.value("QTasksWidget_Ramki_Col" , m_defaultColor).value<QColor>();
+    m_ColorMap[15] = settings.value("QTasksWidget_Plate_Col" , m_defaultColor).value<QColor>();
+    m_ColorMap[16] = settings.value("QTasksWidget_DateTime_end" , m_defaultColor).value<QColor>();
 }
 
 void QTasksWidget::SaveColorMap()
@@ -229,7 +232,9 @@ void QTasksWidget::SaveColorMap()
     settings.setValue("QTasksWidget_Prichina_Zaderzg", m_ColorMap[11]);
     settings.setValue("QTasksWidget_Ot_Zak_PenPark", m_ColorMap[12]);
     settings.setValue("QTasksWidget_Check", m_ColorMap[13]);
-
+    settings.setValue("QTasksWidget_Ramki_Col", m_ColorMap[14]);
+    settings.setValue("QTasksWidget_Plate_Col", m_ColorMap[15]);
+    settings.setValue("QTasksWidget_DateTime_end", m_ColorMap[16]);
 }
 
 void QTasksWidget::TaskTypeComboChanged(int )
@@ -239,21 +244,29 @@ void QTasksWidget::TaskTypeComboChanged(int )
     if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid(QString("8078b7ce-e423-49ae-9ce6-17758b852b33")))
     {
         m_pPenalParkTaskFilterWidget->show();
-        m_iCheckBoxCol = 10;
+        m_iCheckBoxCol = 11;
         return;
     }
+    /*Выбраны все типы или один из типов без доп. панели фильтров*/
+    m_pPenalParkTaskFilterWidget->hide();
 
     /*Выбран тип Документы*/
     if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid(QString("25695573-f5fe-43fd-93dc-76ee09e461fa")))
     {
-        m_iCheckBoxCol = 10;
+        m_iCheckBoxCol = 11;
+
         return;
     }
 
-    m_iCheckBoxCol=8;
+    /*Выбран тип Номера*/
+    if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid(QString("99b4e860-5a7b-42a4-9136-f96252ef4192")))
+    {
+        m_iCheckBoxCol = 11;
+        return;
+    }
 
-    /*Выбраны все типы или один из типов без доп. панели фильтров*/
-    m_pPenalParkTaskFilterWidget->hide();
+    m_iCheckBoxCol=9;
+
 }
 
 void QTasksWidget::onHeaderDoubleClicked(int logicalIndex)
@@ -281,6 +294,18 @@ void QTasksWidget::onHeaderDoubleClicked(int logicalIndex)
             UpdateTasksList();
             return;
         }
+        /*Выбран тип Документы*/
+        if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid(QString("99b4e860-5a7b-42a4-9136-f96252ef4192"))&&(logicalIndex==8 || logicalIndex==9 || logicalIndex==10))
+        {
+            if(logicalIndex == 8) m_ColorMap[14] = color;
+            if(logicalIndex == 9) m_ColorMap[15] = color;
+            if(logicalIndex == 10) m_ColorMap[13] = color;
+            SaveColorMap();
+            UpdateTasksList();
+            return;
+        }
+
+
         if(logicalIndex == 8) m_ColorMap[13] = color;
         else m_ColorMap[logicalIndex+1] = color;
 
@@ -301,7 +326,7 @@ void QTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         QPenaltyParkingDialog dlg;
         dlg.LoadDataFromBD(QUuid::fromString(item->data(Qt::UserRole).toString()));
         splash.finish(&dlg);
-        dlg.exec();
+        if(dlg.exec() == QDialog::Accepted) UpdateTasksList();
     }
     if(item->data(Qt::UserRole+1).toUuid() == QUuid(QString("99b4e860-5a7b-42a4-9136-f96252ef4192")))
     {
@@ -313,7 +338,7 @@ void QTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         QPlateTaskDialog dlg;
         dlg.LoadDataFromBD(QUuid::fromString(item->data(Qt::UserRole).toString()));
         splash.finish(&dlg);
-        dlg.exec();
+        if(dlg.exec() == QDialog::Accepted) UpdateTasksList();
     }
     if(item->data(Qt::UserRole+1).toUuid() == QUuid(QString("057b3b6f-2848-479b-a546-3f16cb531ffe")))
     {
@@ -325,7 +350,7 @@ void QTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         QParkingTaskDialog dlg;
         dlg.LoadDataFromBD(QUuid::fromString(item->data(Qt::UserRole).toString()));
         splash.finish(&dlg);
-        dlg.exec();
+        if(dlg.exec() == QDialog::Accepted) UpdateTasksList();
     }
 
     if(item->data(Qt::UserRole+1).toUuid() == QUuid(QString("fe81daf9-a838-4bac-84aa-595e038d3a12")))
@@ -338,7 +363,7 @@ void QTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         QRetToZoneDialog dlg;
         dlg.LoadDataFromBD(QUuid::fromString(item->data(Qt::UserRole).toString()));
         splash.finish(&dlg);
-        dlg.exec();
+        if(dlg.exec() == QDialog::Accepted) UpdateTasksList();
     }
 
     if(item->data(Qt::UserRole+1).toUuid() == QUuid(QString("78850df8-814b-41c8-8977-945c085f3021")))
@@ -351,7 +376,7 @@ void QTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         QSmenaDlg dlg;
         dlg.LoadDataFromBD(QUuid::fromString(item->data(Qt::UserRole).toString()));
         splash.finish(&dlg);
-        dlg.exec();
+        if(dlg.exec() == QDialog::Accepted) UpdateTasksList();
     }
 
     if(item->data(Qt::UserRole+1).toUuid() == QUuid(QString("25695573-f5fe-43fd-93dc-76ee09e461fa")))
@@ -363,7 +388,7 @@ void QTasksWidget::OnTasksDblClk(QTableWidgetItem* item)
         QDocsTaskDlg dlg;//(item->data(Qt::UserRole).toString());
         dlg.LoadDataFromBD(QUuid::fromString(item->data(Qt::UserRole).toString()));
         splash.finish(&dlg);
-        dlg.exec();
+        if(dlg.exec() == QDialog::Accepted) UpdateTasksList();
     }
 
 }
@@ -407,7 +432,7 @@ void QTasksWidget::OnSchetPressed()
     {
         if(((QCheckBox *)m_pTasksTableWidget->cellWidget(iRowCounter , m_iCheckBoxCol))->isChecked() == false) continue;
 
-        QUuid uuidCurrentLineZakazUL = m_pTasksTableWidget->item(iRowCounter , 1)->data(Qt::UserRole + 5).toUuid();
+        QUuid uuidCurrentLineZakazUL = m_pTasksTableWidget->item(iRowCounter , 2)->data(Qt::UserRole + 5).toUuid();
         //QUuid uuidCurrentLineZakaz   = m_pTasksTableWidget->item(iRowCounter , 1)->data(Qt::UserRole + 6).toUuid();
 
         if(uuidULZakazIdUL != QUuid() && uuidULZakazIdUL!=uuidCurrentLineZakazUL)
@@ -418,13 +443,13 @@ void QTasksWidget::OnSchetPressed()
         uuidULZakazIdUL = uuidCurrentLineZakazUL;
 
         schetItem.dblCount = 1;
-        schetItem.strName = m_pTasksTableWidget->item(iRowCounter , 1)->text() + "(" + m_pTasksTableWidget->item(iRowCounter , 4)->text() + ")";
+        schetItem.strName = m_pTasksTableWidget->item(iRowCounter , 2)->text() + "(" + m_pTasksTableWidget->item(iRowCounter , 5)->text() + ")";
         schetItem.strUnitMeasure =" шт.";
-        schetItem.dblItemPrice = m_pTasksTableWidget->item(iRowCounter , 1)->data(Qt::UserRole +4).toDouble();//Стоимость задачи для заказчика
+        schetItem.dblItemPrice = m_pTasksTableWidget->item(iRowCounter , 2)->data(Qt::UserRole +4).toDouble();//Стоимость задачи для заказчика
 
         vCurrentSchetItems.push_back(schetItem);
 
-        schetItem.dblItemPrice = m_pTasksTableWidget->item(iRowCounter , 1)->data(Qt::UserRole +2).toDouble();//Затраты
+        schetItem.dblItemPrice = m_pTasksTableWidget->item(iRowCounter , 2)->data(Qt::UserRole +2).toDouble();//Затраты
         vCurrentSchetZatratiItems.push_back(schetItem);
     }
 
@@ -528,97 +553,173 @@ void QTasksWidget::UpdateTasksList()
         strTimeBase=QString("\"Время выполнения\"");
 
 
-    QString strQuery =  QString("SELECT Задачи.id, Задачи.\"Дата Время\", \"Типы задач\".\"Тип\" , \"Типы задач\".id , Задачи.\"Время выполнения\" , Заказчики.Название , Задачи.Цена , %3 , Пользователи.Имя, Пользователи.Фамилия , Пользователи. Отчество ,  Заказчики.id , Заказчики.ЮЛ, ЦеныЗаказчиков.Цена , %4 FROM \"Типы задач\", Задачи, Заказчики, Пользователи, ЦеныЗаказчиков where ЦеныЗаказчиков.Заказчик=Заказчики.id and ЦеныЗаказчиков.ТипЗадачи=Задачи.Тип and Заказчики.id=Задачи.Заказчик and Задачи.Исполнитель=Пользователи.id and Задачи.Тип = \"Типы задач\".id and Задачи.Удалено<> 'true'  %2 order by Задачи.%5 desc").arg(m_filtersStr).arg(NUMBER_BY_TASK).arg(PAY_BY_TASK).arg(strTimeBase);
-    headers << "Дата/время" << "Задача" << "Заказчик"<<"Сумма сотруднику"<<"Сумма заказчику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<" ";
+    //QString strQuery =  QString("SELECT Задачи.id, Задачи.\"Дата Время\", \"Типы задач\".\"Тип\" , \"Типы задач\".id , Задачи.\"Время выполнения\" , Заказчики.Название , Задачи.Цена , %3 , Пользователи.Имя, Пользователи.Фамилия , Пользователи. Отчество ,  Заказчики.id , Заказчики.ЮЛ, ЦеныЗаказчиков.Цена , %4 FROM \"Типы задач\", Задачи, Заказчики, Пользователи, ЦеныЗаказчиков where ЦеныЗаказчиков.Заказчик=Заказчики.id and ЦеныЗаказчиков.ТипЗадачи=Задачи.Тип and Заказчики.id=Задачи.Заказчик and Задачи.Исполнитель=Пользователи.id and Задачи.Тип = \"Типы задач\".id and Задачи.Удалено<> 'true'  %2 order by Задачи.%5 desc").arg(m_filtersStr).arg(NUMBER_BY_TASK).arg(PAY_BY_TASK).arg(strTimeBase);
+    QString strQuery = QString(
+        "SELECT "
+            "t.id, "
+            "t.\"Дата Время\", "
+            "tt.\"Тип\", "
+            "tt.id AS \"Тип id\", "
+            "t.\"Время выполнения\", "
+            "c.\"Название\" AS \"Заказчик\", "
+            "t.\"Цена\", "
+            "%1, "  // NUMBER_BY_TASK
+            "u.\"Имя\", "
+            "u.\"Фамилия\", "
+            "u.\"Отчество\", "
+            "c.id AS \"Заказчик id\", "
+            "c.\"ЮЛ\", "
+            "p.\"Цена\" AS \"Цена заказчика\", "
+            "%2 "  // PAY_BY_TASK
+        "FROM Задачи t "
+        "INNER JOIN \"Типы задач\" tt ON t.\"Тип\" = tt.id "
+        "INNER JOIN \"Заказчики\" c ON t.\"Заказчик\" = c.id "
+        "INNER JOIN \"Пользователи\" u ON t.\"Исполнитель\" = u.id "
+        "INNER JOIN \"ЦеныЗаказчиков\" p ON "
+            "p.\"Заказчик\" = c.id AND "
+            "p.\"ТипЗадачи\" = t.\"Тип\" "
+        "WHERE t.\"Удалено\" <> 'true' "
+        "%3 "   // m_filtersStr
+        "ORDER BY t.%4 DESC"  // Сортировка
+    )
+    .arg(NUMBER_BY_TASK)      // %1
+    .arg(PAY_BY_TASK)         // %2
+    .arg(m_filtersStr)        // %3
+    .arg(strTimeBase);        // %4
+
+    headers << "Дата/время" << "Дата/время завершения" << "Задача" << "Заказчик"<<"Сумма сотруднику"<<"Сумма заказчику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<" ";
     m_pTasksTableWidget->setColumnCount(m_iCheckBoxCol + 1);
 
     /*Выбрана штрафстоянка - доп. столбцы штрафстоянки*/
     if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid(QString("8078b7ce-e423-49ae-9ce6-17758b852b33")))
     {
         headers.clear();
-        headers << "Дата/время" << "Задача" << "Заказчик"<<"Сумма сотруднику"<<"Сумма заказчику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<"Причина задержания"<<"От заказчика"<<" ";
+        headers << "Дата/время" << "Дата/время завершения"<< "Задача" << "Заказчик"<<"Сумма сотруднику"<<"Сумма заказчику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<"Причина задержания"<<"От заказчика"<<" ";
         //strQuery =  QString("SELECT Задачи.id, Задачи.\"Дата Время\", \"Типы задач\".\"Тип\" , \"Типы задач\".id , Задачи.\"Время выполнения\" , Заказчики.Название , Задачи.Цена , %2 , Пользователи.Имя, Пользователи.Фамилия , Пользователи. Отчество ,  Заказчики.id , Заказчики.ЮЛ, ЦеныЗаказчиков.Цена,  %3 , \"Причины задержания\".Название , EXISTS(select 1 from ЗадачиЗаказчикаШС where ПереведенаВЗадачу = Задачи.id) FROM \"Типы задач\", Задачи, Заказчики, Пользователи, ЦеныЗаказчиков, \"Расширение задачи ШС\", \"Причины задержания\" where ЦеныЗаказчиков.Заказчик=Заказчики.id and ЦеныЗаказчиков.ТипЗадачи=Задачи.Тип and Заказчики.id=Задачи.Заказчик and Задачи.Исполнитель=Пользователи.id and Задачи.Тип = \"Типы задач\".id and Задачи.Удалено<> 'true' and Задачи.Расширение = \"Расширение задачи ШС\".id and \"Расширение задачи ШС\".\"Причина задержания\"=\"Причины задержания\".id %1 order by Задачи.\"Дата Время\" desc").arg(m_filtersStr).arg(NUMBER_BY_TASK).arg(PAY_BY_TASK);
         strQuery = QString(
-                       "SELECT "
-                       "Задачи.id, "
-                       "Задачи.\"Дата Время\", "
-                       "\"Типы задач\".\"Тип\", "
-                       "\"Типы задач\".id, "
-                       "Задачи.\"Время выполнения\", "
-                       "Заказчики.\"Название\", "
-                       "Задачи.\"Цена\", "
-                       "%1, "  // NUMBER_BY_TASK
-                       "Пользователи.\"Имя\", "
-                       "Пользователи.\"Фамилия\", "
-                       "Пользователи.\"Отчество\", "
-                       "Заказчики.id, "
-                       "Заказчики.\"ЮЛ\", "
-                       "ЦеныЗаказчиков.\"Цена\", "
-                       "%2, "  // PAY_BY_TASK
-                       "\"Причины задержания\".\"Название\", "
-                       "EXISTS(SELECT 1 FROM \"ЗадачиЗаказчикаШС\" WHERE \"ПереведенаВЗадачу\" = Задачи.id) "
-                       "FROM Задачи "
-                       "INNER JOIN \"Типы задач\" ON Задачи.\"Тип\" = \"Типы задач\".id "
-                       "INNER JOIN \"Заказчики\" ON Задачи.\"Заказчик\" = \"Заказчики\".id "
-                       "INNER JOIN \"Пользователи\" ON Задачи.\"Исполнитель\" = \"Пользователи\".id "
-                       "INNER JOIN \"ЦеныЗаказчиков\" ON ("
-                       "ЦеныЗаказчиков.\"Заказчик\" = Заказчики.id AND "
-                       "ЦеныЗаказчиков.\"ТипЗадачи\" = Задачи.\"Тип\") "
-                       "LEFT JOIN \"Расширение задачи ШС\" ON Задачи.\"Расширение\" = \"Расширение задачи ШС\".id "
-                       "LEFT JOIN \"Причины задержания\" ON \"Расширение задачи ШС\".\"Причина задержания\" = \"Причины задержания\".id "
-                       "WHERE "
-                       "Задачи.\"Удалено\" <> 'true' "
-                       "%3 "  // Фильтры (m_filtersStr)
-                       "ORDER BY Задачи.%4 DESC"
-                       )
-                       .arg(NUMBER_BY_TASK)   // %1
-                       .arg(PAY_BY_TASK)      // %2
-                       .arg(m_filtersStr)     // %3
-                       .arg(strTimeBase);     // %4
+            "SELECT "
+                "t.id, "
+                "t.\"Дата Время\", "
+                "tt.\"Тип\", "
+                "tt.id AS \"Тип id\", "
+                "t.\"Время выполнения\", "
+                "c.\"Название\" AS \"Заказчик\", "
+                "t.\"Цена\", "
+                "%1, "  // NUMBER_BY_TASK
+                "u.\"Имя\", "
+                "u.\"Фамилия\", "
+                "u.\"Отчество\", "
+                "c.id AS \"Заказчик id\", "
+                "c.\"ЮЛ\", "
+                "p.\"Цена\" AS \"Цена заказчика\", "
+                "%2, "  // PAY_BY_TASK
+                "pr.\"Название\" AS \"Причина\", "
+                "EXISTS(SELECT 1 FROM \"ЗадачиЗаказчикаШС\" WHERE \"ПереведенаВЗадачу\" = t.id) AS \"От заказчика\" "
+            "FROM Задачи t "
+            "INNER JOIN \"Типы задач\" tt ON t.\"Тип\" = tt.id "
+            "INNER JOIN \"Заказчики\" c ON t.\"Заказчик\" = c.id "
+            "INNER JOIN \"Пользователи\" u ON t.\"Исполнитель\" = u.id "
+            "INNER JOIN \"ЦеныЗаказчиков\" p ON p.\"Заказчик\" = c.id AND p.\"ТипЗадачи\" = t.\"Тип\" "
+            // Обязательное соединение с расширением ШС
+            "INNER JOIN \"Расширение задачи ШС\" rs ON t.\"Расширение\" = rs.id "
+            // Необязательное соединение с причинами задержания
+            "LEFT JOIN \"Причины задержания\" pr ON rs.\"Причина задержания\" = pr.id "
+            "WHERE t.\"Удалено\" <> 'true' "
+            "%3 "   // Фильтры (m_filtersStr)
+            "ORDER BY t.%4 DESC"
+        )
+        .arg(NUMBER_BY_TASK)   // %1
+        .arg(PAY_BY_TASK)      // %2
+        .arg(m_filtersStr)     // %3
+        .arg(strTimeBase);     // %4
     }
     /*Выбран тип Документы*/
     if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid(QString("25695573-f5fe-43fd-93dc-76ee09e461fa")))
     {
         headers.clear();
-        headers << "Дата/время" << "Задача" << "Заказчик"<<"Сумма сотруднику"<<"Сумма заказчику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<"Количество"<<"Тип документа"<<" ";
+        headers << "Дата/время" << "Дата/время завершения"<< "Задача" << "Заказчик"<<"Сумма сотруднику"<<"Сумма заказчику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<"Количество"<<"Тип документа"<<" ";
         //strQuery =  QString("SELECT Задачи.id, Задачи.\"Дата Время\", \"Типы задач\".\"Тип\" , \"Типы задач\".id , Задачи.\"Время выполнения\" , Заказчики.Название , Задачи.Цена , %2 , Пользователи.Имя, Пользователи.Фамилия , Пользователи. Отчество ,  Заказчики.id , Заказчики.ЮЛ, ЦеныЗаказчиков.Цена,  %3 , \"Расширение задачи Документы\".Количество, \"Документы задачи документы\".Документ   FROM \"Типы задач\", Задачи, Заказчики, Пользователи, ЦеныЗаказчиков, \"Расширение задачи Документы\", \"Документы задачи документы\" where ЦеныЗаказчиков.Заказчик=Заказчики.id and ЦеныЗаказчиков.ТипЗадачи=Задачи.Тип and Заказчики.id=Задачи.Заказчик and Задачи.Исполнитель=Пользователи.id and Задачи.Тип = \"Типы задач\".id and Задачи.Удалено<> 'true' and Задачи.Расширение = \"Расширение задачи Документы\".id and \"Расширение задачи Документы\".\"Документ\"=\"Документы задачи документы\".id %1 order by Задачи.\"Дата Время\" desc").arg(m_filtersStr).arg(NUMBER_BY_TASK).arg(PAY_BY_TASK);
         strQuery = QString(
-                       "SELECT "
-                       "Задачи.id, "
-                       "Задачи.\"Дата Время\", "
-                       "\"Типы задач\".\"Тип\", "
-                       "\"Типы задач\".id, "
-                       "Задачи.\"Время выполнения\", "
-                       "Заказчики.\"Название\", "
-                       "Задачи.\"Цена\", "
-                       "%1, "  // NUMBER_BY_TASK
-                       "Пользователи.\"Имя\", "
-                       "Пользователи.\"Фамилия\", "
-                       "Пользователи.\"Отчество\", "
-                       "Заказчики.id, "
-                       "Заказчики.\"ЮЛ\", "
-                       "ЦеныЗаказчиков.\"Цена\", "
-                       "%2, "  // PAY_BY_TASK
-                       "doc_ext.\"Количество\", "
-                       "doc_types.\"Документ\" "
-                       "FROM Задачи "
-                       "INNER JOIN \"Типы задач\" ON Задачи.\"Тип\" = \"Типы задач\".id "
-                       "INNER JOIN \"Заказчики\" ON Задачи.\"Заказчик\" = \"Заказчики\".id "
-                       "INNER JOIN \"Пользователи\" ON Задачи.\"Исполнитель\" = \"Пользователи\".id "
-                       "INNER JOIN \"ЦеныЗаказчиков\" ON ("
-                       "ЦеныЗаказчиков.\"Заказчик\" = Заказчики.id AND "
-                       "ЦеныЗаказчиков.\"ТипЗадачи\" = Задачи.\"Тип\") "
-                       "LEFT JOIN \"Расширение задачи Документы\" doc_ext ON Задачи.\"Расширение\" = doc_ext.id "
-                       "LEFT JOIN \"Документы задачи документы\" doc_types ON doc_ext.\"Документ\" = doc_types.id "
-                       "WHERE "
-                       "Задачи.\"Удалено\" <> 'true' "
-                       "%3 "  // Фильтры (m_filtersStr)
-                       "ORDER BY Задачи.%4 DESC"
-                       )
-                       .arg(NUMBER_BY_TASK)   // %1
-                       .arg(PAY_BY_TASK)      // %2
-                       .arg(m_filtersStr)     // %3
-                       .arg(strTimeBase);     // %4
+            "SELECT "
+                "t.id, "
+                "t.\"Дата Время\", "
+                "tt.\"Тип\", "
+                "tt.id AS \"Тип id\", "
+                "t.\"Время выполнения\", "
+                "c.\"Название\" AS \"Заказчик\", "
+                "t.\"Цена\", "
+                "%1, "  // NUMBER_BY_TASK
+                "u.\"Имя\", "
+                "u.\"Фамилия\", "
+                "u.\"Отчество\", "
+                "c.id AS \"Заказчик id\", "
+                "c.\"ЮЛ\", "
+                "p.\"Цена\" AS \"Цена заказчика\", "
+                "%2, "  // PAY_BY_TASK
+                "de.\"Количество\", "
+                "dt.\"Документ\" "
+            "FROM Задачи t "
+            "INNER JOIN \"Типы задач\" tt ON t.\"Тип\" = tt.id "
+            "INNER JOIN \"Заказчики\" c ON t.\"Заказчик\" = c.id "
+            "INNER JOIN \"Пользователи\" u ON t.\"Исполнитель\" = u.id "
+            "INNER JOIN \"ЦеныЗаказчиков\" p ON p.\"Заказчик\" = c.id AND p.\"ТипЗадачи\" = t.\"Тип\" "
+            "LEFT JOIN \"Расширение задачи Документы\" de ON t.\"Расширение\" = de.id "
+            "LEFT JOIN \"Документы задачи документы\" dt ON de.\"Документ\" = dt.id "
+            "WHERE t.\"Удалено\" <> 'true' "
+            "%3 "   // Фильтры (m_filtersStr)
+            "ORDER BY t.%4 DESC"
+        )
+        .arg(NUMBER_BY_TASK)   // %1
+        .arg(PAY_BY_TASK)      // %2
+        .arg(m_filtersStr)     // %3
+        .arg(strTimeBase);     // %4
+    }
+
+    //Выбран тип Номера
+    if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid(QString("99b4e860-5a7b-42a4-9136-f96252ef4192")))
+    {
+        headers.clear();
+        headers << "Дата/время" << "Дата/время завершения"<< "Задача" << "Заказчик" << "Сумма сотруднику"
+                << "Сумма заказчику" << "ГРЗ" << "Сотрудник" << "Затраты"
+                << "Кол-во рамок" << "Кол-во пластин" << " ";
+
+        // Формирование запроса
+        strQuery = QString(
+            "SELECT "
+                "t.id, "
+                "t.\"Дата Время\", "
+                "tt.\"Тип\", "
+                "tt.id AS \"Тип id\", "
+                "t.\"Время выполнения\", "
+                "c.\"Название\" AS \"Заказчик\", "
+                "t.\"Цена\", "
+                "%1, "  // NUMBER_BY_TASK (госномер)
+                "u.\"Имя\", "
+                "u.\"Фамилия\", "
+                "u.\"Отчество\", "
+                "c.id AS \"Заказчик id\", "
+                "c.\"ЮЛ\", "
+                "p.\"Цена\" AS \"Цена заказчика\", "
+                "%2, "  // PAY_BY_TASK (затраты)
+                "rn.\"Количество рамок\", "  // Доп. поле: количество рамок
+                "rn.\"Количество пластин\" " // Доп. поле: количество пластин
+            "FROM Задачи t "
+            "INNER JOIN \"Типы задач\" tt ON t.\"Тип\" = tt.id "
+            "INNER JOIN \"Заказчики\" c ON t.\"Заказчик\" = c.id "
+            "INNER JOIN \"Пользователи\" u ON t.\"Исполнитель\" = u.id "
+            "INNER JOIN \"ЦеныЗаказчиков\" p ON "
+                "p.\"Заказчик\" = c.id AND "
+                "p.\"ТипЗадачи\" = t.\"Тип\" "
+            // Соединение с расширением для задач "Номера"
+            "LEFT JOIN \"Расширение задачи Номера\" rn ON t.\"Расширение\" = rn.id "
+            "WHERE t.\"Удалено\" <> 'true' "
+            "%3 "   // Фильтры (m_filtersStr)
+            "ORDER BY t.%4 DESC"
+        )
+        .arg(NUMBER_BY_TASK)   // %1
+        .arg(PAY_BY_TASK)      // %2
+        .arg(m_filtersStr)     // %3
+        .arg(strTimeBase);     // %4
     }
 
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
@@ -641,15 +742,24 @@ void QTasksWidget::UpdateTasksList()
     while(query.next())
     {
         /*Время*/
-        int iTimeColumnNum = 1;
-        if(m_pDateByEndOfTask->isChecked()) iTimeColumnNum = 4;
-        QTableWidgetItem * pItem = new QTableWidgetItem(QDateTime::fromSecsSinceEpoch(query.value(iTimeColumnNum).toInt()).toString("dd.MM.yyyy hh:mm"));
+        QTableWidgetItem * pItem = new QTableWidgetItem(QDateTime::fromSecsSinceEpoch(query.value(1).toInt()).toString("dd.MM.yyyy hh:mm"));
         pItem->setData(Qt::UserRole , query.value(0));
-
         pItem->setData(Qt::UserRole +1 , query.value(3));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         pItem->setBackground(QBrush(m_ColorMap[1]));
         m_pTasksTableWidget->setItem(iRowCounter , 0,  pItem);
+
+        if(query.value(4).toInt()!=0)
+            pItem = new QTableWidgetItem(QDateTime::fromSecsSinceEpoch(query.value(4).toInt()).toString("dd.MM.yyyy hh:mm"));
+        else
+            pItem = new QTableWidgetItem("  ");
+        pItem->setData(Qt::UserRole , query.value(0));
+        pItem->setData(Qt::UserRole +1 , query.value(3));
+        pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+        pItem->setBackground(QBrush(m_ColorMap[16]));
+        m_pTasksTableWidget->setItem(iRowCounter , 1,  pItem);
+
+
 
         /*Тип задачи - по этому столбцу строится счет, поэтому в нем сохраним затраты и и сумму*/
         pItem = new QTableWidgetItem(query.value(2).toString());
@@ -662,7 +772,7 @@ void QTasksWidget::UpdateTasksList()
         pItem->setData(Qt::UserRole +6 , query.value(11));//Заказчики.id
         pItem->setBackground(QBrush(m_ColorMap[2]));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
-        m_pTasksTableWidget->setItem(iRowCounter , 1,  pItem);
+        m_pTasksTableWidget->setItem(iRowCounter , 2,  pItem);
 
         /*Заказчик*/
         pItem = new QTableWidgetItem(query.value(5).toString());
@@ -670,7 +780,7 @@ void QTasksWidget::UpdateTasksList()
         pItem->setData(Qt::UserRole +1 , query.value(3));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         pItem->setBackground(QBrush(m_ColorMap[3]));
-        m_pTasksTableWidget->setItem(iRowCounter , 2,  pItem);
+        m_pTasksTableWidget->setItem(iRowCounter , 3,  pItem);
 
         /*Сумма сотруднику*/
         //pItem = new QTableWidgetItem(locale.toString(query.value(6).toInt()));
@@ -680,7 +790,7 @@ void QTasksWidget::UpdateTasksList()
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         pItem->setBackground(QBrush(m_ColorMap[4]));
         if(query.value(6).toInt() == 0) pItem->setBackground(QBrush(Qt::red));
-        m_pTasksTableWidget->setItem(iRowCounter , 3,  pItem);
+        m_pTasksTableWidget->setItem(iRowCounter , 4,  pItem);
         dblSumm = dblSumm + query.value(6).toDouble();
 
         /*Сумма для заказчика*/
@@ -690,7 +800,7 @@ void QTasksWidget::UpdateTasksList()
         pItem->setData(Qt::UserRole +1 , query.value(3));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         pItem->setBackground(QBrush(m_ColorMap[5]));
-        m_pTasksTableWidget->setItem(iRowCounter , 4,  pItem);
+        m_pTasksTableWidget->setItem(iRowCounter , 5,  pItem);
         dblZakazSumm = dblZakazSumm + query.value(13).toDouble();
 
         /*ГРЗ*/
@@ -699,7 +809,7 @@ void QTasksWidget::UpdateTasksList()
         pItem->setData(Qt::UserRole +1 , query.value(3));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         pItem->setBackground(QBrush(m_ColorMap[6]));
-        m_pTasksTableWidget->setItem(iRowCounter , 5,  pItem);
+        m_pTasksTableWidget->setItem(iRowCounter , 6,  pItem);
 
         /*Сотрудник*/
         pItem = new QTableWidgetItem(QString("%1 %2 %3").arg(query.value(8).toString()).arg(query.value(9).toString()).arg(query.value(10).toString()));
@@ -707,7 +817,7 @@ void QTasksWidget::UpdateTasksList()
         pItem->setData(Qt::UserRole +1 , query.value(3));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         pItem->setBackground(QBrush(m_ColorMap[7]));
-        m_pTasksTableWidget->setItem(iRowCounter , 6,  pItem);
+        m_pTasksTableWidget->setItem(iRowCounter , 7,  pItem);
 
         /*Затраты*/
         //pItem = new QTableWidgetItem(locale.toString(query.value(14).toInt()));
@@ -716,7 +826,7 @@ void QTasksWidget::UpdateTasksList()
         pItem->setData(Qt::UserRole +1 , query.value(3));
         pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         pItem->setBackground(QBrush(m_ColorMap[8]));
-        m_pTasksTableWidget->setItem(iRowCounter , 7,  pItem);
+        m_pTasksTableWidget->setItem(iRowCounter , 8,  pItem);
         dblPay = dblPay + query.value(14).toDouble();
 
         /*Выбрана штрафстоянка - доп. столбцы штрафстоянки*/
@@ -728,7 +838,7 @@ void QTasksWidget::UpdateTasksList()
             pItem->setData(Qt::UserRole +1 , query.value(3));
             pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
             pItem->setBackground(QBrush(m_ColorMap[11]));
-            m_pTasksTableWidget->setItem(iRowCounter , 8,  pItem);
+            m_pTasksTableWidget->setItem(iRowCounter , 9,  pItem);
 
             /*Задача на штрафстоянку получена от заказчика*/
             if(query.value(16).toBool()) pItem = new QTableWidgetItem("Да");
@@ -737,7 +847,7 @@ void QTasksWidget::UpdateTasksList()
             pItem->setData(Qt::UserRole +1 , query.value(3));
             pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
             pItem->setBackground(QBrush(m_ColorMap[12]));
-            m_pTasksTableWidget->setItem(iRowCounter , 9,  pItem);
+            m_pTasksTableWidget->setItem(iRowCounter , 10,  pItem);
 
         }
 
@@ -750,7 +860,7 @@ void QTasksWidget::UpdateTasksList()
             pItem->setData(Qt::UserRole +1 , query.value(3));
             pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
             pItem->setBackground(QBrush(m_ColorMap[9]));
-            m_pTasksTableWidget->setItem(iRowCounter , 8,  pItem);
+            m_pTasksTableWidget->setItem(iRowCounter , 9,  pItem);
 
             /*Тип документов*/
             pItem = new QTableWidgetItem(query.value(16).toString());
@@ -758,7 +868,27 @@ void QTasksWidget::UpdateTasksList()
             pItem->setData(Qt::UserRole +1 , query.value(3));
             pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
             pItem->setBackground(QBrush(m_ColorMap[10]));
+            m_pTasksTableWidget->setItem(iRowCounter , 10,  pItem);
+        }
+
+        /*Выбран тип Номера*/
+        if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid(QString("99b4e860-5a7b-42a4-9136-f96252ef4192")))
+        {
+            /*Количество рамок*/
+            pItem = new QTableWidgetItem(query.value(15).toString());
+            pItem->setData(Qt::UserRole , query.value(0));
+            pItem->setData(Qt::UserRole +1 , query.value(3));
+            pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+            pItem->setBackground(QBrush(m_ColorMap[14]));
             m_pTasksTableWidget->setItem(iRowCounter , 9,  pItem);
+
+            /*Тип пластин*/
+            pItem = new QTableWidgetItem(query.value(16).toString());
+            pItem->setData(Qt::UserRole , query.value(0));
+            pItem->setData(Qt::UserRole +1 , query.value(3));
+            pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+            pItem->setBackground(QBrush(m_ColorMap[15]));
+            m_pTasksTableWidget->setItem(iRowCounter , 10,  pItem);
         }
 
         /*Чек-бокс*/
@@ -775,18 +905,18 @@ void QTasksWidget::UpdateTasksList()
     m_pTasksTableWidget->setRowCount(iRowCounter + 1);//+1 для итого
 
     /*Добавим Итого*/
-    m_pTasksTableWidget->setSpan(iRowCounter , 0 , 1 , 3);
+    m_pTasksTableWidget->setSpan(iRowCounter , 0 , 1 , 4);
     QTableWidgetItem * pItem = new QTableWidgetItem(QString("Итого: "));
     m_pTasksTableWidget->setItem(iRowCounter , 0,  pItem);
 
     pItem = new QTableWidgetItem(QString(" %1 руб.").arg(locale.toString((int)dblSumm)));
-    m_pTasksTableWidget->setItem(iRowCounter , 3,  pItem);
-
-    pItem = new QTableWidgetItem(QString(" %1 руб.").arg(locale.toString((int)dblZakazSumm)));
     m_pTasksTableWidget->setItem(iRowCounter , 4,  pItem);
 
+    pItem = new QTableWidgetItem(QString(" %1 руб.").arg(locale.toString((int)dblZakazSumm)));
+    m_pTasksTableWidget->setItem(iRowCounter , 5,  pItem);
+
     pItem = new QTableWidgetItem(QString(" %1 руб.").arg(locale.toString((int)dblPay)));
-    m_pTasksTableWidget->setItem(iRowCounter , 7,  pItem);
+    m_pTasksTableWidget->setItem(iRowCounter , 8,  pItem);
 
     QFont font;
     font.setBold(true);
@@ -801,78 +931,100 @@ void QTasksWidget::OnFilterApplyPressed()
 {
     //TODO: В union добавлять все задачи, в которых ест госномер
     QString numberFilterString = "";
-    if(m_pNumberEdit->text().length()>0)
+    if(!m_pNumberEdit->text().isEmpty())
     {
-        numberFilterString=QString(" and Задачи.\"Расширение\" in ((select id from \"Расширение задачи Возврат в зону\" where Госномер ilike '%%1%')  union  (select id from \"Расширение задачи Номера\" where Госномер ilike '%%1%') union  (select id from \"Расширение задачи Парковка\" where Госномер ilike '%%1%') union  (select id from \"Расширение задачи ШС\" where Госномер ilike '%%1%'))").arg(m_pNumberEdit->text());
+        numberFilterString = QString(" and t.\"Расширение\" IN ("
+            "(SELECT id FROM \"Расширение задачи Возврат в зону\" WHERE \"Госномер\" ILIKE '%%1%') "
+            "UNION ALL "
+            "(SELECT id FROM \"Расширение задачи Номера\" WHERE \"Госномер\" ILIKE '%%1%') "
+            "UNION ALL "
+            "(SELECT id FROM \"Расширение задачи Парковка\" WHERE \"Госномер\" ILIKE '%%1%') "
+            "UNION ALL "
+            "(SELECT id FROM \"Расширение задачи ШС\" WHERE \"Госномер\" ILIKE '%%1%')"
+        ")").arg(m_pNumberEdit->text());
     }
 
     QString typeFilterString;
+    QUuid taskTypeUuid = m_pTaskTypeComboBox->currentData().toUuid();
 
-    if(m_pTaskTypeComboBox->currentData().toUuid()!=QUuid())
+    if(!taskTypeUuid.isNull())
     {
-        typeFilterString=QString(" and Задачи.Тип='%1' ").arg(m_pTaskTypeComboBox->currentData().toUuid().toString());
+        typeFilterString = QString(" and t.\"Тип\" = '%1' ").arg(taskTypeUuid.toString());
 
-        /*Выбрана штрафстоянка - доп. фильтры штрафстоянки*/
-        if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid(QString("8078b7ce-e423-49ae-9ce6-17758b852b33")))
+        // Дополнительные фильтры для штрафстоянки
+        if(taskTypeUuid == QUuid("{8078b7ce-e423-49ae-9ce6-17758b852b33}"))
         {
-            QString strPenParkFilter = "";
-
             if(m_pPenalParkTaskFilterWidget->m_pGibddCombo->currentData()!=QVariant(QUuid()))
             {
-                strPenParkFilter = QString("  and Задачи.Расширение in (select  \"Расширение задачи ШС\".id from \"Расширение задачи ШС\" where Задачи.Расширение=\"Расширение задачи ШС\".id and \"Расширение задачи ШС\".\"Отдел ГАИ\"='%1')  ").arg(m_pPenalParkTaskFilterWidget->m_pGibddCombo->currentData().toString());
-                typeFilterString = typeFilterString.append(strPenParkFilter);
-            }
-            if(m_pPenalParkTaskFilterWidget->m_pParkingCombo->currentData()!=QVariant(QUuid()))
-            {
-                strPenParkFilter = QString("  and Задачи.Расширение in (select  \"Расширение задачи ШС\".id from \"Расширение задачи ШС\" where Задачи.Расширение=\"Расширение задачи ШС\".id and \"Расширение задачи ШС\".\"Штрафстоянка\"='%1')  ").arg(m_pPenalParkTaskFilterWidget->m_pParkingCombo->currentData().toString());
-                typeFilterString = typeFilterString.append(strPenParkFilter);
-            }
-            if(m_pPenalParkTaskFilterWidget->m_pReasonCombo->currentData()!=QVariant(QUuid()))
-            {
-                strPenParkFilter = QString("  and Задачи.Расширение in (select  \"Расширение задачи ШС\".id from \"Расширение задачи ШС\" where Задачи.Расширение=\"Расширение задачи ШС\".id and \"Расширение задачи ШС\".\"Причина задержания\"='%1')  ").arg(m_pPenalParkTaskFilterWidget->m_pReasonCombo->currentData().toString());
-                typeFilterString = typeFilterString.append(strPenParkFilter);
-            }
-            if(m_pPenalParkTaskFilterWidget->m_pOnlyFromZakazchikCheckBox->isChecked())
-            {
-                strPenParkFilter = QString("  and EXISTS(select 1 from ЗадачиЗаказчикаШС where ПереведенаВЗадачу = Задачи.id) ");
-                typeFilterString = typeFilterString.append(strPenParkFilter);
-            }
-            if(m_pPenalParkTaskFilterWidget->m_pOnlyManualCreatedCheckBox->isChecked())
-            {
-                strPenParkFilter = QString("  and NOT EXISTS(select 1 from ЗадачиЗаказчикаШС where ПереведенаВЗадачу = Задачи.id) ");
-                typeFilterString = typeFilterString.append(strPenParkFilter);
+                typeFilterString += QString(" AND EXISTS(SELECT 1 FROM \"Расширение задачи ШС\" rs "
+                    "WHERE rs.id = t.\"Расширение\" AND rs.\"Отдел ГАИ\" = '%1')")
+                    .arg(m_pPenalParkTaskFilterWidget->m_pGibddCombo->currentData().toUuid().toString());
             }
 
+            if(m_pPenalParkTaskFilterWidget->m_pParkingCombo->currentData()!=QVariant(QUuid()))
+            {
+                typeFilterString += QString(" AND EXISTS(SELECT 1 FROM \"Расширение задачи ШС\" rs "
+                    "WHERE rs.id = t.\"Расширение\" AND rs.\"Штрафстоянка\" = '%1')")
+                    .arg(m_pPenalParkTaskFilterWidget->m_pParkingCombo->currentData().toUuid().toString());
+            }
+
+            if(m_pPenalParkTaskFilterWidget->m_pReasonCombo->currentData()!=QVariant(QUuid()))
+            {
+                typeFilterString += QString(" AND EXISTS(SELECT 1 FROM \"Расширение задачи ШС\" rs "
+                    "WHERE rs.id = t.\"Расширение\" AND rs.\"Причина задержания\" = '%1')")
+                    .arg(m_pPenalParkTaskFilterWidget->m_pReasonCombo->currentData().toUuid().toString());
+            }
+
+            if(m_pPenalParkTaskFilterWidget->m_pOnlyFromZakazchikCheckBox->isChecked())
+            {
+                typeFilterString += " AND EXISTS(SELECT 1 FROM \"ЗадачиЗаказчикаШС\" WHERE \"ПереведенаВЗадачу\" = t.id)";
+            }
+
+            if(m_pPenalParkTaskFilterWidget->m_pOnlyManualCreatedCheckBox->isChecked())
+            {
+                typeFilterString += " AND NOT EXISTS(SELECT 1 FROM \"ЗадачиЗаказчикаШС\" WHERE \"ПереведенаВЗадачу\" = t.id)";
+            }
         }
     }
 
     QString emplFilterString;
-    if(m_pEmplComboBox->currentData()!=QVariant(QUuid()))
+    QUuid emplUuid = m_pEmplComboBox->currentData().toUuid();
+    if(!emplUuid.isNull())
     {
-        emplFilterString=QString(" and Задачи.Исполнитель='%1' ").arg(m_pEmplComboBox->currentData().toUuid().toString());
+        emplFilterString = QString(" and t.\"Исполнитель\" = '%1' ").arg(emplUuid.toString());
     }
 
     QString CarshsFilterString;
-    if(m_pCarshsComboBox->currentData()!=QVariant(QUuid()))
+    QUuid customerUuid = m_pCarshsComboBox->currentData().toUuid();
+    if(!customerUuid.isNull())
     {
-        CarshsFilterString=QString(" and Заказчики.id='%1' ").arg(m_pCarshsComboBox->currentData().toUuid().toString());
+        CarshsFilterString = QString(" and c.id = '%1' ").arg(customerUuid.toString());
     }
 
-    QString FinishFilterString("");
+    QString FinishFilterString;
     if(m_pOnlyFinishedCheckBox->isChecked())
     {
-        FinishFilterString = " and Задачи.Цена <> 0 ";
+        FinishFilterString = " and t.\"Цена\" <> 0 ";
     }
-    if(m_pOnlyUnfinishedCheckBox->isChecked())
+    else if(m_pOnlyUnfinishedCheckBox->isChecked())
     {
-        FinishFilterString = " and Задачи.Цена = 0 ";
+        FinishFilterString = " and t.\"Цена\" = 0 ";
     }
 
-    QString strTimeBase("\"Дата Время\"");
+    QString strTimeBase("t.\"Дата Время\"");
     if(m_pDateByEndOfTask->isChecked())
-        strTimeBase=QString("\"Время выполнения\"");
+        strTimeBase = "t.\"Время выполнения\"";
 
-    m_filtersStr = QString("and Задачи.%8>'%1' and Задачи.%8<'%2' %3 %4 %5 %6 %7").arg(m_pFromDateTimeEdit->dateTime().toSecsSinceEpoch()).arg(m_pToDateTimeEdit->dateTime().toSecsSinceEpoch()).arg(typeFilterString).arg(numberFilterString).arg(emplFilterString).arg(CarshsFilterString).arg(FinishFilterString).arg(strTimeBase);
+    m_filtersStr = QString("and %1 > '%2' and %1 < '%3' %4 %5 %6 %7 %8")
+        .arg(strTimeBase)
+        .arg(m_pFromDateTimeEdit->dateTime().toSecsSinceEpoch())
+        .arg(m_pToDateTimeEdit->dateTime().toSecsSinceEpoch())
+        .arg(typeFilterString)
+        .arg(numberFilterString)
+        .arg(emplFilterString)
+        .arg(CarshsFilterString)
+        .arg(FinishFilterString);
+
     UpdateTasksList();
 }
 
