@@ -41,7 +41,7 @@ QTasksWidget::QTasksWidget(QWidget *parent)
     LoadColorMap();
 
     m_filtersStr = QString("");
-    m_iCheckBoxCol = 8;
+    m_iCheckBoxCol = 9;
 
 
 
@@ -173,10 +173,10 @@ QTasksWidget::QTasksWidget(QWidget *parent)
     pVMainLayout->addSpacing(5);
 
     m_pTasksTableWidget = new QTableWidget;
-    m_pTasksTableWidget->setColumnCount(9);
+    m_pTasksTableWidget->setColumnCount(10);
     //m_pTasksTableWidget->setColumnHidden(2,true);  //Скрыли зазказчика
     QStringList headers;
-    headers << "Дата/время" << "Задача" << "Заказчик"<<"Сумма сотруднику"<<"Сумма заказчику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<" ";
+    headers << "Дата/время" << "Дата/время завершения"<< "Задача" << "Заказчик"<<"Сумма сотруднику"<<"Сумма заказчику"<<"ГРЗ"<<"Сотрудник"<<"Затраты"<<" ";
     m_pTasksTableWidget->setHorizontalHeaderLabels(headers);
     connect(m_pTasksTableWidget , SIGNAL(itemDoubleClicked(QTableWidgetItem*)) , this , SLOT(OnTasksDblClk(QTableWidgetItem*)));
     pVMainLayout->addWidget(m_pTasksTableWidget);
@@ -275,39 +275,41 @@ void QTasksWidget::onHeaderDoubleClicked(int logicalIndex)
     if (color.isValid()) {
 
         /*Выбрана штрафстоянка - доп. столбцы штрафстоянки*/
-        if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid(QString("8078b7ce-e423-49ae-9ce6-17758b852b33"))&&(logicalIndex==8 || logicalIndex==9 || logicalIndex==10))
+        if(m_pTaskTypeComboBox->currentData().toUuid()==QUuid(QString("8078b7ce-e423-49ae-9ce6-17758b852b33"))&&(logicalIndex==9 || logicalIndex==10 || logicalIndex==11))
         {
-            if(logicalIndex == 8) m_ColorMap[11] = color;
-            if(logicalIndex == 9) m_ColorMap[12] = color;
-            if(logicalIndex == 10) m_ColorMap[13] = color;
+            if(logicalIndex == 9) m_ColorMap[11] = color;
+            if(logicalIndex == 10) m_ColorMap[12] = color;
+            if(logicalIndex == 11) m_ColorMap[13] = color;
             SaveColorMap();
             UpdateTasksList();
             return;
         }
         /*Выбран тип Документы*/
-        if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid(QString("25695573-f5fe-43fd-93dc-76ee09e461fa"))&&(logicalIndex==8 || logicalIndex==9 || logicalIndex==10))
+        if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid(QString("25695573-f5fe-43fd-93dc-76ee09e461fa"))&&(logicalIndex==9 || logicalIndex==10 || logicalIndex==11))
         {
-            if(logicalIndex == 8) m_ColorMap[9] = color;
-            if(logicalIndex == 9) m_ColorMap[10] = color;
-            if(logicalIndex == 10) m_ColorMap[13] = color;
+            if(logicalIndex == 9) m_ColorMap[9] = color;
+            if(logicalIndex == 10) m_ColorMap[10] = color;
+            if(logicalIndex == 11) m_ColorMap[13] = color;
             SaveColorMap();
             UpdateTasksList();
             return;
         }
         /*Выбран тип Документы*/
-        if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid(QString("99b4e860-5a7b-42a4-9136-f96252ef4192"))&&(logicalIndex==8 || logicalIndex==9 || logicalIndex==10))
+        if(m_pTaskTypeComboBox->currentData().toUuid() == QUuid(QString("99b4e860-5a7b-42a4-9136-f96252ef4192"))&&(logicalIndex==9 || logicalIndex==10 || logicalIndex==11))
         {
-            if(logicalIndex == 8) m_ColorMap[14] = color;
-            if(logicalIndex == 9) m_ColorMap[15] = color;
-            if(logicalIndex == 10) m_ColorMap[13] = color;
+            if(logicalIndex == 9) m_ColorMap[14] = color;
+            if(logicalIndex == 10) m_ColorMap[15] = color;
+            if(logicalIndex == 11) m_ColorMap[13] = color;
             SaveColorMap();
             UpdateTasksList();
             return;
         }
 
 
-        if(logicalIndex == 8) m_ColorMap[13] = color;
-        else m_ColorMap[logicalIndex+1] = color;
+        if(logicalIndex == 9) m_ColorMap[13] = color;
+            else if(logicalIndex == 0) m_ColorMap[1] = color;
+                else if(logicalIndex == 1) m_ColorMap[16] = color;
+                    else m_ColorMap[logicalIndex] = color;
 
         SaveColorMap();
         UpdateTasksList();
@@ -443,7 +445,7 @@ void QTasksWidget::OnSchetPressed()
         uuidULZakazIdUL = uuidCurrentLineZakazUL;
 
         schetItem.dblCount = 1;
-        schetItem.strName = m_pTasksTableWidget->item(iRowCounter , 2)->text() + "(" + m_pTasksTableWidget->item(iRowCounter , 5)->text() + ")";
+        schetItem.strName = m_pTasksTableWidget->item(iRowCounter , 2)->text() + "(" + m_pTasksTableWidget->item(iRowCounter , 6)->text() + ")"; //Тип(ГРЗ)
         schetItem.strUnitMeasure =" шт.";
         schetItem.dblItemPrice = m_pTasksTableWidget->item(iRowCounter , 2)->data(Qt::UserRole +4).toDouble();//Стоимость задачи для заказчика
 
@@ -749,6 +751,7 @@ void QTasksWidget::UpdateTasksList()
         pItem->setBackground(QBrush(m_ColorMap[1]));
         m_pTasksTableWidget->setItem(iRowCounter , 0,  pItem);
 
+        /*Время завершения задачи*/
         if(query.value(4).toInt()!=0)
             pItem = new QTableWidgetItem(QDateTime::fromSecsSinceEpoch(query.value(4).toInt()).toString("dd.MM.yyyy hh:mm"));
         else
