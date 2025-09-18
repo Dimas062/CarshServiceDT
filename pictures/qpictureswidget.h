@@ -40,7 +40,7 @@ public slots:
 
 
 signals:
-
+    void imageShowedSignal(QImage &);
 };
 
 #endif // QPICTURESWIDGET_H

@@ -152,6 +152,10 @@ void QPicturesWidget::UpdatePictures()
 
     m_pCurrentPicLabel->SetCurrentImage(&(*m_currentPictureIt));
 
+#ifdef Q_OS_DESKTOP
+    emit(imageShowedSignal(*m_currentPictureIt));
+#endif
+
     if(m_currentPictureIt == m_Pictures.begin()) m_pLeftButton->setEnabled(false);
     else m_pLeftButton->setEnabled(true);
 
